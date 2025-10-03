@@ -1,1 +1,1 @@
-# RyzenAdjUWP
+# IntelAPUSettings

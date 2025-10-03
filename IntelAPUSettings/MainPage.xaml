@@ -1,0 +1,79 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:IntelAPUSettings"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:Custom="using:Microsoft.UI.Xaml.Controls.Primitives"
+    x:Class="IntelAPUSettings.MainPage"
+    mc:Ignorable="d"
+    d:DesignWidth="400"
+    d:DesignHeight="400"
+    d:DataContext="{d:DesignInstance Type=local:MainPageModel}"
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    Background="#25282C"
+    RequestedTheme="Dark">
+
+    <Page.Resources>
+        <local:WattConverter x:Key="WattConverter"/>
+        <local:AdjustSliderCommand x:Key="SliderIncrease5" Step="5"/>
+        <local:AdjustSliderCommand x:Key="SliderIncrease1" Step="1"/>
+        <local:AdjustSliderCommand x:Key="SliderDecrease5" Step="-5"/>
+        <local:AdjustSliderCommand x:Key="SliderDecrease1" Step="-1"/>
+
+        <SolidColorBrush x:Key="ButtonBackground" Color="#3E434B"/>
+        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#484E58"/>
+        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#3A3F47"/>
+        <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="#2C3035"/>
+        <SolidColorBrush x:Key="ButtonBorderBrush" Color="#6B7584"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#6B7584"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#555D69"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="#3A3F46"/>
+        <StaticResource x:Key="RepeatButtonBackground" ResourceKey="ButtonBackground"/>
+        <StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="ButtonBackgroundPointerOver"/>
+        <StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="ButtonBackgroundPressed"/>
+        <StaticResource x:Key="RepeatButtonBackgroundDisabled" ResourceKey="ButtonBackgroundDisabled"/>
+        <StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="ButtonBorderBrush"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="ButtonBorderBrushPointerOver"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="ButtonBorderBrushPressed"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="ButtonBorderBrushDisabled"/>
+        <CornerRadius x:Key="ControlCornerRadius">8,8,8,8</CornerRadius>
+        <Thickness x:Key="ButtonPadding">15,10,15,11</Thickness>
+    </Page.Resources>
+
+    <Grid Padding="20">
+        <Grid x:Name="BackendPanel" VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock HorizontalTextAlignment="Center" Margin="0,5">IntelAPUSettings Backend Not Connected</TextBlock>
+            <Button x:Name="LaunchBackendButton" Grid.Row="1" Margin="0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="LaunchBackendButton_OnClick" FontWeight="Bold" FontSize="18">
+                Launch Backend
+            </Button>
+        </Grid>
+        <StackPanel x:Name="MainPanel">
+            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="Power Limit" FontSize="16" FontWeight="Bold"/>
+            <Slider x:Name="TdpSlider" Margin="0,10" Value="{Binding Tdp, Mode=TwoWay}" Maximum="{Binding TdpMax}" Minimum="{Binding TdpMin}"/>
+            <Grid Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <RepeatButton Grid.Column="0" HorizontalAlignment="Stretch" Margin="0,0,5,0" Content="-5"
+                    Command="{StaticResource SliderDecrease5}" CommandParameter="{Binding ElementName=TdpSlider}"/>
+                <RepeatButton Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0" Content="-1"
+                    Command="{StaticResource SliderDecrease1}" CommandParameter="{Binding ElementName=TdpSlider}"/>
+                <TextBlock Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Converter={StaticResource WattConverter}, Path=Tdp}"/>
+                <RepeatButton Grid.Column="3" HorizontalAlignment="Stretch" Margin="5,0" Content="+1"
+                    Command="{StaticResource SliderIncrease1}" CommandParameter="{Binding ElementName=TdpSlider}"/>
+                <RepeatButton Grid.Column="4" HorizontalAlignment="Stretch" Margin="5,0,0,0" Content="+5"
+                    Command="{StaticResource SliderIncrease5}" CommandParameter="{Binding ElementName=TdpSlider}"/>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</Page>
