@@ -14,70 +14,102 @@ namespace IntelAPUSettings
 		private MainPageModel _base;
 		private CoreDispatcher _dispatcher;
 
+
 		public MainPageModelWrapper(MainPageModel baseModel, CoreDispatcher dispatcher)
 		{
 			_base = baseModel;
 			_dispatcher = dispatcher;
 		}
 
-		public double Tdp
-		{
-			get { lock (_base) { return _base.tdp; } }
+		public double Fps
+        {
+			get { lock (_base) { return _base.fps; } }
 			set
 			{
                 lock (_base)
                 {
-					value = Math.Min(Math.Max(value, _base.tdpMin), _base.tdpMax);
-					if (_base.tdp != value)
+					value = Math.Min(Math.Max(value, _base.fpsMin), _base.fpsMax);
+					if (_base.fps != value)
 					{
-						_base.tdp = value;
-						_base.Notify("Tdp");
-						Backend.Instance.Send($"set-tdp {value}");
+						_base.fps = value;
+						_base.Notify("Fps");
+						Backend.Instance.Send($"set-fps {value}");
 					}
 				}
 			}
 		}
-		public void SetTdpVar(double value)
+
+        public double BoostMode
+        {
+            get { lock (_base) { return _base.boostMode; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.boostMode != value)
+                    {
+                        _base.boostMode = value;
+                        _base.Notify("BoostMode");
+                        Backend.Instance.Send($"set-boost {value}");
+                    }
+                }
+            }
+        }
+        public void SetFpsVar(double value)
 		{
 			lock (_base)
 			{
-				if (_base.tdp != value)
+				if (_base.fps != value)
 				{
-					_base.tdp = value;
-					_base.Notify("Tdp");
+					_base.fps = value;
+					_base.Notify("Fps");
 				}
 			}
 		}
-		public double TdpMax
+
+        public void SetBoostVar(double value)
+        {
+            lock (_base)
+            {
+                if (_base.boostMode != value)
+                {
+                    _base.boostMode = value;
+                    Backend.Instance.Send($"set-boost {value}");
+                    _base.Notify("BoostMode");
+                }
+            }
+        }
+
+        public double FpsMax
 		{
-			get { lock (_base) { return _base.tdpMax; } }
+			get { lock (_base) { return _base.fpsMax; } }
 			set
 			{
 				lock (_base)
 				{
-					if (_base.tdpMax != value)
+					if (_base.fpsMax != value)
 					{
-						_base.tdpMax = value;
-						if (_base.tdp > value)
-							SetTdpVar(value);
-						_base.Notify("TdpMax");
+						_base.fpsMax = value;
+						if (_base.fps > value)
+                            SetFpsVar(value);
+						_base.Notify("FpsMax");
 					}
 				}
 			}
 		}
-		public double TdpMin
+		public double FpsMin
 		{
-			get { lock (_base) { return _base.tdpMin; } }
+			get { lock (_base) { return _base.fpsMin; } }
 			set
 			{
 				lock (_base)
 				{
-					if (_base.tdpMin != value)
+					if (_base.fpsMin != value)
 					{
-						_base.tdpMin = value;
-						if (_base.tdp < value)
-							SetTdpVar(value);
-						_base.Notify("TdpMin");
+						_base.fpsMin = value;
+						if (_base.fps < value)
+							SetFpsVar(value);
+						_base.Notify("FpsMin");
 					}
 				}
 			}
@@ -103,10 +135,11 @@ namespace IntelAPUSettings
 
 	class MainPageModel
     {
-		public double tdp = 30;
-		public double tdpMax = 100;
-		public double tdpMin = 0;
-		public bool isConnected = false;
+        public double fps = 90;
+        public double fpsMin = 30;
+        public double fpsMax = 120;
+        public double boostMode = 2; // 0: off, 1: enabled, 2: agressive
+        public bool isConnected = false;
 
 		private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();
 

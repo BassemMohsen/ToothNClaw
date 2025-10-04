@@ -8,20 +8,14 @@
     xmlns:Custom="using:Microsoft.UI.Xaml.Controls.Primitives"
     x:Class="IntelAPUSettings.MainPage"
     mc:Ignorable="d"
-    d:DesignWidth="400"
-    d:DesignHeight="400"
+    d:DesignWidth="798"
+    d:DesignHeight="949"
     d:DataContext="{d:DesignInstance Type=local:MainPageModel}"
     muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
     Background="#25282C"
-    RequestedTheme="Dark">
+    RequestedTheme="Dark" FontSize="16">
 
     <Page.Resources>
-        <local:WattConverter x:Key="WattConverter"/>
-        <local:AdjustSliderCommand x:Key="SliderIncrease5" Step="5"/>
-        <local:AdjustSliderCommand x:Key="SliderIncrease1" Step="1"/>
-        <local:AdjustSliderCommand x:Key="SliderDecrease5" Step="-5"/>
-        <local:AdjustSliderCommand x:Key="SliderDecrease1" Step="-1"/>
-
         <SolidColorBrush x:Key="ButtonBackground" Color="#3E434B"/>
         <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#484E58"/>
         <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#3A3F47"/>
@@ -40,40 +34,148 @@
         <StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="ButtonBorderBrushDisabled"/>
         <CornerRadius x:Key="ControlCornerRadius">8,8,8,8</CornerRadius>
         <Thickness x:Key="ButtonPadding">15,10,15,11</Thickness>
+        <local:CpuBoostModeConverter x:Key="CpuBoostModeConverter"/>
     </Page.Resources>
 
-    <Grid Padding="20">
-        <Grid x:Name="BackendPanel" VerticalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
-            </Grid.RowDefinitions>
-            <TextBlock HorizontalTextAlignment="Center" Margin="0,5">IntelAPUSettings Backend Not Connected</TextBlock>
-            <Button x:Name="LaunchBackendButton" Grid.Row="1" Margin="0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="LaunchBackendButton_OnClick" FontWeight="Bold" FontSize="18">
+
+    <Grid Padding="12">
+
+        <Grid.RowDefinitions>
+            <!-- BackendPanel -->
+            <RowDefinition Height="Auto"/>
+            <!-- MainPanel ScrollViewer -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="BackendPanel" Grid.Row="0" VerticalAlignment="Top">
+            <TextBlock HorizontalTextAlignment="Center" Margin="0,5">IntelAPUSettings Backend is not connected</TextBlock>
+            <Button x:Name="LaunchBackendButton" Grid.Row="1" Margin="0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="LaunchBackendButton_OnClick" FontSize="16">
                 Launch Backend
             </Button>
         </Grid>
-        <StackPanel x:Name="MainPanel">
-            <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="Power Limit" FontSize="16" FontWeight="Bold"/>
-            <Slider x:Name="TdpSlider" Margin="0,10" Value="{Binding Tdp, Mode=TwoWay}" Maximum="{Binding TdpMax}" Minimum="{Binding TdpMin}"/>
-            <Grid Margin="0,0,0,5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <RepeatButton Grid.Column="0" HorizontalAlignment="Stretch" Margin="0,0,5,0" Content="-5"
-                    Command="{StaticResource SliderDecrease5}" CommandParameter="{Binding ElementName=TdpSlider}"/>
-                <RepeatButton Grid.Column="1" HorizontalAlignment="Stretch" Margin="5,0" Content="-1"
-                    Command="{StaticResource SliderDecrease1}" CommandParameter="{Binding ElementName=TdpSlider}"/>
-                <TextBlock Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding Converter={StaticResource WattConverter}, Path=Tdp}"/>
-                <RepeatButton Grid.Column="3" HorizontalAlignment="Stretch" Margin="5,0" Content="+1"
-                    Command="{StaticResource SliderIncrease1}" CommandParameter="{Binding ElementName=TdpSlider}"/>
-                <RepeatButton Grid.Column="4" HorizontalAlignment="Stretch" Margin="5,0,0,0" Content="+5"
-                    Command="{StaticResource SliderIncrease5}" CommandParameter="{Binding ElementName=TdpSlider}"/>
-            </Grid>
-        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" Margin="15,5,0,0">
+            <StackPanel Orientation="Vertical" Spacing="16" x:Name="MainPanel">
+
+
+                <!-- CPU Boost -->
+                <StackPanel Orientation="Vertical" Spacing="4">
+                    <!-- Title + Status -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <!-- Title -->
+                            <ColumnDefinition Width="Auto"/>
+                            <!-- Status Text -->
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Text="CPU Boost Mode"
+                               HorizontalAlignment="Left"
+                               FontSize="16"
+                               FontWeight="SemiBold" VerticalAlignment="Center"/>
+
+                    <!-- Status Text -->
+                    <TextBlock x:Name="CpuBoostStatusText"
+                   Grid.Column="1"
+                   Text="{Binding BoostMode, Converter={StaticResource CpuBoostModeConverter}, ConverterParameter=Text}"
+                   FontSize="16"
+                   FontWeight="SemiBold"
+                   Foreground="{Binding BoostMode, Converter={StaticResource CpuBoostModeConverter}, ConverterParameter=Brush}"
+                   VerticalAlignment="Center"
+                   Margin="10,0,15,10" SelectionChanged="CpuBoostStatusText_SelectionChanged"/>
+                    </Grid>
+                    
+                    <StackPanel Orientation="Horizontal" Spacing="10" 
+                                HorizontalAlignment="Left" Margin="0,8,0,0" Width="556" Height="60" VerticalAlignment="Center">
+                        <Button x:Name="AgressiveCPUBoostButton" Grid.Row="1" HorizontalAlignment="Left" Click="AgressiveCPUBoostButton_OnClick" FontSize="18" Margin="0,6,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="45">
+                            Agressive
+                        </Button>
+                        <Button x:Name="EnabledCPUBoostButton" Grid.Row="1" HorizontalAlignment="Center" Click="EnabledCPUBoostButton_OnClick" FontSize="18" Margin="0,6,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="45">
+                            Enabled
+                        </Button>
+                        <Button x:Name="DisabledCPUBoostButton" Grid.Row="1" HorizontalAlignment="Right" Click="DisabledCPUBoostButton_OnClick" FontSize="18" Margin="0,6,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="45">
+                            Disabled
+                        </Button>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- FPS Limiter -->
+                <StackPanel>
+                    <!-- Row: Text on left, Toggle on right -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="FPS Limiter: To be done"
+                   VerticalAlignment="Center"
+                   FontSize="16"
+                   FontWeight="SemiBold"/>
+
+                        <ToggleSwitch x:Name="FpsLimiterToggle"
+                      Grid.Column="1"
+                      OffContent="Off"
+                      OnContent="On"
+                      IsOn="True"
+                      Toggled="FpsLimiterToggle_Toggled"/>
+                    </Grid>
+
+                    <!-- Slider + Numeric Input -->
+                    <Grid x:Name="FpsSliderPanel" Margin="0,6,0,0" Visibility="Visible">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="125"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Slider -->
+                        <Slider x:Name="FPSSlider"
+                            Grid.Column="0"
+                            Margin="0,0,10,0"
+                            Minimum="{Binding FpsMin}"
+                            Maximum="{Binding FpsMax}"
+                            Value="{Binding Fps, Mode=TwoWay}"/>
+
+                        <!-- Numeric input -->
+                        <muxc:NumberBox x:Name="FpsValueBox"
+                        Grid.Column="1"
+                        Value="{Binding Fps, Mode=TwoWay}"
+                        Minimum="{Binding FpsMin}"
+                        Maximum="{Binding FpsMax}"
+                        SpinButtonPlacementMode="Inline"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center" FontSize="16" Height="40"/>
+                    </Grid>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="Endurance Gaming AutoTDP: To Be Done"
+               FontSize="16"
+               Margin="0,0,0,4"/>
+
+                    <ComboBox x:Name="EnduranceGamingComboBox"
+              HorizontalAlignment="Stretch"
+              SelectionChanged="EnduranceGamingComboBox_SelectionChanged" FontSize="16">
+                        <ComboBoxItem Content="OFF - Unlimited" Tag="Off" IsSelected="True"/>
+                        <ComboBoxItem Content="Performance - 60FPS" Tag="Performance"/>
+                        <ComboBoxItem Content="Balanced - 60FPS" Tag="Balanced"/>
+                        <ComboBoxItem Content="Efficiency - 30FPS" Tag="Efficiency"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="Xe Low Latency: To Be Done"
+                     FontSize="16"
+                     Margin="0,0,0,4"/>
+
+                    <ComboBox x:Name="LowLatencyComboBox"
+                    HorizontalAlignment="Stretch"
+                    SelectionChanged="LowLatencyComboBox_SelectionChanged" FontSize="16">
+                        <ComboBoxItem Content="OFF" Tag="Off" IsSelected="True"/>
+                        <ComboBoxItem Content="On" Tag="Performance"/>
+                        <ComboBoxItem Content="On + Boost" Tag="Boost"/>
+                    </ComboBox>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

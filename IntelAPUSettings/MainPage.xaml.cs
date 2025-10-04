@@ -55,7 +55,7 @@ namespace IntelAPUSettings
         private void ConnectedInitialize()
         {
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PanelSwitch(true));
-            Backend.Instance.Send("get-tdp-limit");
+            Backend.Instance.Send("get-fps-limit");
         }
 
         private void PanelSwitch(bool isBackendAlive)
@@ -88,12 +88,12 @@ namespace IntelAPUSettings
                 case "connected":
                     ConnectedInitialize();
                     break;
-                case "tdp-limit":
-                    _model.TdpMax = double.Parse(args[1]);
-                    _model.TdpMin = double.Parse(args[2]);
+                case "fps-limit":
+                    _model.FpsMax = double.Parse(args[1]);
+                    _model.FpsMin = double.Parse(args[2]);
                     break;
-                case "tdp":
-                    _model.SetTdpVar(double.Parse(args[1]));
+                case "fps":
+                    _model.SetFpsVar(double.Parse(args[1]));
                     break;
             }
         }
@@ -106,6 +106,47 @@ namespace IntelAPUSettings
         private void LaunchBackendButton_OnClick(object sender, RoutedEventArgs e)
         {
             _ = Backend.LaunchBackend();
+        }
+
+        private void AgressiveCPUBoostButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            // handle agressive boost
+            _model.SetBoostVar(2);
+        }
+
+        private void EnabledCPUBoostButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            // handle Enabled boost
+            _model.SetBoostVar(1);
+
+        }
+
+        private void DisabledCPUBoostButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            // handle Disabled boost
+            _model.SetBoostVar(0);
+        }
+
+        private void EnduranceGamingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // TODO: handle EnduranceGaming selection changes
+
+        }
+
+        private void LowLatencyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // TODO: handle Xe Low Latency selection changes
+        }
+
+        private void FpsLimiterToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // TODO: handle FPS Limiter toggle changes
+
+        }
+
+        private void CpuBoostStatusText_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
