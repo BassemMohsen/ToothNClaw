@@ -37,147 +37,152 @@
         <local:CpuBoostModeConverter x:Key="CpuBoostModeConverter"/>
     </Page.Resources>
 
-
     <Grid Padding="12">
 
         <Grid.RowDefinitions>
-            <!-- BackendPanel -->
             <RowDefinition Height="Auto"/>
-            <!-- MainPanel ScrollViewer -->
+            <!-- BackendPanel -->
             <RowDefinition Height="*"/>
+            <!-- MainPanel ScrollViewer -->
         </Grid.RowDefinitions>
-        <Grid x:Name="BackendPanel" Grid.Row="0" VerticalAlignment="Top">
-            <TextBlock HorizontalTextAlignment="Center" Margin="0,5">Tooth Backend is not connected</TextBlock>
-            <Button x:Name="LaunchBackendButton" Grid.Row="1" Margin="0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="LaunchBackendButton_OnClick" FontSize="16">
+
+        <!-- Backend Panel -->
+        <StackPanel x:Name="BackendPanel" Grid.Row="0" VerticalAlignment="Top" Spacing="5">
+            <TextBlock HorizontalTextAlignment="Center">Tooth Backend is not connected</TextBlock>
+            <Button x:Name="LaunchBackendButton"
+                    HorizontalAlignment="Stretch"
+                    Click="LaunchBackendButton_OnClick"
+                    FontSize="16"
+                    IsTabStop="True">
                 Launch Backend
             </Button>
-        </Grid>
+        </StackPanel>
 
-        <ScrollViewer Grid.Row="1" Margin="10,5,10,7">
-            <StackPanel Orientation="Vertical" Spacing="16" x:Name="MainPanel">
+        <!-- Main Scrollable Panel -->
+        <ScrollViewer Grid.Row="1"
+                      Margin="10,5,10,7"
+                      VerticalScrollMode="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollMode="Disabled"
+                      TabNavigation="Cycle"
+                      IsTabStop="True"
+                      >
 
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16">
 
                 <!-- CPU Boost -->
                 <StackPanel Orientation="Vertical" Spacing="4">
-
-                    <!-- Title -->
                     <TextBlock Text="CPU Boost Mode"
-               FontSize="16"
-               FontWeight="SemiBold"
-               Margin="0,0,0,4"/>
-
-                    <!-- ComboBox -->
+                               FontSize="16"
+                               FontWeight="SemiBold"
+                               Margin="0,0,0,4"/>
                     <ComboBox x:Name="CpuBoostModeSelector"
                               SelectedValue="{Binding boostMode, Mode=TwoWay}"
                               Loaded="CpuBoostModeSelector_Loaded"
                               SelectedValuePath="Tag"
-                              HorizontalAlignment="Stretch" Height="40" Margin="5,0,5,0" SelectionChanged="CpuBoostModeSelector_SelectionChanged">
-
+                              HorizontalAlignment="Stretch"
+                              Height="40"
+                              Margin="5,0,5,0"
+                              SelectionChanged="CpuBoostModeSelector_SelectionChanged"
+                              IsTabStop="True">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Content}" 
-                       Foreground="{Binding Tag, Converter={StaticResource CpuBoostModeConverter}, ConverterParameter=Brush}"
-                       FontSize="16"/>
+                                <TextBlock Text="{Binding Content}"
+                                           Foreground="{Binding Tag, Converter={StaticResource CpuBoostModeConverter}, ConverterParameter=Brush}"
+                                           FontSize="16"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
-
                         <!-- Dropdown Items -->
                         <ComboBoxItem Content="Disabled" Foreground="Red">
-                        <ComboBoxItem.Tag>
-                            <x:Double>0</x:Double>
-                        </ComboBoxItem.Tag>
+                            <ComboBoxItem.Tag>
+                                <x:Double>0</x:Double>
+                            </ComboBoxItem.Tag>
                         </ComboBoxItem>
-                        
+
                         <ComboBoxItem Content="Enabled" Foreground="White">
-                        <ComboBoxItem.Tag>
-                            <x:Double>1</x:Double>
-                        </ComboBoxItem.Tag>
+                            <ComboBoxItem.Tag>
+                                <x:Double>1</x:Double>
+                            </ComboBoxItem.Tag>
                         </ComboBoxItem>
-                        
+
                         <ComboBoxItem Content="Aggressive" Foreground="Green">
-                        <ComboBoxItem.Tag>
-                            <x:Double>2</x:Double>
-                        </ComboBoxItem.Tag>
+                            <ComboBoxItem.Tag>
+                                <x:Double>2</x:Double>
+                            </ComboBoxItem.Tag>
                         </ComboBoxItem>
                     </ComboBox>
-
                 </StackPanel>
 
-
                 <!-- FPS Limiter -->
-                <StackPanel>
-                    <!-- Row: Label + Toggle -->
+                <StackPanel Orientation="Vertical" Spacing="4">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-
                         <TextBlock Text="FPS Limiter: To be done"
-                   VerticalAlignment="Center"
-                   FontSize="16"
-                   FontWeight="SemiBold"/>
-
+                                   VerticalAlignment="Center"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"/>
                         <ToggleSwitch x:Name="FpsLimiterToggle"
-                      Grid.Column="1"
-                      OffContent="Off"
-                      OnContent="On"
-                      IsOn="False"
-                      Toggled="FpsLimiterToggle_Toggled"/>
+                                      Grid.Column="1"
+                                      OffContent="Off"
+                                      OnContent="On"
+                                      IsOn="False"
+                                      Toggled="FpsLimiterToggle_Toggled"
+                                      IsTabStop="True"/>
                     </Grid>
 
-                    <!-- Collapsible Panel -->
                     <Border x:Name="FpsLimiterPanel"
-            Margin="0,6,0,0"
-            CornerRadius="8"
-            Background="#30343A"
-            BorderBrush="#50555C"
-            BorderThickness="1"
-            Padding="8"
-            RenderTransformOrigin="0.5,0">
-                        <Border.RenderTransform>
-                            <ScaleTransform x:Name="FpsPanelScale" ScaleY="1"/>
-                        </Border.RenderTransform>
-
+                            Margin="0,6,0,0"
+                            CornerRadius="8"
+                            Background="#30343A"
+                            BorderBrush="#50555C"
+                            BorderThickness="1"
+                            Padding="8">
                         <Grid x:Name="FpsSliderPanel">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="125"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Slider -->
                             <Slider x:Name="FPSSlider"
-                    Grid.Column="0"
-                    Margin="5,0,10,0"
-                    Minimum="{Binding FpsMin}"
-                    Maximum="{Binding FpsMax}"
-                    Value="{Binding Fps, Mode=TwoWay}"
-                    IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}"/>
+                                    Grid.Column="0"
+                                    Margin="5,0,10,0"
+                                    Minimum="{Binding FpsMin}"
+                                    Maximum="{Binding FpsMax}"
+                                    Value="{Binding Fps, Mode=TwoWay}"
+                                    IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}"
+                                    IsTabStop="True"/>
 
-                            <!-- Numeric input -->
                             <muxc:NumberBox x:Name="FpsValueBox"
-                            Grid.Column="1"
-                            Value="{Binding Fps, Mode=TwoWay}"
-                            Minimum="{Binding FpsMin}"
-                            Maximum="{Binding FpsMax}"
-                            SpinButtonPlacementMode="Inline"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Height="40"
-                            IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}"/>
+                                            Grid.Column="1"
+                                            Value="{Binding Fps, Mode=TwoWay}"
+                                            Minimum="{Binding FpsMin}"
+                                            Maximum="{Binding FpsMax}"
+                                            SpinButtonPlacementMode="Inline"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            FontSize="16"
+                                            Height="40"
+                                            IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}"
+                                            IsTabStop="True"/>
                         </Grid>
                     </Border>
                 </StackPanel>
 
-                <StackPanel>
+                <!-- Endurance Gaming -->
+                <StackPanel Orientation="Vertical" Spacing="4">
                     <TextBlock Text="Intel Endurance Gaming AutoTDP: To Be Done"
-               FontSize="16"
-               Margin="0,0,0,4"/>
-
+                               FontSize="16"
+                               Margin="0,0,0,4"/>
                     <ComboBox x:Name="EnduranceGamingComboBox"
-              HorizontalAlignment="Stretch"
-              SelectionChanged="EnduranceGamingComboBox_SelectionChanged" FontSize="16" Height="40" Margin="5,0,5,0">
+                              HorizontalAlignment="Stretch"
+                              SelectionChanged="EnduranceGamingComboBox_SelectionChanged"
+                              FontSize="16"
+                              Height="40"
+                              Margin="5,0,5,0"
+                              IsTabStop="True">
                         <ComboBoxItem Content="OFF - Unlimited" Tag="Off" IsSelected="True"/>
                         <ComboBoxItem Content="Performance - 60FPS" Tag="Performance"/>
                         <ComboBoxItem Content="Balanced - 60FPS" Tag="Balanced"/>
@@ -185,24 +190,37 @@
                     </ComboBox>
                 </StackPanel>
 
-                <StackPanel>
+                <!-- Xe Low Latency -->
+                <StackPanel Orientation="Vertical" Spacing="4">
                     <TextBlock Text="Xe Low Latency: To Be Done"
-                     FontSize="16"
-                     Margin="0,0,0,4"/>
-
+                               FontSize="16"
+                               Margin="0,0,0,4"/>
                     <ComboBox x:Name="LowLatencyComboBox"
-                    HorizontalAlignment="Stretch"
-                    SelectionChanged="LowLatencyComboBox_SelectionChanged" FontSize="16" Height="40" Margin="5,0,5,0">
+                              HorizontalAlignment="Stretch"
+                              SelectionChanged="LowLatencyComboBox_SelectionChanged"
+                              FontSize="16"
+                              Height="40"
+                              Margin="5,0,5,0"
+                              IsTabStop="True">
                         <ComboBoxItem Content="OFF" Tag="Off" IsSelected="True"/>
                         <ComboBoxItem Content="On" Tag="Performance"/>
                         <ComboBoxItem Content="On + Boost" Tag="Boost"/>
                     </ComboBox>
                 </StackPanel>
 
-                <Button x:Name="LaunchIGSButton" Grid.Row="1" Margin="0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="LaunchIGSButton_OnClick" FontSize="16" FontWeight="Bold" Background="#FF2256A9">
+                <!-- Launch Intel Graphics Software -->
+                <Button x:Name="LaunchIGSButton"
+                        Margin="0,5"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Center"
+                        Click="LaunchIGSButton_OnClick"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Background="#FF2256A9"
+                        IsTabStop="True">
                     Launch Intel Graphics Software
                 </Button>
-                
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

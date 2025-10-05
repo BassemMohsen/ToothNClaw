@@ -129,6 +129,12 @@ namespace Tooth
         private void FpsLimiterToggle_Toggled(object sender, RoutedEventArgs e)
         {
             // TODO: handle FPS Limiter toggle changes
+            if (FpsLimiterToggle.IsOn)
+            {
+                // Focus the slider when enabling
+                FPSSlider.Focus(FocusState.Programmatic);
+            }
+
 
         }
 
@@ -151,6 +157,9 @@ namespace Tooth
 
         private void CpuBoostModeSelector_Loaded(object sender, RoutedEventArgs e)
         {
+            // Focus the slider when enabling
+            FPSSlider.Focus(FocusState.Programmatic);
+
             CpuBoostModeSelector.SelectedValue = _model.BoostMode;
         }
 

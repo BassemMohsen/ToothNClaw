@@ -10,14 +10,14 @@
 
   <Identity
     Name="Tooth"
-    Publisher="CN=chenx"
+    Publisher="CN=BassemMohsen"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="695778d8-33d0-498d-b7a2-16f87624ef42" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Tooth</DisplayName>
-    <PublisherDisplayName>chenx</PublisherDisplayName>
+    <PublisherDisplayName>BassemMohsen</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

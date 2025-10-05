@@ -94,7 +94,7 @@ namespace Tooth.Backend
         async void launchIntelGraphicsSofware()
         {
 
-            string path = @"C:\Program Files\Intel\Intel Graphics Software\IntelGraphicsSofware.exe";
+            string path = @"C:\Program Files\Intel\Intel Graphics Software\IntelGraphicsSoftware.exe";
 
             if (!File.Exists(path))
             {
@@ -107,7 +107,7 @@ namespace Tooth.Backend
             {
                 await Task.Run(() =>
                 {
-                    Process.Start("C:\\Program Files\\Intel\\Intel Graphics Software\\IntelGraphicsSofware.exe");
+                    Process.Start("C:\\Program Files\\Intel\\Intel Graphics Software\\IntelGraphicsSoftware.exe");
                 });
                 Console.WriteLine("[Info] Launched Intel Graphics Software successfully.");
             }
