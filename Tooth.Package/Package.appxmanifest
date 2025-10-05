@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  IgnorableNamespaces="uap rescap">
+
+  <Identity
+    Name="Tooth.Package"
+    Publisher="CN=chenx"
+    Version="1.0.0.0" />
+
+  <Properties>
+    <DisplayName>Tooth.Package</DisplayName>
+    <PublisherDisplayName>chenx</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="Tooth.App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="Tooth.App">
+      <uap:VisualElements
+        DisplayName="Tooth.Package"
+        Description="Tooth.Package"
+        BackgroundColor="transparent"
+        Square44x44Logo="Assets\Square44x44Logo.png" Square150x150Logo="Assets\Square150x150Logo.png">
+        <uap:DefaultTile  Square71x71Logo="Assets\SmallTile.png" Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="Tooth.Backend/Tooth.Backend.exe" />
+        <uap3:Extension Category="windows.appExtension">
+          <uap3:AppExtension Name="microsoft.gameBarUIExtension"
+                             Id="Tooth.XboxGameBarUI"
+                             DisplayName="Tooth"
+                             Description="Tooth APU Tuner, Display and Performance tweaker"
+                             PublicFolder="GameBar">
+            <uap3:Properties>
+              <GameBarWidget Type="Standard">
+                <HomeMenuVisible>true</HomeMenuVisible>
+                <ActivateAfterInstall>true</ActivateAfterInstall>
+                <Window>
+                  <Size>
+                    <Height>300</Height>
+                    <Width>400</Width>
+                    <MinHeight>150</MinHeight>
+                    <MinWidth>200</MinWidth>
+                    <MaxHeight>350</MaxHeight>
+                    <MaxWidth>450</MaxWidth>
+                  </Size>
+                  <ResizeSupported>
+                    <Horizontal>true</Horizontal>
+                    <Vertical>true</Vertical>
+                  </ResizeSupported>
+                </Window>
+              </GameBarWidget>
+            </uap3:Properties>
+          </uap3:AppExtension>
+        </uap3:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="allowElevation" />
+    <Capability Name="internetClient"/>
+  </Capabilities>
+</Package>

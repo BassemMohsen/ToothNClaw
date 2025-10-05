@@ -1,4 +1,4 @@
-# IntelAPUSettings
+# Tooth
 
 Designed to be lightweight and complement MSI Quick Settings options.
 This is not full blown feature set and is not replace MSI Quick Settings.

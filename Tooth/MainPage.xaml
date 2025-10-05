@@ -1,0 +1,209 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tooth"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:Custom="using:Microsoft.UI.Xaml.Controls.Primitives"
+    x:Class="Tooth.MainPage"
+    mc:Ignorable="d"
+    d:DesignWidth="798"
+    d:DesignHeight="949"
+    d:DataContext="{d:DesignInstance Type=local:MainPageModel}"
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    Background="#25282C"
+    RequestedTheme="Dark" FontSize="16">
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="ButtonBackground" Color="#3E434B"/>
+        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#484E58"/>
+        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#3A3F47"/>
+        <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="#2C3035"/>
+        <SolidColorBrush x:Key="ButtonBorderBrush" Color="#6B7584"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#6B7584"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#555D69"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="#3A3F46"/>
+        <StaticResource x:Key="RepeatButtonBackground" ResourceKey="ButtonBackground"/>
+        <StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="ButtonBackgroundPointerOver"/>
+        <StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="ButtonBackgroundPressed"/>
+        <StaticResource x:Key="RepeatButtonBackgroundDisabled" ResourceKey="ButtonBackgroundDisabled"/>
+        <StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="ButtonBorderBrush"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="ButtonBorderBrushPointerOver"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="ButtonBorderBrushPressed"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="ButtonBorderBrushDisabled"/>
+        <CornerRadius x:Key="ControlCornerRadius">8,8,8,8</CornerRadius>
+        <Thickness x:Key="ButtonPadding">15,10,15,11</Thickness>
+        <local:CpuBoostModeConverter x:Key="CpuBoostModeConverter"/>
+    </Page.Resources>
+
+
+    <Grid Padding="12">
+
+        <Grid.RowDefinitions>
+            <!-- BackendPanel -->
+            <RowDefinition Height="Auto"/>
+            <!-- MainPanel ScrollViewer -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="BackendPanel" Grid.Row="0" VerticalAlignment="Top">
+            <TextBlock HorizontalTextAlignment="Center" Margin="0,5">Tooth Backend is not connected</TextBlock>
+            <Button x:Name="LaunchBackendButton" Grid.Row="1" Margin="0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="LaunchBackendButton_OnClick" FontSize="16">
+                Launch Backend
+            </Button>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" Margin="10,5,10,7">
+            <StackPanel Orientation="Vertical" Spacing="16" x:Name="MainPanel">
+
+
+                <!-- CPU Boost -->
+                <StackPanel Orientation="Vertical" Spacing="4">
+
+                    <!-- Title -->
+                    <TextBlock Text="CPU Boost Mode"
+               FontSize="16"
+               FontWeight="SemiBold"
+               Margin="0,0,0,4"/>
+
+                    <!-- ComboBox -->
+                    <ComboBox x:Name="CpuBoostModeSelector"
+                              SelectedValue="{Binding boostMode, Mode=TwoWay}"
+                              Loaded="CpuBoostModeSelector_Loaded"
+                              SelectedValuePath="Tag"
+                              HorizontalAlignment="Stretch" Height="40" Margin="5,0,5,0" SelectionChanged="CpuBoostModeSelector_SelectionChanged">
+
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Content}" 
+                       Foreground="{Binding Tag, Converter={StaticResource CpuBoostModeConverter}, ConverterParameter=Brush}"
+                       FontSize="16"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+
+                        <!-- Dropdown Items -->
+                        <ComboBoxItem Content="Disabled" Foreground="Red">
+                        <ComboBoxItem.Tag>
+                            <x:Double>0</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        
+                        <ComboBoxItem Content="Enabled" Foreground="White">
+                        <ComboBoxItem.Tag>
+                            <x:Double>1</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        
+                        <ComboBoxItem Content="Aggressive" Foreground="Green">
+                        <ComboBoxItem.Tag>
+                            <x:Double>2</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                    </ComboBox>
+
+                </StackPanel>
+
+
+                <!-- FPS Limiter -->
+                <StackPanel>
+                    <!-- Row: Label + Toggle -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="FPS Limiter: To be done"
+                   VerticalAlignment="Center"
+                   FontSize="16"
+                   FontWeight="SemiBold"/>
+
+                        <ToggleSwitch x:Name="FpsLimiterToggle"
+                      Grid.Column="1"
+                      OffContent="Off"
+                      OnContent="On"
+                      IsOn="False"
+                      Toggled="FpsLimiterToggle_Toggled"/>
+                    </Grid>
+
+                    <!-- Collapsible Panel -->
+                    <Border x:Name="FpsLimiterPanel"
+            Margin="0,6,0,0"
+            CornerRadius="8"
+            Background="#30343A"
+            BorderBrush="#50555C"
+            BorderThickness="1"
+            Padding="8"
+            RenderTransformOrigin="0.5,0">
+                        <Border.RenderTransform>
+                            <ScaleTransform x:Name="FpsPanelScale" ScaleY="1"/>
+                        </Border.RenderTransform>
+
+                        <Grid x:Name="FpsSliderPanel">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="125"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Slider -->
+                            <Slider x:Name="FPSSlider"
+                    Grid.Column="0"
+                    Margin="5,0,10,0"
+                    Minimum="{Binding FpsMin}"
+                    Maximum="{Binding FpsMax}"
+                    Value="{Binding Fps, Mode=TwoWay}"
+                    IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}"/>
+
+                            <!-- Numeric input -->
+                            <muxc:NumberBox x:Name="FpsValueBox"
+                            Grid.Column="1"
+                            Value="{Binding Fps, Mode=TwoWay}"
+                            Minimum="{Binding FpsMin}"
+                            Maximum="{Binding FpsMax}"
+                            SpinButtonPlacementMode="Inline"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Height="40"
+                            IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="Intel Endurance Gaming AutoTDP: To Be Done"
+               FontSize="16"
+               Margin="0,0,0,4"/>
+
+                    <ComboBox x:Name="EnduranceGamingComboBox"
+              HorizontalAlignment="Stretch"
+              SelectionChanged="EnduranceGamingComboBox_SelectionChanged" FontSize="16" Height="40" Margin="5,0,5,0">
+                        <ComboBoxItem Content="OFF - Unlimited" Tag="Off" IsSelected="True"/>
+                        <ComboBoxItem Content="Performance - 60FPS" Tag="Performance"/>
+                        <ComboBoxItem Content="Balanced - 60FPS" Tag="Balanced"/>
+                        <ComboBoxItem Content="Efficiency - 30FPS" Tag="Efficiency"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <StackPanel>
+                    <TextBlock Text="Xe Low Latency: To Be Done"
+                     FontSize="16"
+                     Margin="0,0,0,4"/>
+
+                    <ComboBox x:Name="LowLatencyComboBox"
+                    HorizontalAlignment="Stretch"
+                    SelectionChanged="LowLatencyComboBox_SelectionChanged" FontSize="16" Height="40" Margin="5,0,5,0">
+                        <ComboBoxItem Content="OFF" Tag="Off" IsSelected="True"/>
+                        <ComboBoxItem Content="On" Tag="Performance"/>
+                        <ComboBoxItem Content="On + Boost" Tag="Boost"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <Button x:Name="LaunchIGSButton" Grid.Row="1" Margin="0,5" HorizontalAlignment="Stretch" VerticalAlignment="Center" Click="LaunchIGSButton_OnClick" FontSize="16" FontWeight="Bold" Background="#FF2256A9">
+                    Launch Intel Graphics Software
+                </Button>
+                
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
