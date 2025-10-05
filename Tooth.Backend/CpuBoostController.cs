@@ -24,6 +24,8 @@ namespace Tooth.Backend
         {
             var scheme = GetActivePowerPlanGuid();
             RunCommand($"powercfg -setacvalueindex {scheme} {ProcessorGroupGuid} {BoostSettingGuid} {(int)mode}");
+            RunCommand($"powercfg -setdcvalueindex {scheme} {ProcessorGroupGuid} {BoostSettingGuid} {(int)mode}");
+            
             RunCommand($"powercfg -S {scheme}"); // Apply
 
             Trace.WriteLine($"SetBoostMode {mode}");
@@ -36,12 +38,20 @@ namespace Tooth.Backend
             string cmd = $"powercfg -query {scheme} {ProcessorGroupGuid} {BoostSettingGuid}";
             string output = RunCommandWithOutput(cmd);
 
-            var match = Regex.Match(output, @"Current AC Power Setting Index: 0x(\d+)");
-            if (match.Success && int.TryParse(match.Groups[1].Value, out int value))
-            {
-                Trace.WriteLine($"GetBoostMode {value}");
-                return (BoostMode)value;
-            }
+            var matchAC = Regex.Match(output, @"Current AC Power Setting Index: 0x(\d+)");
+            var matchDC = Regex.Match(output, @"Current DC Power Setting Index: 0x(\d+)");
+
+            if (matchAC.Success && int.TryParse(matchAC.Groups[1].Value, out int acValue))
+                Trace.WriteLine($"GetBoostMode AC {acValue}");
+
+            if (matchDC.Success && int.TryParse(matchDC.Groups[1].Value, out int dcValue))
+                Trace.WriteLine($"GetBoostMode DC {dcValue}");
+
+            // Prefer AC value if available, else DC
+            if (matchAC.Success)
+                return (BoostMode)int.Parse(matchAC.Groups[1].Value);
+            if (matchDC.Success)
+                return (BoostMode)int.Parse(matchDC.Groups[1].Value);
 
             return null;
         }
