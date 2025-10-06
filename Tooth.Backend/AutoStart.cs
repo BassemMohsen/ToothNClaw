@@ -14,12 +14,20 @@ namespace Tooth.Backend
     internal class AutoStart
     {
         public string name { get; private set; }
+
+        // TaskManager vars
+        private Microsoft.Win32.TaskScheduler.Task task;
         private TaskDefinition _taskDefinition;
+        private readonly ExecAction _action;
 
         public AutoStart(string name, ExecAction action)
         {
             this.name = name;
+            this._action = action;
+
             _taskDefinition = TaskService.Instance.NewTask();
+            _taskDefinition.RegistrationInfo.Description = "Tooth Server in the background ";
+
             _taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
             _taskDefinition.Principal.UserId = WindowsIdentity.GetCurrent().Name;
             _taskDefinition.Principal.LogonType = TaskLogonType.InteractiveToken;
@@ -28,7 +36,9 @@ namespace Tooth.Backend
             _taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
             _taskDefinition.Settings.Enabled = false;
             _taskDefinition.Triggers.Add(new LogonTrigger() { UserId = WindowsIdentity.GetCurrent().Name });
-            _taskDefinition.Actions.Add(action);
+            _taskDefinition.Actions.Add(_action);
+            
+
         }
 
         public void SetEnabled(bool enabled)
@@ -37,7 +47,7 @@ namespace Tooth.Backend
             try
             {
                 // get current task, if any, delete it
-                var task = TaskService.Instance.FindTask(name);
+                task = TaskService.Instance.FindTask(name);
                 Console.WriteLine($"[AutoStart] TaskService.Instance.FindTask call has finished: {name}");
                 if (task != null) {
                     Console.WriteLine($"[AutoStart] Task is not null: {name}");
@@ -58,7 +68,7 @@ namespace Tooth.Backend
                 try
                 {
                     Console.WriteLine($"[AutoStart] Task is {name} about to be registered, and wasn't found");
-                    var task = TaskService.Instance.RootFolder.RegisterTaskDefinition(name, _taskDefinition);
+                    task = TaskService.Instance.RootFolder.RegisterTaskDefinition(name, _taskDefinition);
                     task.Enabled = true;
                     Console.WriteLine($"[AutoStart] Task is RegisterTaskDefinition: {name} is now: {enabled}");
                 }

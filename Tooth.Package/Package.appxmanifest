@@ -11,7 +11,7 @@
   <Identity
     Name="Tooth.Package"
     Publisher="CN=BassemMohsen"
-    Version="1.0.20.0" />
+    Version="1.0.22.0" />
 
   <Properties>
     <DisplayName>Tooth.Package</DisplayName>
@@ -50,7 +50,7 @@
         <uap3:Extension Category="windows.appExtension">
           <uap3:AppExtension Name="microsoft.gameBarUIExtension"
                              Id="Tooth.XboxGameBarUI"
-                             DisplayName="Tooth"
+                             DisplayName="Tooth on Claw"
                              Description="Tooth APU Tuner, Display and Performance tweaker"
                              PublicFolder="GameBar">
             <uap3:Properties>

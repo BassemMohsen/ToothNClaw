@@ -52,8 +52,12 @@
             </Button>
         </StackPanel>
 
-
-        <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16">
+        <ScrollViewer Margin="10,5,10,7"
+                      VerticalScrollMode="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollMode="Disabled">
+            
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16">
 
             <!-- CPU Boost -->
             <StackPanel Orientation="Vertical" Spacing="4">
@@ -62,7 +66,7 @@
                                FontWeight="Bold"
                                Margin="0,0,0,4"/>
                 <ComboBox x:Name="CpuBoostModeSelector"
-                              SelectedValue="{Binding boostMode, Mode=TwoWay}"
+                              SelectedValue="{Binding BoostMode, Mode=TwoWay}"
                               Loaded="CpuBoostModeSelector_Loaded"
                               SelectedValuePath="Tag"
                               HorizontalAlignment="Stretch"
@@ -199,19 +203,19 @@
                 Launch Intel Graphics Software
             </Button>
 
-            <StackPanel Orientation="Vertical" Spacing="4">
-                <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="Settings" FontSize="18" FontWeight="Bold"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Start Backend Automatically" FontSize="18"/>
-                    <ToggleSwitch Grid.Column="1" x:Name="AutoStartToggle" IsOn="{Binding AutoStart, Mode=TwoWay}"/>
+                <StackPanel Orientation="Vertical" Spacing="4">
+                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="Settings" FontSize="18" FontWeight="Bold"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Start Backend Automatically" FontSize="18"/>
+                        <ToggleSwitch Grid.Column="1" x:Name="AutoStartToggle" IsOn="{Binding AutoStart, Mode=TwoWay}"/>
 
-                </Grid>
+                    </Grid>
+                </StackPanel>
             </StackPanel>
-
-        </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

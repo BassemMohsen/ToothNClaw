@@ -39,6 +39,7 @@ namespace Tooth.Backend
 
             // Start your backend communication
             Console.WriteLine($"{PROGRAM_NAME}");
+            Console.WriteLine($"[Program] Started with Argument {args[0]}");
 
             string packageSid;
             if (args.Length >= 1 && args[0].StartsWith("S-1-"))
