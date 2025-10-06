@@ -114,7 +114,34 @@ namespace Tooth
 				}
 			}
 		}
-		public event PropertyChangedEventHandler PropertyChanged;
+        public bool AutoStart
+        {
+            get { lock (_base) { return _base.autoStart; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.autoStart != value)
+                    {
+                        _base.autoStart = value;
+                        _base.Notify("AutoStart");
+                        Backend.Instance.Send($"autostart {value}");
+                    }
+                }
+            }
+        }
+        public void SetAutoStartVar(bool value)
+        {
+            lock (_base)
+            {
+                if (_base.autoStart != value)
+                {
+                    _base.autoStart = value;
+                    _base.Notify("AutoStart");
+                }
+            }
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
 		public async Task Notify(string propertyName)
 		{
@@ -139,6 +166,7 @@ namespace Tooth
         public double fpsMin = 30;
         public double fpsMax = 120;
         public double boostMode = 2; // 0: off, 1: enabled, 2: agressive
+        public bool autoStart = false;
         public bool isConnected = false;
 
 		private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();

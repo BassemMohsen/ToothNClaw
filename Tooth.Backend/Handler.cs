@@ -11,11 +11,13 @@ namespace Tooth.Backend
     internal class Handler
     {
         private CpuBoostController cpuBoostController;
+		private readonly AutoStart _autoStart;
 
-        public Handler()
+		public Handler(AutoStart autoStart)
         {
             cpuBoostController = new CpuBoostController();
-        }
+			_autoStart = autoStart;
+		}
 
         public void Register(Communication comm)
         {
@@ -53,42 +55,57 @@ namespace Tooth.Backend
                         {
                             cpuBoostController = new CpuBoostController();
                         }
-                        Console.WriteLine($"[Server Handler] Setting CPU Boost to {args[1]}");
+						Console.WriteLine($"[Server Handler] Setting CPU Boost to {args[1]}");
                         if (Enum.TryParse(args[1], out CpuBoostController.BoostMode mode))
                         {
                             cpuBoostController.SetBoostMode(mode);
                         }
                         else
                         {
-                            Console.WriteLine($"[Server Handler] Invalid Boost Mode: {args[1]}");
+							Console.WriteLine($"[Server Handler] Invalid Boost Mode: {args[1]}");
                         }
                     }
                     break;
 
                 case "set-Fps":
                     {
-                        Console.WriteLine($"[Server Handler] Todo: Setting Fps to {args[1]}");
+						Console.WriteLine($"[Server Handler] Todo: Setting Fps to {args[1]}");
                     }
                     break;
 
                 case "set-EnduranceGaming":
                     {
-                        Console.WriteLine($"[Server Handler] Todo: Setting Endurance Gaming mode to {args[1]}");
+						Console.WriteLine($"[Server Handler] Todo: Setting Endurance Gaming mode to {args[1]}");
                     }
                     break;
 
                 case "set-LowLatencyMode":
                     {
-                        Console.WriteLine($"[Server Handler] Todo: Setting Low Latency mode to {args[1]}");
+						Console.WriteLine($"[Server Handler] Todo: Setting Low Latency mode to {args[1]}");
                     }
                     break;
                 case "IntelGraphicsSofware":
                     {
-                        Console.WriteLine($"[Server Handler] Launch Intel Graphics Software");
+						Console.WriteLine($"[Server Handler] Launch Intel Graphics Software");
                         launchIntelGraphicsSofware();
                     }
                     break;
-            }
+				case "init":
+                    {
+                        bool enabled = AutoStart.IsEnabled(_autoStart.name);
+                        Console.WriteLine($"[Handler] Get AutoStart Status: {enabled}");
+                        comm.Send($"autostart {enabled}");
+                    }
+                    break;
+				case "autostart":
+					{
+						Console.WriteLine($"[Handler] Set Auto Start: {args[1]}");
+						bool enabled = bool.Parse(args[1]);
+						_autoStart.SetEnabled(enabled);
+						comm.Send($"autostart {AutoStart.IsEnabled(_autoStart.name)}");
+					}
+					break;
+			}
         }
 
         async void launchIntelGraphicsSofware()
@@ -98,8 +115,8 @@ namespace Tooth.Backend
 
             if (!File.Exists(path))
             {
-                // File doesn’t exist, log or notify gracefully
-                Console.WriteLine($"[Warning] Intel Graphics Software not found at '{path}'");
+				// File doesn’t exist, log or notify gracefully
+				Console.WriteLine($"[Warning] Intel Graphics Software not found at '{path}'");
                 return;
             }
 
@@ -109,12 +126,12 @@ namespace Tooth.Backend
                 {
                     Process.Start("C:\\Program Files\\Intel\\Intel Graphics Software\\IntelGraphicsSoftware.exe");
                 });
-                Console.WriteLine("[Info] Launched Intel Graphics Software successfully.");
+				Console.WriteLine("[Info] Launched Intel Graphics Software successfully.");
             }
             catch (Exception ex)
             {
-                // Catch any other exceptions and log them
-                Console.WriteLine($"[Error] Failed to launch Intel Graphics Software: {ex.Message}");
+				// Catch any other exceptions and log them
+				Console.WriteLine($"[Error] Failed to launch Intel Graphics Software: {ex.Message}");
             }
         }
     }

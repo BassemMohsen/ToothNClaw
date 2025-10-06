@@ -1,4 +1,8 @@
-# Tooth
+# Tooth on Claw
+
+Claw 8 AI+ extra Settings Widget.
+
+![App Preview](images/Tooth-Widget.png)
 
 Designed to be lightweight and complement MSI Quick Settings options.
 This is not full blown feature set and is not replace MSI Quick Settings.

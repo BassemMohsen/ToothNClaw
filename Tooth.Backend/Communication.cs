@@ -22,29 +22,30 @@ namespace Tooth.Backend
         public EventHandler DisconnectedEvent {  get; set; }
         public EventHandler<string> ReceivedEvent { get; set; }
 
-        public Communication()
+        public Communication(string packageSid)
         {
-            var pipeName = $"Sessions\\{Process.GetCurrentProcess().SessionId}\\AppContainerNamedObjects\\{ApplicationData.Current.LocalSettings.Values["PackageSid"]}\\ToothPipe";
+            Console.WriteLine($"[Connection] Package SID: {packageSid}");
+            var pipeName = $"Sessions\\{Process.GetCurrentProcess().SessionId}\\AppContainerNamedObjects\\{packageSid}\\ToothPipe";
             Console.WriteLine($"[Connection] Pipe name: {pipeName}");
-            
+
             _server = new NamedPipeServerStream(
                 pipeName,
                 PipeDirection.InOut, 1,
                 PipeTransmissionMode.Message,
-                PipeOptions.Asynchronous, 128, 128, GetPipeSecurity());
+                PipeOptions.Asynchronous, 128, 128, GetPipeSecurity(packageSid));
             _reader = new StreamReader(_server);
             _writer = new StreamWriter(_server);
         }
 
-        private static PipeSecurity GetPipeSecurity()
+        private static PipeSecurity GetPipeSecurity(string packageSid)
         {
             var ps = new PipeSecurity();
             var clientRule = new PipeAccessRule(
-                new SecurityIdentifier(ApplicationData.Current.LocalSettings.Values["PackageSid"] as string),
+                new SecurityIdentifier(packageSid),
                 PipeAccessRights.ReadWrite,
                 AccessControlType.Allow);
             var ownerRule = new PipeAccessRule(
-                new SecurityIdentifier(ApplicationData.Current.LocalSettings.Values["UserSid"] as string),
+                WindowsIdentity.GetCurrent().User,
                 PipeAccessRights.FullControl,
                 AccessControlType.Allow);
             ps.AddAccessRule(clientRule);

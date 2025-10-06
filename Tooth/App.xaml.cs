@@ -85,7 +85,7 @@ namespace Tooth
                         widgetArgs,
                         Window.Current.CoreWindow,
                         rootFrame);
-                    rootFrame.Navigate(typeof(MainPage));
+                    rootFrame.Navigate(typeof(MainPage), _xboxGameBarWidget);
 
                     Window.Current.Closed += XboxGameBarWidgetWindow_Closed;
 

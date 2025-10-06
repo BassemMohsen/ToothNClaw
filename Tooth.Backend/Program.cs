@@ -4,15 +4,20 @@ using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Reflection;
+using Windows.Storage;
+
+
 
 namespace Tooth.Backend
 {
     internal static class Program
     {
         private static Mutex _mutex;
+        const string PROGRAM_NAME = "Tooth.Backend";
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             _mutex = new Mutex(true, "Tooth.Backend");
             if (!_mutex.WaitOne(TimeSpan.Zero, true))
@@ -33,8 +38,21 @@ namespace Tooth.Backend
             Application.SetCompatibleTextRenderingDefault(false);
 
             // Start your backend communication
-            var comm = new Communication();
-            var handler = new Handler();
+            Console.WriteLine($"{PROGRAM_NAME}");
+
+            string packageSid;
+            if (args.Length >= 1 && args[0].StartsWith("S-1-"))
+                packageSid = args[0];
+            else
+                packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
+
+            var comm = new Communication(packageSid);
+            var handler = new Handler(
+                new AutoStart(PROGRAM_NAME,
+                new Microsoft.Win32.TaskScheduler.ExecAction(
+                    Assembly.GetEntryAssembly().Location, packageSid
+                    )));
+
             handler.Register(comm);
             Task.Run(() => comm.Run()); // Run in background
 

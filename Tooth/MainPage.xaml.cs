@@ -58,6 +58,7 @@ namespace Tooth
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PanelSwitch(true));
             Backend.Instance.Send("get-fps-limit");
             Backend.Instance.Send("get-boost");
+            Backend.Instance.Send("init");
         }
 
         private void PanelSwitch(bool isBackendAlive)
@@ -101,6 +102,9 @@ namespace Tooth
                     break;
                 case "fps":
                     _model.SetFpsVar(double.Parse(args[1]));
+                    break;
+                case "autostart":
+                    _model.SetAutoStartVar(bool.Parse(args[1]));
                     break;
             }
         }
@@ -157,9 +161,6 @@ namespace Tooth
 
         private void CpuBoostModeSelector_Loaded(object sender, RoutedEventArgs e)
         {
-            // Focus the slider when enabling
-            FPSSlider.Focus(FocusState.Programmatic);
-
             CpuBoostModeSelector.SelectedValue = _model.BoostMode;
         }
 
