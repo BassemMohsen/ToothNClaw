@@ -5,18 +5,22 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Tooth.GraphicsProcessingUnit;
 using Windows.System;
+using static Tooth.IGCL.IGCLBackend;
 namespace Tooth.Backend
 {
     internal class Handler
     {
         private CpuBoostController cpuBoostController;
+        private IntelGPU intelGPUController;
 		private readonly AutoStart _autoStart;
 
 		public Handler(AutoStart autoStart)
         {
             cpuBoostController = new CpuBoostController();
-			_autoStart = autoStart;
+            intelGPUController = new IntelGPU();
+            _autoStart = autoStart;
 		}
 
         public void Register(Communication comm)
@@ -72,10 +76,68 @@ namespace Tooth.Backend
 						Console.WriteLine($"[Server Handler] Todo: Setting Fps to {args[1]}");
                     }
                     break;
+                case "get-EnduranceGaming":
+                    {
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        ctl_endurance_gaming_t enduranceGaming = intelGPUController.GetEnduranceGaming();
 
+                        if (enduranceGaming.EGControl == ctl_3d_endurance_gaming_control_t.OFF)
+                        {
+                            Console.WriteLine($"[Server Handler] Responding with GPU Endurance Gaming 0");
+                            (sender as Communication).Send("EnduranceGaming" + ' ' + 0);
+                        }
+                        else if (enduranceGaming.EGControl == ctl_3d_endurance_gaming_control_t.AUTO)
+                        {
+                            switch (enduranceGaming.EGMode)
+                            {
+                                case ctl_3d_endurance_gaming_mode_t.PERFORMANCE:
+                                    Console.WriteLine($"[Server Handler] Responding with GPU Endurance Gaming 1");
+                                    (sender as Communication).Send("EnduranceGaming" + ' ' + 1);
+                                    break;
+                                case ctl_3d_endurance_gaming_mode_t.BALANCED:
+                                    Console.WriteLine($"[Server Handler] Responding with GPU Endurance Gaming 2");
+                                    (sender as Communication).Send("EnduranceGaming" + ' ' + 2);
+                                    break;
+                                case ctl_3d_endurance_gaming_mode_t.BATTERY:
+                                    Console.WriteLine($"[Server Handler] Responding with GPU Endurance Gaming 3");
+                                    (sender as Communication).Send("EnduranceGaming" + ' ' + 3);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    break;
                 case "set-EnduranceGaming":
                     {
-						Console.WriteLine($"[Server Handler] Todo: Setting Endurance Gaming mode to {args[1]}");
+                        Console.WriteLine($"[Server Handler] Setting Endurance Gaming mode to {args[1]}");
+                        bool result = false;
+                        switch (args[1])
+                        {
+                            case "0":
+                                result = intelGPUController.SetEnduranceGaming(IGCL.IGCLBackend.ctl_3d_endurance_gaming_control_t.OFF, IGCL.IGCLBackend.ctl_3d_endurance_gaming_mode_t.MAX);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetEnduranceGaming {result}");
+                                break;
+                            case "1":
+                                result = intelGPUController.SetEnduranceGaming(IGCL.IGCLBackend.ctl_3d_endurance_gaming_control_t.AUTO, IGCL.IGCLBackend.ctl_3d_endurance_gaming_mode_t.PERFORMANCE);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetEnduranceGaming {result}");
+                                break;
+                            case "2":
+                                result = intelGPUController.SetEnduranceGaming(IGCL.IGCLBackend.ctl_3d_endurance_gaming_control_t.AUTO, IGCL.IGCLBackend.ctl_3d_endurance_gaming_mode_t.BALANCED);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetEnduranceGaming {result}");
+                                break;
+                            case "3":
+                                result = intelGPUController.SetEnduranceGaming(IGCL.IGCLBackend.ctl_3d_endurance_gaming_control_t.AUTO, IGCL.IGCLBackend.ctl_3d_endurance_gaming_mode_t.BATTERY);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetEnduranceGaming {result}");
+                                break;
+                            default:
+                                Console.WriteLine($"[Server Handler] Wrong Arg value: Setting Endurance Gaming mode to {args[1]}");
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetEnduranceGaming {result}");
+                                break;
+                        }
                     }
                     break;
 

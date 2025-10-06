@@ -78,6 +78,7 @@
     <Compile Include="CpuBoostController.cs" />
     <Compile Include="ctl_telemetry_data.cs" />
     <Compile Include="IGCLBackend.cs" />
+    <Compile Include="IntelGPU.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -118,9 +119,17 @@
     <PackageReference Include="Microsoft.Windows.SDK.Contracts">
       <Version>10.0.26100.6584</Version>
     </PackageReference>
+    <PackageReference Include="SharpDX.Direct3D9">
+      <Version>4.2.0</Version>
+    </PackageReference>
     <PackageReference Include="TaskScheduler">
       <Version>2.12.2</Version>
     </PackageReference>
+  </ItemGroup>
+    <ItemGroup>
+      <None Update="IGCL_Wrapper.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Images\tooth.ico" />

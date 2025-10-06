@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace HandheldCompanion.IGCL
+namespace Tooth.IGCL
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct ctl_telemetry_data

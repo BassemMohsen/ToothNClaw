@@ -159,20 +159,38 @@
 
             <!-- Endurance Gaming -->
             <StackPanel Orientation="Vertical" Spacing="4">
-                <TextBlock Text="Intel Endurance Gaming AutoTDP: To Be Done"
+                <TextBlock Text="Endurance Gaming AutoTDP/TargetFPS"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
                 <ComboBox x:Name="EnduranceGamingComboBox"
                               HorizontalAlignment="Stretch"
                               SelectionChanged="EnduranceGamingComboBox_SelectionChanged"
+                              SelectedValue="{Binding EnduranceGaming, Mode=TwoWay}"
+                              SelectedValuePath="Tag"
                               FontSize="18"
                               Height="40"
                               Margin="5,0,5,0">
-                    <ComboBoxItem Content="OFF - Unlimited" Tag="Off" IsSelected="True"/>
-                    <ComboBoxItem Content="Performance - 60FPS" Tag="Performance"/>
-                    <ComboBoxItem Content="Balanced - 60FPS" Tag="Balanced"/>
-                    <ComboBoxItem Content="Efficiency - 30FPS" Tag="Efficiency"/>
-                </ComboBox>
+                    <ComboBoxItem Content="OFF - Unlimited FPS" IsSelected="True">
+                            <ComboBoxItem.Tag>
+                                <x:Double>0</x:Double>
+                            </ComboBoxItem.Tag>
+                     </ComboBoxItem>
+                        <ComboBoxItem Content="Performance - 60FPS">
+                            <ComboBoxItem.Tag>
+                                <x:Double>1</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="Balanced - 40FPS" >
+                        <ComboBoxItem.Tag>
+                            <x:Double>2</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="Efficiency - 30FPS">
+                        <ComboBoxItem.Tag>
+                            <x:Double>3</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                    </ComboBox>
             </StackPanel>
 
             <!-- Xe Low Latency -->
@@ -187,7 +205,7 @@
                               Height="40"
                               Margin="5,0,5,0">
                     <ComboBoxItem Content="OFF" Tag="Off" IsSelected="True"/>
-                    <ComboBoxItem Content="On" Tag="Performance"/>
+                    <ComboBoxItem Content="On" Tag="On"/>
                     <ComboBoxItem Content="On + Boost" Tag="Boost"/>
                 </ComboBox>
             </StackPanel>

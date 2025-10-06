@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace HandheldCompanion.IGCL
+namespace Tooth.IGCL
 {
     // Define the wrapper class for IGCL
     public static class IGCLBackend
@@ -434,7 +434,7 @@ namespace HandheldCompanion.IGCL
             DLL_INITIALIZE_SUCCESS = 4
         }
 
-        private const string dllName = "IGCL_Wrapper.dll";
+        private const string dllName = "Libraries\\IGCL_Wrapper.dll";
         private static IGCLStatus status = IGCLStatus.NO_ERROR;
 
         static IGCLBackend()
@@ -445,7 +445,13 @@ namespace HandheldCompanion.IGCL
                 if (pDll == IntPtr.Zero)
                 {
                     status = IGCLStatus.DLL_NOT_FOUND;
+                    Console.WriteLine("IGCLStatus.DLL_NOT_FOUND.");
                 }
+                else
+                {
+                    Console.WriteLine("IGCLStatus.DLL_FOUND.");
+                }
+                    
 
                 if (status == IGCLStatus.NO_ERROR)
                 {
@@ -471,6 +477,8 @@ namespace HandheldCompanion.IGCL
                         SetEnduranceGamingSettings = (SetEnduranceGamingSettingsDelegate)GetDelegate("SetEnduranceGamingSettings", typeof(SetEnduranceGamingSettingsDelegate));
 
                         status = IGCLStatus.DLL_INITIALIZE_SUCCESS;
+
+                        Console.WriteLine("IGCL Wrapper initialized successfully.");
                     }
                     catch
                     {
@@ -493,6 +501,8 @@ namespace HandheldCompanion.IGCL
                         GetEnduranceGamingCaps = null;
                         GetEnduranceGamingSettings = null;
                         SetEnduranceGamingSettings = null;
+
+                        Console.WriteLine("IGCL Wrapper initialization failed.");
                     }
                 }
             }

@@ -58,6 +58,7 @@ namespace Tooth
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PanelSwitch(true));
             Backend.Instance.Send("get-fps-limit");
             Backend.Instance.Send("get-boost");
+            Backend.Instance.Send("get-EnduranceGaming");
             Backend.Instance.Send("init");
         }
 
@@ -100,6 +101,11 @@ namespace Tooth
                     _model.BoostMode = double.Parse(args[1]);
                     CpuBoostModeSelector.SelectedValue = _model.BoostMode;
                     break;
+                case "EnduranceGaming":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating UI GPU Endurance Gaming to {args[1]}");
+                    _model.EnduranceGaming = double.Parse(args[1]);
+                    EnduranceGamingComboBox.SelectedValue = _model.EnduranceGaming;
+                    break;
                 case "fps":
                     _model.SetFpsVar(double.Parse(args[1]));
                     break;
@@ -122,6 +128,18 @@ namespace Tooth
         private void EnduranceGamingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // TODO: handle EnduranceGaming selection changes
+            if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item)
+            {
+                // Extract the Tag (0, 1, or 2)
+                if (item.Tag is double tagValue)
+                {
+                    if (DataContext is MainPageModelWrapper model)
+                    {
+                        _model.EnduranceGaming = tagValue;
+                        _model.SetEnduranceGamingVar(tagValue);
+                    }
+                }
+            }
 
         }
 

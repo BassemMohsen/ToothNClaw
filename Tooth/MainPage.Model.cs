@@ -55,6 +55,23 @@ namespace Tooth
                 }
             }
         }
+
+        public double EnduranceGaming
+        {
+            get { lock (_base) { return _base.enduranceGaming; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.enduranceGaming != value)
+                    {
+                        _base.enduranceGaming = value;
+                        _base.Notify("EnduranceGaming");
+                        Backend.Instance.Send($"set-EnduranceGaming {value}");
+                    }
+                }
+            }
+        }
         public void SetFpsVar(double value)
 		{
 			lock (_base)
@@ -76,6 +93,19 @@ namespace Tooth
                     _base.boostMode = value;
                     Backend.Instance.Send($"set-boost {value}");
                     _base.Notify("BoostMode");
+                }
+            }
+        }
+
+        public void SetEnduranceGamingVar(double value)
+        {
+            lock (_base)
+            {
+                if (_base.enduranceGaming != value)
+                {
+                    _base.enduranceGaming = value;
+                    Backend.Instance.Send($"set-EnduranceGaming {value}");
+                    _base.Notify("EnduranceGaming");
                 }
             }
         }
@@ -166,6 +196,7 @@ namespace Tooth
         public double fpsMin = 30;
         public double fpsMax = 120;
         public double boostMode = 2; // 0: off, 1: enabled, 2: agressive
+        public double enduranceGaming = 0; // 0: off, 1: Performance, 2: Balanced, 3: Battery
         public bool autoStart = false;
         public bool isConnected = false;
 
