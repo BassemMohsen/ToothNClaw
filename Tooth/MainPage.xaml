@@ -52,12 +52,12 @@
             </Button>
         </StackPanel>
 
-        <ScrollViewer Margin="10,5,10,7"
+        <ScrollViewer Margin="5,5,5,7"
                       VerticalScrollMode="Auto"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollMode="Disabled">
-            
-            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16">
+
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16" Margin="15,5,15,5">
 
             <!-- CPU Boost -->
             <StackPanel Orientation="Vertical" Spacing="4">
@@ -203,14 +203,62 @@
                               SelectionChanged="LowLatencyComboBox_SelectionChanged"
                               FontSize="18"
                               Height="40"
-                              Margin="5,0,5,0">
-                    <ComboBoxItem Content="OFF" Tag="Off" IsSelected="True"/>
-                    <ComboBoxItem Content="On" Tag="On"/>
-                    <ComboBoxItem Content="On + Boost" Tag="Boost"/>
-                </ComboBox>
+                              Margin="5,0,5,0"
+                          SelectedValuePath="Tag">
+                    <ComboBoxItem Content="OFF" IsSelected="True">
+                        <ComboBoxItem.Tag>
+                            <x:Double>1</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="On">
+                        <ComboBoxItem.Tag>
+                            <x:Double>1</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="On + Boost">
+                        <ComboBoxItem.Tag>
+                            <x:Double>1</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                    </ComboBox>
             </StackPanel>
 
-            <!-- Launch Intel Graphics Software -->
+            <!-- Frame Synchronization -->
+            <StackPanel Orientation="Vertical" Spacing="4">
+                <TextBlock Text="Frame Sync: To Be Done"
+                FontSize="18"
+                Margin="0,0,0,4" FontWeight="Bold"/>
+                <ComboBox x:Name="FrameSyncComboBox"
+                HorizontalAlignment="Stretch"
+                SelectionChanged="FrameSyncComboBox_SelectionChanged"
+                SelectedValuePath="Tag"
+                FontSize="18"
+                Height="40"
+                Margin="5,0,5,0">
+                    <ComboBoxItem Content="Application Choice" IsSelected="True">
+                        <ComboBoxItem.Tag>
+                            <x:Double>0</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="VSync On">
+                        <ComboBoxItem.Tag>
+                            <x:Double>1</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="Smooth Sync">
+                        <ComboBoxItem.Tag>
+                            <x:Double>2</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="Smart Sync">
+                        <ComboBoxItem.Tag>
+                            <x:Double>3</x:Double>
+                        </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                    </ComboBox>
+            </StackPanel>
+
+                <!-- Launch Intel Graphics Software -->
             <Button x:Name="LaunchIGSButton"
                         Margin="0,5"
                         HorizontalAlignment="Stretch"

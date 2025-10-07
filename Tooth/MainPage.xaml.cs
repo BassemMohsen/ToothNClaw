@@ -186,5 +186,10 @@ namespace Tooth
         {
             Backend.Instance.Send($"IntelGraphicsSofware");
         }
+
+        private void FrameSyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // TODO: handle Xe Frame Sync selection changes
+        }
     }
 }
