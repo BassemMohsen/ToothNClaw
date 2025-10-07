@@ -72,7 +72,7 @@ namespace Tooth.Backend
                     ConnectedEvent?.Invoke(this, null);
                 }
                 string message = _reader.ReadLine();
-                Console.WriteLine($"[Connection] Received: {message}");
+                Console.WriteLine($"[Server Connection] Received: {message}");
                 if (!string.IsNullOrEmpty(message))
                     ReceivedEvent?.Invoke(this, message);
             }

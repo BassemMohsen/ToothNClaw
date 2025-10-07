@@ -55,6 +55,7 @@
     <PackageReference Include="Microsoft.Gaming.XboxGameBar" Version="7.3.2506120" />
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform" Version="6.2.14" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.6584" PrivateAssets="all" />
+    <PackageReference Include="SharpDX.Direct3D9" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tooth.Backend\Tooth.Backend.csproj" />

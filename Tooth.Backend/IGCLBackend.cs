@@ -401,6 +401,8 @@ namespace Tooth.IGCL
         private delegate ctl_result_t GetEnduranceGamingCapsDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_endurance_gaming_caps_t caps);
         private delegate ctl_result_t GetEnduranceGamingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_endurance_gaming_t settings);
         private delegate ctl_result_t SetEnduranceGamingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ctl_endurance_gaming_t settings);
+        private delegate ctl_result_t SetFramesPerSecondLimitDelegate(ctl_device_adapter_handle_t hDevice, bool isEnabled, int fpslimit);
+        private delegate ctl_result_t GetFramesPerSecondLimitDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_fps_limiter_t fpslimiter);
 
         // Define the function pointers
         private static InitializeIgclDelegate? InitializeIgcl;
@@ -420,6 +422,8 @@ namespace Tooth.IGCL
         private static GetEnduranceGamingCapsDelegate? GetEnduranceGamingCaps;
         private static GetEnduranceGamingSettingsDelegate? GetEnduranceGamingSettings;
         private static SetEnduranceGamingSettingsDelegate? SetEnduranceGamingSettings;
+        private static SetFramesPerSecondLimitDelegate? SetFramesPerSecondLimit;
+        private static GetFramesPerSecondLimitDelegate? GetFramesPerSecondLimit;
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
         private static IntPtr pDll = IntPtr.Zero;
@@ -475,7 +479,9 @@ namespace Tooth.IGCL
                         GetEnduranceGamingCaps = (GetEnduranceGamingCapsDelegate)GetDelegate("GetEnduranceGamingCaps", typeof(GetEnduranceGamingCapsDelegate));
                         GetEnduranceGamingSettings = (GetEnduranceGamingSettingsDelegate)GetDelegate("GetEnduranceGamingSettings", typeof(GetEnduranceGamingSettingsDelegate));
                         SetEnduranceGamingSettings = (SetEnduranceGamingSettingsDelegate)GetDelegate("SetEnduranceGamingSettings", typeof(SetEnduranceGamingSettingsDelegate));
-
+                        GetFramesPerSecondLimit = (GetFramesPerSecondLimitDelegate)GetDelegate("GetFramesPerSecondLimit", typeof(GetFramesPerSecondLimitDelegate));
+                        SetFramesPerSecondLimit = (SetFramesPerSecondLimitDelegate)GetDelegate("SetFramesPerSecondLimit", typeof(SetFramesPerSecondLimitDelegate));
+                        
                         status = IGCLStatus.DLL_INITIALIZE_SUCCESS;
 
                         Console.WriteLine("IGCL Wrapper initialized successfully.");
@@ -501,6 +507,8 @@ namespace Tooth.IGCL
                         GetEnduranceGamingCaps = null;
                         GetEnduranceGamingSettings = null;
                         SetEnduranceGamingSettings = null;
+                        GetFramesPerSecondLimit = null;
+                        SetFramesPerSecondLimit = null;
 
                         Console.WriteLine("IGCL Wrapper initialization failed.");
                     }
@@ -731,6 +739,26 @@ namespace Tooth.IGCL
             };
             ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
             ctl_result_t res = SetEnduranceGamingSettings!(hDev, settings);
+            return res == ctl_result_t.CTL_RESULT_SUCCESS;
+        }
+
+        internal static ctl_fps_limiter_t GetFPSLimit(int deviceIdx)
+        {
+            ctl_fps_limiter_t fps_limiter = new();
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = GetFramesPerSecondLimit!(hDev, ref fps_limiter);
+            return fps_limiter;
+        }
+
+        internal static bool SetFPSLimit(int deviceIdx, bool isEnabled, int fpslimit)
+        {
+            ctl_fps_limiter_t fps_limiter = new ctl_fps_limiter_t
+            {
+                isLimiterEnabled = isEnabled,
+                fpsLimitValue = fpslimit
+            };
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = SetFramesPerSecondLimit!(hDev, fps_limiter.isLimiterEnabled, fps_limiter.fpsLimitValue);
             return res == ctl_result_t.CTL_RESULT_SUCCESS;
         }
 

@@ -12,7 +12,6 @@ namespace Tooth.GraphicsProcessingUnit
     {
         protected object updateLock = new();
         public bool IsInitialized = false;
-        private Timer BusyTimer;
         private bool busyEventRaised = false;
         protected object functionLock = new();
         protected volatile bool halting = false;
@@ -56,15 +55,8 @@ namespace Tooth.GraphicsProcessingUnit
                         // Reset flag
                         busyEventRaised = false;
 
-                        // Reset timer
-                        BusyTimer.Stop();
-                        BusyTimer.Start();
-
                         // Execute function
                         T result = func();
-
-                        // Stop timer since func() has completed
-                        BusyTimer.Stop();
 
                         // If the busy event was raised, signal that we're now free.
                         if (busyEventRaised)
@@ -219,7 +211,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return new();
 
-            ctl_endurance_gaming_caps_t caps = new ctl_endurance_gaming_caps_t();
+            //ctl_endurance_gaming_caps_t caps = new ctl_endurance_gaming_caps_t();
             return Execute(() => IGCLBackend.GetEnduranceGamingCapacities(deviceIdx), new());
         }
 
@@ -240,6 +232,26 @@ namespace Tooth.GraphicsProcessingUnit
                 return new();
 
             return IGCLBackend.GetEnduranceGaming(deviceIdx);
+        }
+
+
+        public bool SetFPSLimiter(bool isLimiterEnabled, int fpsLimitValue)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return IGCLBackend.SetFPSLimit(
+                deviceIdx,
+                isLimiterEnabled,
+                fpsLimitValue);
+        }
+
+        public ctl_fps_limiter_t GetFPSLimiter()
+        {
+            if (!IsInitialized)
+                return new();
+
+            return IGCLBackend.GetFPSLimit(deviceIdx);
         }
 
         private ctl_telemetry_data GetTelemetry()

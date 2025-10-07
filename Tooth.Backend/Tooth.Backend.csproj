@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="AutoStart.cs" />
     <Compile Include="Communication.cs" />
+    <Compile Include="ctl_fps_limiter_t.cs" />
     <Compile Include="Handler.cs" />
     <Compile Include="CpuBoostController.cs" />
     <Compile Include="ctl_telemetry_data.cs" />
@@ -126,8 +127,8 @@
       <Version>2.12.2</Version>
     </PackageReference>
   </ItemGroup>
-    <ItemGroup>
-      <None Update="IGCL_Wrapper.dll">
+  <ItemGroup>
+    <None Update="IGCL_Wrapper.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

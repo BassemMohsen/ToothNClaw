@@ -21,19 +21,36 @@ namespace Tooth
 			_dispatcher = dispatcher;
 		}
 
-		public double Fps
+        public bool FpsLimitEnabled
         {
-			get { lock (_base) { return _base.fps; } }
+            get { lock (_base) { return _base.fpsLimitEnabled; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.fpsLimitEnabled != value)
+                    {
+                        _base.fpsLimitEnabled = value;
+                        _base.Notify("FpsLimitEnabled");
+                        Backend.Instance.Send($"set-Fps-limiter {Convert.ToInt32(value)} {_base.fpsLimitValue}");
+                    }
+                }
+            }
+        }
+
+        public double FpsLimitValue
+        {
+			get { lock (_base) { return _base.fpsLimitValue; } }
 			set
 			{
                 lock (_base)
                 {
 					value = Math.Min(Math.Max(value, _base.fpsMin), _base.fpsMax);
-					if (_base.fps != value)
+					if (_base.fpsLimitValue != value)
 					{
-						_base.fps = value;
-						_base.Notify("Fps");
-						Backend.Instance.Send($"set-fps {value}");
+						_base.fpsLimitValue = value;
+						_base.Notify("FpsLimitValue");
+						Backend.Instance.Send($"set-Fps-limiter {Convert.ToInt32(_base.fpsLimitEnabled)} {value}");
 					}
 				}
 			}
@@ -89,17 +106,29 @@ namespace Tooth
                 }
             }
         }
-        public void SetFpsVar(double value)
+        public void SetFpsLimiterValueVar(double value)
 		{
 			lock (_base)
 			{
-				if (_base.fps != value)
+				if (_base.fpsLimitValue != value)
 				{
-					_base.fps = value;
-					_base.Notify("Fps");
+					_base.fpsLimitValue = value;
+					_base.Notify("FpsLimitValue");
 				}
 			}
 		}
+
+        public void SetFpsLimiterEnabledVar(bool value)
+        {
+            lock (_base)
+            {
+                if (_base.fpsLimitEnabled != value)
+                {
+                    _base.fpsLimitEnabled = value;
+                    _base.Notify("FpsLimitEnabled");
+                }
+            }
+        }
 
         public void SetBoostVar(double value)
         {
@@ -150,8 +179,7 @@ namespace Tooth
 					if (_base.fpsMax != value)
 					{
 						_base.fpsMax = value;
-						if (_base.fps > value)
-                            SetFpsVar(value);
+
 						_base.Notify("FpsMax");
 					}
 				}
@@ -167,8 +195,6 @@ namespace Tooth
 					if (_base.fpsMin != value)
 					{
 						_base.fpsMin = value;
-						if (_base.fps < value)
-							SetFpsVar(value);
 						_base.Notify("FpsMin");
 					}
 				}
@@ -222,7 +248,8 @@ namespace Tooth
 
 	class MainPageModel
     {
-        public double fps = 90;
+        public bool fpsLimitEnabled = false;
+        public double fpsLimitValue = 90;
         public double fpsMin = 30;
         public double fpsMax = 120;
         public double boostMode = 2; // 0: off, 1: enabled, 2: agressive

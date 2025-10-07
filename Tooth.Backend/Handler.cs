@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Tooth.GraphicsProcessingUnit;
+using Tooth.IGCL;
 using Windows.System;
 using static Tooth.IGCL.IGCLBackend;
 namespace Tooth.Backend
@@ -15,6 +16,7 @@ namespace Tooth.Backend
         private CpuBoostController cpuBoostController;
         private IntelGPU intelGPUController;
 		private readonly AutoStart _autoStart;
+
 
 		public Handler(AutoStart autoStart)
         {
@@ -71,9 +73,66 @@ namespace Tooth.Backend
                     }
                     break;
 
-                case "set-Fps":
+                case "get-fps-limiter-enabled":
                     {
-						Console.WriteLine($"[Server Handler] Todo: Setting Fps to {args[1]}");
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        ctl_fps_limiter_t fpsLimiter = intelGPUController.GetFPSLimiter();
+                        if (fpsLimiter.isLimiterEnabled)
+                        {
+                            Console.WriteLine($"[Server Handler] Responding with FPS Limiter Enabled 1");
+                            (sender as Communication).Send("fps-limiter-enabled" + ' ' + "1");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[Server Handler] Responding with FPS Limiter Enabled 0");
+                            (sender as Communication).Send("fps-limiter-enabled" + ' ' + "0");
+                        }
+                    }
+                    break;
+                case "get-fps-limiter-value":
+                    {
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        ctl_fps_limiter_t fpsLimiter = intelGPUController.GetFPSLimiter();
+                        Console.WriteLine($"[Server Handler] Responding with FPS Limiter value {fpsLimiter.fpsLimitValue}");
+                        (sender as Communication).Send("fps-limiter-value" + ' ' + fpsLimiter.fpsLimitValue);
+                    }
+                    break;
+
+                case "set-Fps-limiter":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Fps Enabled to {args[1]} with FPS Cap at: {args[2]} ");
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+
+                        if (args[1] == "0") // Limiter off
+                        {
+                            // Check that value is between min VRR and max VRR supported by Claw display, min should be 48
+                            if (int.TryParse(args[2], out int fps) && fps >= 30 && fps <= 120)
+                            {
+                                bool result = intelGPUController.SetFPSLimiter(false, fps);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFPSLimiter {result}");
+                            }
+                        }
+                        else if (args[1] == "1") // Limiter on
+                        {
+                            // Check that value is between min VRR and max VRR supported by Claw display, min should be 48
+                            if (int.TryParse(args[2], out int fps) && fps >= 30 && fps <= 120)
+                            {
+                                bool result = intelGPUController.SetFPSLimiter(true, fps);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFPSLimiter {result}");
+                            }
+                            else
+                            {
+                            }
+                        }
                     }
                     break;
                 case "get-EnduranceGaming":

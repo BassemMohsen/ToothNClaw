@@ -32,6 +32,7 @@ namespace Tooth
     {
         private static MainPageModel _modelBase = new MainPageModel();
         private MainPageModelWrapper _model;
+        private DispatcherTimer _fpsLimitUpdateTimer;
 
         public MainPage()
         {
@@ -60,6 +61,8 @@ namespace Tooth
             Backend.Instance.Send("get-boost");
             Backend.Instance.Send("get-EnduranceGaming");
             Backend.Instance.Send("get-resolution");
+            Backend.Instance.Send("get-fps-limiter-value");
+            Backend.Instance.Send("get-fps-limiter-enabled");
             Backend.Instance.Send("init");
         }
 
@@ -93,9 +96,14 @@ namespace Tooth
                 case "connected":
                     ConnectedInitialize();
                     break;
-                case "fps-limit":
-                    _model.FpsMax = double.Parse(args[1]);
-                    _model.FpsMin = double.Parse(args[2]);
+                case "fps-limiter-enabled":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating UI GPU FPS Limiter Enabled to {args[1]}");
+                    _model.FpsLimitEnabled =  Convert.ToBoolean(int.Parse(args[1]));
+                    FpsLimiterToggle.IsOn = _model.FpsLimitEnabled;
+                    break;
+                case "fps-limiter-value":
+                    _model.FpsLimitValue = int.Parse(args[1]);
+                    FPSSlider.Value = _model.FpsLimitValue;
                     break;
                 case "boost":
                     Trace.WriteLine($"[MainPage.xaml.cs] Updating UI CPU Boost {args[1]}");
@@ -106,9 +114,6 @@ namespace Tooth
                     Trace.WriteLine($"[MainPage.xaml.cs] Updating UI GPU Endurance Gaming to {args[1]}");
                     _model.EnduranceGaming = double.Parse(args[1]);
                     EnduranceGamingComboBox.SelectedValue = _model.EnduranceGaming;
-                    break;
-                case "fps":
-                    _model.SetFpsVar(double.Parse(args[1]));
                     break;
                 case "autostart":
                     _model.SetAutoStartVar(bool.Parse(args[1]));
@@ -207,6 +212,11 @@ namespace Tooth
                     }
                 }
             }
+        }
+
+        private void FPSSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            Backend.Instance.Send($"set-Fps-limiter" + ' ' + $"{Convert.ToInt32(_model.FpsLimitEnabled)}" + ' ' + $"{_model.FpsLimitValue}");
         }
     }
 }
