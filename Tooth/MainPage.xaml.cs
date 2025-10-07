@@ -59,6 +59,7 @@ namespace Tooth
             Backend.Instance.Send("get-fps-limit");
             Backend.Instance.Send("get-boost");
             Backend.Instance.Send("get-EnduranceGaming");
+            Backend.Instance.Send("get-resolution");
             Backend.Instance.Send("init");
         }
 
@@ -112,6 +113,9 @@ namespace Tooth
                 case "autostart":
                     _model.SetAutoStartVar(bool.Parse(args[1]));
                     break;
+                case "resolution":
+                    _model.SetResolutionVar(double.Parse(args[1]));
+                    break;
             }
         }
 
@@ -140,7 +144,6 @@ namespace Tooth
                     }
                 }
             }
-
         }
 
         private void LowLatencyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -156,8 +159,6 @@ namespace Tooth
                 // Focus the slider when enabling
                 FPSSlider.Focus(FocusState.Programmatic);
             }
-
-
         }
 
         private void CpuBoostModeSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -190,6 +191,22 @@ namespace Tooth
         private void FrameSyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // TODO: handle Xe Frame Sync selection changes
+        }
+
+        private void ResolutionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item)
+            {
+                // Extract the Tag (0, 1, or 2)
+                if (item.Tag is double tagValue)
+                {
+                    if (DataContext is MainPageModelWrapper model)
+                    {
+                        _model.Resolution = tagValue;
+                        _model.SetResolutionVar(tagValue);
+                    }
+                }
+            }
         }
     }
 }

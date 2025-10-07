@@ -56,6 +56,23 @@ namespace Tooth
             }
         }
 
+        public double Resolution
+        {
+            get { lock (_base) { return _base.resolution; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.resolution != value)
+                    {
+                        _base.resolution = value;
+                        _base.Notify("Resolution");
+                        Backend.Instance.Send($"set-resolution {value}");
+                    }
+                }
+            }
+        }
+
         public double EnduranceGaming
         {
             get { lock (_base) { return _base.enduranceGaming; } }
@@ -93,6 +110,19 @@ namespace Tooth
                     _base.boostMode = value;
                     Backend.Instance.Send($"set-boost {value}");
                     _base.Notify("BoostMode");
+                }
+            }
+        }
+
+        public void SetResolutionVar(double value)
+        {
+            lock (_base)
+            {
+                if (_base.resolution != value)
+                {
+                    _base.resolution = value;
+                    Backend.Instance.Send($"set-resolution {value}");
+                    _base.Notify("Resolution");
                 }
             }
         }
@@ -197,6 +227,7 @@ namespace Tooth
         public double fpsMax = 120;
         public double boostMode = 2; // 0: off, 1: enabled, 2: agressive
         public double enduranceGaming = 0; // 0: off, 1: Performance, 2: Balanced, 3: Battery
+        public double resolution = 0; // 0: 1920x1200, 1: 1680 x 1050, 2: 1440 x 900, 3: 1280 x 800
         public bool autoStart = false;
         public bool isConnected = false;
 

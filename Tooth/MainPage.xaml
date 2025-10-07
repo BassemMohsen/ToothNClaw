@@ -157,7 +157,43 @@
                 </Border>
             </StackPanel>
 
-            <!-- Endurance Gaming -->
+                <!-- Adjust Display Resolution -->
+                <StackPanel Orientation="Vertical" Spacing="4">
+                    <TextBlock Text="Adjust Display Resolution: To be done"
+                               FontSize="18"
+                               Margin="0,0,0,4" FontWeight="Bold"/>
+                    <ComboBox x:Name="ResolutionComboBox"
+                              HorizontalAlignment="Stretch"
+                              SelectionChanged="ResolutionComboBox_SelectionChanged"
+                              SelectedValue="{Binding Resolution, Mode=TwoWay}"
+                              SelectedValuePath="Tag"
+                              FontSize="18"
+                              Height="40"
+                              Margin="5,0,5,0">
+                        <ComboBoxItem Content="1920 x 1200 (Native)" IsSelected="True">
+                            <ComboBoxItem.Tag>
+                                <x:Double>0</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="1680 x 1050">
+                            <ComboBoxItem.Tag>
+                                <x:Double>1</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="1440 x 900" >
+                            <ComboBoxItem.Tag>
+                                <x:Double>2</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="1280 x 800">
+                            <ComboBoxItem.Tag>
+                                <x:Double>3</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Endurance Gaming -->
             <StackPanel Orientation="Vertical" Spacing="4">
                 <TextBlock Text="Endurance Gaming AutoTDP/TargetFPS"
                                FontSize="18"
