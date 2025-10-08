@@ -35,7 +35,8 @@
         <CornerRadius x:Key="ControlCornerRadius">8,8,8,8</CornerRadius>
         <Thickness x:Key="ButtonPadding">15,10,15,11</Thickness>
         <local:CpuBoostModeConverter x:Key="CpuBoostModeConverter"/>
-    </Page.Resources>
+        <local:BooleanToVisibilityConverter  x:Key="BooleanToVisibilityConverter"/>
+        </Page.Resources>
 
     <Grid Padding="12">
 
@@ -110,10 +111,11 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Frames per Second Limiter"
+                        <TextBlock Text="Framerate Limiter"
                                    VerticalAlignment="Center"
+                                   Grid.Column="0"
                                    FontSize="18"
-                                   FontWeight="Bold" SelectionChanged="TextBlock_SelectionChanged"/>
+                                   FontWeight="Bold" />
                         <ToggleSwitch x:Name="FpsLimiterToggle"
                                       Grid.Column="1"
                                       OffContent="Off"
@@ -128,8 +130,9 @@
                             Background="#30343A"
                             BorderBrush="#50555C"
                             BorderThickness="1"
-                            Padding="8">
-                        <Grid x:Name="FpsSliderPanel">
+                            Padding="8"
+                            Visibility="{Binding IsOn, ElementName=FpsLimiterToggle, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Grid x:Name="FpsSliderPanel" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
                                 <ColumnDefinition Width="404*"/>
@@ -142,7 +145,7 @@
                                     Minimum="{Binding FpsMin}"
                                     Maximum="{Binding FpsMax}"
                                     Value="{Binding FpsLimitValue, Mode=TwoWay}"
-                                    IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}" Grid.ColumnSpan="2" ValueChanged="FPSSlider_ValueChanged"/>
+                                    IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}" Grid.ColumnSpan="2" ValueChanged="FPSSlider_ValueChanged" VerticalAlignment="Center"/>
 
                             <muxc:NumberBox x:Name="FpsValueBox"
                                             Grid.Column="2"
@@ -161,7 +164,7 @@
 
                 <!-- Adjust Display Resolution -->
                 <StackPanel Orientation="Vertical" Spacing="4">
-                    <TextBlock Text="Adjust Display Resolution: To be done"
+                    <TextBlock Text="Display Resolution: To be done"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
                     <ComboBox x:Name="ResolutionComboBox"
@@ -197,7 +200,7 @@
 
                 <!-- Endurance Gaming -->
                 <StackPanel Orientation="Vertical" Spacing="4">
-                    <TextBlock Text="Endurance Gaming AutoTDP/TargetFPS"
+                    <TextBlock Text="Endurance Gaming: Target Framerate"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
                     <ComboBox x:Name="EnduranceGamingComboBox"

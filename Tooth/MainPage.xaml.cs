@@ -32,7 +32,6 @@ namespace Tooth
     {
         private static MainPageModel _modelBase = new MainPageModel();
         private MainPageModelWrapper _model;
-        private DispatcherTimer _fpsLimitUpdateTimer;
 
         public MainPage()
         {
