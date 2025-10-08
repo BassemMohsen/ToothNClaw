@@ -374,6 +374,25 @@ namespace Tooth.IGCL
             MAX = 3
         }
 
+        public enum ctl_3d_low_latency_types_t : uint
+        {
+            CTL_3D_LOW_LATENCY_TYPES_TURN_OFF = 0,          ///< Low latency mode disable
+            CTL_3D_LOW_LATENCY_TYPES_TURN_ON = 1,           ///< Low latency mode enable
+            CTL_3D_LOW_LATENCY_TYPES_TURN_ON_BOOST_MODE_ON = 2, ///< Low latency mode enable with boost
+            CTL_3D_LOW_LATENCY_TYPES_MAX
+        }
+
+        public enum ctl_gaming_flip_mode_flag_t : uint
+        {
+            CTL_GAMING_FLIP_MODE_FLAG_APPLICATION_DEFAULT   = 1 << 0 , //< Application Default
+            CTL_GAMING_FLIP_MODE_FLAG_VSYNC_OFF             = 1 << 1,   //< Convert all sync flips to async on the next possible scanline.
+            CTL_GAMING_FLIP_MODE_FLAG_VSYNC_ON              = 1 << 2,//< Convert all async flips to sync flips.
+            CTL_GAMING_FLIP_MODE_FLAG_SMOOTH_SYNC           = 1 << 3, //< Reduce tearing effect with async flips
+            CTL_GAMING_FLIP_MODE_FLAG_SPEED_FRAME           = 1 << 4, //< Application unaware triple buffering
+            CTL_GAMING_FLIP_MODE_FLAG_CAPPED_FPS            = 1 << 5,  //< Limit the game FPS to panel RR
+            CTL_GAMING_FLIP_MODE_FLAG_MAX = 0x80000000
+        }
+
         [DllImport("kernel32")]
         public static extern IntPtr LoadLibrary(string lpFileName);
 
@@ -403,6 +422,10 @@ namespace Tooth.IGCL
         private delegate ctl_result_t SetEnduranceGamingSettingsDelegate(ctl_device_adapter_handle_t hDevice, ctl_endurance_gaming_t settings);
         private delegate ctl_result_t SetFramesPerSecondLimitDelegate(ctl_device_adapter_handle_t hDevice, bool isEnabled, int fpslimit);
         private delegate ctl_result_t GetFramesPerSecondLimitDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_fps_limiter_t fpslimiter);
+        private delegate ctl_result_t SetLowLatencySettingDelegate(ctl_device_adapter_handle_t hDevice, ctl_3d_low_latency_types_t setting);
+        private delegate ctl_result_t GetLowLatencySettingDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_3d_low_latency_types_t setting);
+        private delegate ctl_result_t SetFrameSyncSettingDelegate(ctl_device_adapter_handle_t hDevice, ctl_gaming_flip_mode_flag_t setting);
+        private delegate ctl_result_t GetFrameSyncSettingDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_gaming_flip_mode_flag_t setting);
 
         // Define the function pointers
         private static InitializeIgclDelegate? InitializeIgcl;
@@ -424,6 +447,10 @@ namespace Tooth.IGCL
         private static SetEnduranceGamingSettingsDelegate? SetEnduranceGamingSettings;
         private static SetFramesPerSecondLimitDelegate? SetFramesPerSecondLimit;
         private static GetFramesPerSecondLimitDelegate? GetFramesPerSecondLimit;
+        private static SetLowLatencySettingDelegate? SetLowLatencySetting;
+        private static GetLowLatencySettingDelegate? GetLowLatencySetting;
+        private static SetFrameSyncSettingDelegate? SetFrameSyncSetting;
+        private static GetFrameSyncSettingDelegate? GetFrameSyncSetting;
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
         private static IntPtr pDll = IntPtr.Zero;
@@ -481,6 +508,10 @@ namespace Tooth.IGCL
                         SetEnduranceGamingSettings = (SetEnduranceGamingSettingsDelegate)GetDelegate("SetEnduranceGamingSettings", typeof(SetEnduranceGamingSettingsDelegate));
                         GetFramesPerSecondLimit = (GetFramesPerSecondLimitDelegate)GetDelegate("GetFramesPerSecondLimit", typeof(GetFramesPerSecondLimitDelegate));
                         SetFramesPerSecondLimit = (SetFramesPerSecondLimitDelegate)GetDelegate("SetFramesPerSecondLimit", typeof(SetFramesPerSecondLimitDelegate));
+                        GetLowLatencySetting = (GetLowLatencySettingDelegate)GetDelegate("GetLowLatencySetting", typeof(GetLowLatencySettingDelegate));
+                        SetLowLatencySetting = (SetLowLatencySettingDelegate)GetDelegate("SetLowLatencySetting", typeof(SetLowLatencySettingDelegate));
+                        GetFrameSyncSetting = (GetFrameSyncSettingDelegate)GetDelegate("GetFrameSyncSetting", typeof(GetFrameSyncSettingDelegate));
+                        SetFrameSyncSetting = (SetFrameSyncSettingDelegate)GetDelegate("SetFrameSyncSetting", typeof(SetFrameSyncSettingDelegate));
                         
                         status = IGCLStatus.DLL_INITIALIZE_SUCCESS;
 
@@ -509,6 +540,10 @@ namespace Tooth.IGCL
                         SetEnduranceGamingSettings = null;
                         GetFramesPerSecondLimit = null;
                         SetFramesPerSecondLimit = null;
+                        GetLowLatencySetting = null;
+                        SetLowLatencySetting = null;
+                        GetFrameSyncSetting = null;
+                        SetFrameSyncSetting = null;
 
                         Console.WriteLine("IGCL Wrapper initialization failed.");
                     }
@@ -759,6 +794,36 @@ namespace Tooth.IGCL
             };
             ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
             ctl_result_t res = SetFramesPerSecondLimit!(hDev, fps_limiter.isLimiterEnabled, fps_limiter.fpsLimitValue);
+            return res == ctl_result_t.CTL_RESULT_SUCCESS;
+        }
+
+        internal static ctl_3d_low_latency_types_t GetLowLatency(int deviceIdx)
+        {
+            ctl_3d_low_latency_types_t low_latency_setting = new();
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = GetLowLatencySetting!(hDev, ref low_latency_setting);
+            return low_latency_setting;
+        }
+
+        internal static bool SetLowLatency(int deviceIdx, ctl_3d_low_latency_types_t setting)
+        {
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = SetLowLatencySetting!(hDev, setting);
+            return res == ctl_result_t.CTL_RESULT_SUCCESS;
+        }
+
+        internal static ctl_gaming_flip_mode_flag_t GetFrameSync(int deviceIdx)
+        {
+            ctl_gaming_flip_mode_flag_t fame_sync_setting = new();
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = GetFrameSyncSetting!(hDev, ref fame_sync_setting);
+            return fame_sync_setting;
+        }
+
+        internal static bool SetFrameSync(int deviceIdx, ctl_gaming_flip_mode_flag_t setting)
+        {
+            ctl_device_adapter_handle_t hDev = new ctl_device_adapter_handle_t { handle = devices[deviceIdx] };
+            ctl_result_t res = SetFrameSyncSetting!(hDev, setting);
             return res == ctl_result_t.CTL_RESULT_SUCCESS;
         }
 

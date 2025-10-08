@@ -106,6 +106,41 @@ namespace Tooth
                 }
             }
         }
+
+        public double LowLatency
+        {
+            get { lock (_base) { return _base.lowlatency; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.lowlatency != value)
+                    {
+                        _base.lowlatency = value;
+                        _base.Notify("LowLatency");
+                        Backend.Instance.Send($"set-Low-Latency-Mode {value}");
+                    }
+                }
+            }
+        }
+
+        public double FrameSync
+        {
+            get { lock (_base) { return _base.framesync; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.framesync != value)
+                    {
+                        _base.framesync = value;
+                        _base.Notify("FrameSync");
+                        Backend.Instance.Send($"set-Frame-Sync-Mode {value}");
+                    }
+                }
+            }
+        }
+
         public void SetFpsLimiterValueVar(double value)
 		{
 			lock (_base)
@@ -165,6 +200,32 @@ namespace Tooth
                     _base.enduranceGaming = value;
                     Backend.Instance.Send($"set-EnduranceGaming {value}");
                     _base.Notify("EnduranceGaming");
+                }
+            }
+        }
+
+        public void SetLowLatencyVar(double value)
+        {
+            lock (_base)
+            {
+                if (_base.lowlatency != value)
+                {
+                    _base.lowlatency = value;
+                    Backend.Instance.Send($"set-Low-Latency-Mode {value}");
+                    _base.Notify("LowLatency");
+                }
+            }
+        }
+
+        public void SetFrameSyncVar(double value)
+        {
+            lock (_base)
+            {
+                if (_base.framesync != value)
+                {
+                    _base.framesync = value;
+                    Backend.Instance.Send($"set-Frame-Sync-Mode {value}");
+                    _base.Notify("FrameSync");
                 }
             }
         }
@@ -257,8 +318,10 @@ namespace Tooth
         public double resolution = 0; // 0: 1920x1200, 1: 1680 x 1050, 2: 1440 x 900, 3: 1280 x 800
         public bool autoStart = false;
         public bool isConnected = false;
+        public double lowlatency = 0; // 0: off, 1: ON, 2: ON+BOOST
+        public double framesync = 0; 
 
-		private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();
+        private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();
 
 		public MainPageModelWrapper GetWrapper(CoreDispatcher dispatcher)
 		{

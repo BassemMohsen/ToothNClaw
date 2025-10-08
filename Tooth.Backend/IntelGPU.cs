@@ -23,6 +23,16 @@ namespace Tooth.GraphicsProcessingUnit
         protected int displayIdx = 0;
 
         private bool _disposed = false; // Prevent multiple disposals
+
+        public enum Vsync_Mode : uint
+        {
+            APPLICATION_CHOICE = 0,
+            VSYNC_OFF = 1,
+            VSYNC_ON = 2,
+            SMOOTH_SYNC = 3, // Blur distracting screen tears with a dithering filters.
+            SPEED_SYNC = 4, // Speed up the latest frame, Low Latency, No tearing, no cap.
+            CAPPED_FPS = 5, // Automatically enables V-Sync when the application’s render rate exceeds the display's refresh rate and disables VSync when the render rate falls below the display's refresh rate.
+        }
         public void Dispose()
         {
             halting = true;
@@ -252,6 +262,73 @@ namespace Tooth.GraphicsProcessingUnit
                 return new();
 
             return IGCLBackend.GetFPSLimit(deviceIdx);
+        }
+
+        public bool SetLowLatency(ctl_3d_low_latency_types_t setting)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return IGCLBackend.SetLowLatency(
+                deviceIdx,
+                setting);
+        }
+
+        public ctl_3d_low_latency_types_t GetLowLatency()
+        {
+            if (!IsInitialized)
+                return new();
+
+            return IGCLBackend.GetLowLatency(deviceIdx);
+        }
+
+
+        public bool SetFrameSyncMode(Vsync_Mode mode)
+        {
+            if (!IsInitialized)
+                return false;
+            switch (mode)
+            {
+                case Vsync_Mode.APPLICATION_CHOICE:
+                    return IGCLBackend.SetFrameSync(deviceIdx, ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_APPLICATION_DEFAULT);
+                case Vsync_Mode.VSYNC_OFF:
+                    return IGCLBackend.SetFrameSync(deviceIdx, ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_VSYNC_OFF);
+                case Vsync_Mode.VSYNC_ON:
+                    return IGCLBackend.SetFrameSync(deviceIdx, ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_VSYNC_ON);
+                case Vsync_Mode.SMOOTH_SYNC:
+                    return IGCLBackend.SetFrameSync(deviceIdx, ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_SMOOTH_SYNC);
+                case Vsync_Mode.SPEED_SYNC:
+                    return IGCLBackend.SetFrameSync(deviceIdx, ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_SPEED_FRAME);
+                case Vsync_Mode.CAPPED_FPS:
+                    return IGCLBackend.SetFrameSync(deviceIdx, ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_CAPPED_FPS);
+                default:
+                    return false;
+            }
+        }
+
+        public Vsync_Mode GetFrameSyncMode()
+        {
+            if (!IsInitialized)
+                return new();
+
+            ctl_gaming_flip_mode_flag_t mode = IGCLBackend.GetFrameSync(deviceIdx);
+            switch (mode)
+            {
+                case ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_APPLICATION_DEFAULT:
+                    return Vsync_Mode.APPLICATION_CHOICE;
+                case ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_VSYNC_OFF:
+                    return Vsync_Mode.VSYNC_OFF;
+                case ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_VSYNC_ON:
+                    return Vsync_Mode.VSYNC_ON;
+                case ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_SMOOTH_SYNC:
+                    return Vsync_Mode.SMOOTH_SYNC;
+                case ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_SPEED_FRAME:
+                    return Vsync_Mode.SPEED_SYNC;
+                case ctl_gaming_flip_mode_flag_t.CTL_GAMING_FLIP_MODE_FLAG_CAPPED_FPS:
+                    return Vsync_Mode.CAPPED_FPS;
+                default:
+                    return Vsync_Mode.APPLICATION_CHOICE;
+            }
         }
 
         private ctl_telemetry_data GetTelemetry()

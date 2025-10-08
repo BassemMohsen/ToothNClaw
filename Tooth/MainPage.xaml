@@ -162,6 +162,42 @@
                     </Border>
                 </StackPanel>
 
+                <!-- Frame Synchronization -->
+                <StackPanel Orientation="Vertical" Spacing="4">
+                    <TextBlock Text="Frame Sync"
+                                FontSize="18"
+                                Margin="0,0,0,4" FontWeight="Bold"/>
+                                                    <ComboBox x:Name="FrameSyncComboBox"
+                                HorizontalAlignment="Stretch"
+                                SelectionChanged="FrameSyncComboBox_SelectionChanged"
+                                SelectedValue="{Binding FrameSync, Mode=TwoWay}"
+                                SelectedValuePath="Tag"
+                                FontSize="18"
+                                Height="40"
+                                Margin="5,0,5,0">
+                        <ComboBoxItem Content="Application Choice" IsSelected="True">
+                            <ComboBoxItem.Tag>
+                                <x:Double>0</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="VSync On">
+                            <ComboBoxItem.Tag>
+                                <x:Double>2</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="Smooth Sync">
+                            <ComboBoxItem.Tag>
+                                <x:Double>3</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="Smart Sync">
+                            <ComboBoxItem.Tag>
+                                <x:Double>5</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
                 <!-- Adjust Display Resolution -->
                 <StackPanel Orientation="Vertical" Spacing="4">
                     <TextBlock Text="Display Resolution: To be done"
@@ -236,19 +272,20 @@
 
                 <!-- Xe Low Latency -->
                 <StackPanel Orientation="Vertical" Spacing="4">
-                    <TextBlock Text="Xe Low Latency: To Be Done"
+                    <TextBlock Text="Xe Low Latency"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
                     <ComboBox x:Name="LowLatencyComboBox"
                               HorizontalAlignment="Stretch"
                               SelectionChanged="LowLatencyComboBox_SelectionChanged"
+                              SelectedValue="{Binding LowLatency, Mode=TwoWay}"
                               FontSize="18"
                               Height="40"
                               Margin="5,0,5,0"
                           SelectedValuePath="Tag">
                         <ComboBoxItem Content="OFF" IsSelected="True">
                             <ComboBoxItem.Tag>
-                                <x:Double>1</x:Double>
+                                <x:Double>0</x:Double>
                             </ComboBoxItem.Tag>
                         </ComboBoxItem>
                         <ComboBoxItem Content="On">
@@ -258,42 +295,7 @@
                         </ComboBoxItem>
                         <ComboBoxItem Content="On + Boost">
                             <ComboBoxItem.Tag>
-                                <x:Double>1</x:Double>
-                            </ComboBoxItem.Tag>
-                        </ComboBoxItem>
-                    </ComboBox>
-                </StackPanel>
-
-                <!-- Frame Synchronization -->
-                <StackPanel Orientation="Vertical" Spacing="4">
-                    <TextBlock Text="Frame Sync: To Be Done"
-                FontSize="18"
-                Margin="0,0,0,4" FontWeight="Bold"/>
-                    <ComboBox x:Name="FrameSyncComboBox"
-                HorizontalAlignment="Stretch"
-                SelectionChanged="FrameSyncComboBox_SelectionChanged"
-                SelectedValuePath="Tag"
-                FontSize="18"
-                Height="40"
-                Margin="5,0,5,0">
-                        <ComboBoxItem Content="Application Choice" IsSelected="True">
-                            <ComboBoxItem.Tag>
-                                <x:Double>0</x:Double>
-                            </ComboBoxItem.Tag>
-                        </ComboBoxItem>
-                        <ComboBoxItem Content="VSync On">
-                            <ComboBoxItem.Tag>
-                                <x:Double>1</x:Double>
-                            </ComboBoxItem.Tag>
-                        </ComboBoxItem>
-                        <ComboBoxItem Content="Smooth Sync">
-                            <ComboBoxItem.Tag>
                                 <x:Double>2</x:Double>
-                            </ComboBoxItem.Tag>
-                        </ComboBoxItem>
-                        <ComboBoxItem Content="Smart Sync">
-                            <ComboBoxItem.Tag>
-                                <x:Double>3</x:Double>
                             </ComboBoxItem.Tag>
                         </ComboBoxItem>
                     </ComboBox>

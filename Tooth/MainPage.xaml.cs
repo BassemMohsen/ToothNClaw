@@ -62,6 +62,8 @@ namespace Tooth
             Backend.Instance.Send("get-resolution");
             Backend.Instance.Send("get-fps-limiter-value");
             Backend.Instance.Send("get-fps-limiter-enabled");
+            Backend.Instance.Send("get-Frame-Sync-Mode");
+            Backend.Instance.Send("get-Low-Latency-Mode");
             Backend.Instance.Send("init");
         }
 
@@ -114,6 +116,16 @@ namespace Tooth
                     _model.EnduranceGaming = double.Parse(args[1]);
                     EnduranceGamingComboBox.SelectedValue = _model.EnduranceGaming;
                     break;
+                case "Low-Latency-Mode":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating UI GPU Low Latency Value to {args[1]}");
+                    _model.LowLatency = double.Parse(args[1]);
+                    LowLatencyComboBox.SelectedValue = _model.LowLatency;
+                    break;
+                case "Frame-Sync-Mode":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating UI GPU Frame Sync Mode to {args[1]}");
+                    _model.FrameSync = double.Parse(args[1]);
+                    FrameSyncComboBox.SelectedValue = _model.FrameSync;
+                    break;
                 case "autostart":
                     _model.SetAutoStartVar(bool.Parse(args[1]));
                     break;
@@ -135,7 +147,7 @@ namespace Tooth
 
         private void EnduranceGamingComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // TODO: handle EnduranceGaming selection changes
+            // handle EnduranceGaming selection changes
             if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item)
             {
                 // Extract the Tag (0, 1, or 2)
@@ -152,7 +164,19 @@ namespace Tooth
 
         private void LowLatencyComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // TODO: handle Xe Low Latency selection changes
+            // handle Xe Low Latency selection changes
+            if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item)
+            {
+                // Extract the Tag (0, 1, or 2)
+                if (item.Tag is double tagValue)
+                {
+                    if (DataContext is MainPageModelWrapper model)
+                    {
+                        _model.LowLatency = tagValue;
+                        _model.SetLowLatencyVar(tagValue);
+                    }
+                }
+            }
         }
 
         private void FpsLimiterToggle_Toggled(object sender, RoutedEventArgs e)
@@ -194,7 +218,19 @@ namespace Tooth
 
         private void FrameSyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // TODO: handle Xe Frame Sync selection changes
+            // handle Xe Frame Sync selection changes
+            if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item)
+            {
+                // Extract the Tag (0, 1, or 2)
+                if (item.Tag is double tagValue)
+                {
+                    if (DataContext is MainPageModelWrapper model)
+                    {
+                        _model.FrameSync = tagValue;
+                        _model.SetFrameSyncVar(tagValue);
+                    }
+                }
+            }
         }
 
         private void ResolutionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Tooth.GraphicsProcessingUnit;
 using Tooth.IGCL;
 using Windows.System;
+using static Tooth.GraphicsProcessingUnit.IntelGPU;
 using static Tooth.IGCL.IGCLBackend;
 namespace Tooth.Backend
 {
@@ -200,9 +202,131 @@ namespace Tooth.Backend
                     }
                     break;
 
-                case "set-LowLatencyMode":
+                case "set-Low-Latency-Mode":
                     {
-						Console.WriteLine($"[Server Handler] Todo: Setting Low Latency mode to {args[1]}");
+						Console.WriteLine($"[Server Handler] Setting Low Latency mode to {args[1]}");
+                        bool result = false;
+                        switch (args[1])
+                        {
+                            case "0":
+                                result = intelGPUController.SetLowLatency(IGCL.IGCLBackend.ctl_3d_low_latency_types_t.CTL_3D_LOW_LATENCY_TYPES_TURN_OFF);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetLowLatency {result}");
+                                break;
+                            case "1":
+                                result = intelGPUController.SetLowLatency(IGCL.IGCLBackend.ctl_3d_low_latency_types_t.CTL_3D_LOW_LATENCY_TYPES_TURN_ON);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetLowLatency {result}");
+                                break;
+                            case "2":
+                                result = intelGPUController.SetLowLatency(IGCL.IGCLBackend.ctl_3d_low_latency_types_t.CTL_3D_LOW_LATENCY_TYPES_TURN_ON_BOOST_MODE_ON);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetLowLatency {result}");
+                                break;
+                            default:
+                                Console.WriteLine($"[Server Handler] Wrong Arg value: Setting Low Latency to {args[1]}");
+                                break;
+                        }
+                    }
+                    break;
+
+                case "get-Low-Latency-Mode":
+                    {
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        ctl_3d_low_latency_types_t lowlatencymode = intelGPUController.GetLowLatency();
+
+                        switch (lowlatencymode)
+                        {
+                            case ctl_3d_low_latency_types_t.CTL_3D_LOW_LATENCY_TYPES_TURN_OFF:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Low Latency 0");
+                                (sender as Communication).Send("Low-Latency-Mode" + ' ' + "0");
+                                break;
+                            case ctl_3d_low_latency_types_t.CTL_3D_LOW_LATENCY_TYPES_TURN_ON:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Low Latency 1");
+                                (sender as Communication).Send("Low-Latency-Mode" + ' ' + "1");
+                                break;
+                            case ctl_3d_low_latency_types_t.CTL_3D_LOW_LATENCY_TYPES_TURN_ON_BOOST_MODE_ON:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Low Latency 2");
+                                (sender as Communication).Send("Low-Latency-Mode" + ' ' + "2");
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
+                case "set-Frame-Sync-Mode":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Frame Sync mode to {args[1]}");
+                        bool result = false;
+                        switch (args[1])
+                        {
+                            case "0":
+                                result = intelGPUController.SetFrameSyncMode(IntelGPU.Vsync_Mode.APPLICATION_CHOICE);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFrameSyncMode {result}");
+                                break;
+                            case "1":
+                                result = intelGPUController.SetFrameSyncMode(IntelGPU.Vsync_Mode.VSYNC_OFF);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFrameSyncMode {result}");
+                                break;
+                            case "2":
+                                result = intelGPUController.SetFrameSyncMode(IntelGPU.Vsync_Mode.VSYNC_ON);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFrameSyncMode {result}");
+                                break;
+                            case "3":
+                                result = intelGPUController.SetFrameSyncMode(IntelGPU.Vsync_Mode.SMOOTH_SYNC);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFrameSyncMode {result}");
+                                break;
+                            case "4":
+                                result = intelGPUController.SetFrameSyncMode(IntelGPU.Vsync_Mode.SPEED_SYNC);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFrameSyncMode {result}");
+                                break;
+                            case "5":
+                                result = intelGPUController.SetFrameSyncMode(IntelGPU.Vsync_Mode.CAPPED_FPS);
+                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFrameSyncMode {result}");
+                                break;
+                            default:
+                                Console.WriteLine($"[Server Handler] Wrong Arg value: Setting Frame Sync to {args[1]}");
+                                break;
+                        }
+                    }
+                    break;
+
+                case "get-Frame-Sync-Mode":
+                    {
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        Vsync_Mode vsyncmode = intelGPUController.GetFrameSyncMode();
+
+                        switch (vsyncmode)
+                        {
+                            case Vsync_Mode.APPLICATION_CHOICE:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Frame Sync Mode 0");
+                                (sender as Communication).Send("Frame-Sync-Mode" + ' ' + "0");
+                                break;
+                            case Vsync_Mode.VSYNC_OFF:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Frame Sync Mode 0");
+                                (sender as Communication).Send("Frame-Sync-Mode" + ' ' + "1");
+                                break;
+                            case Vsync_Mode.VSYNC_ON:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Frame Sync Mode 0");
+                                (sender as Communication).Send("Frame-Sync-Mode" + ' ' + "2");
+                                break;
+                            case Vsync_Mode.SMOOTH_SYNC:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Frame Sync Mode 0");
+                                (sender as Communication).Send("Frame-Sync-Mode" + ' ' + "3");
+                                break;
+                            case Vsync_Mode.SPEED_SYNC:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Frame Sync Mode 0");
+                                (sender as Communication).Send("Frame-Sync-Mode" + ' ' + "4");
+                                break;
+                            case Vsync_Mode.CAPPED_FPS:
+                                Console.WriteLine($"[Server Handler] Responding with GPU Frame Sync Mode 0");
+                                (sender as Communication).Send("Frame-Sync-Mode" + ' ' + "5");
+                                break;
+                        }
                     }
                     break;
                 case "IntelGraphicsSofware":
