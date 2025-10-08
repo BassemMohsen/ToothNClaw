@@ -122,6 +122,5 @@
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
     <rescap:Capability Name="allowElevation" />
-    <Capability Name="internetClient"/>
   </Capabilities>
 </Package>
