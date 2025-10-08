@@ -20,6 +20,9 @@ namespace Tooth.Backend
         [DllImport("user32.dll")]
         static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
         const int SW_HIDE = 0;
         const int SW_SHOW = 5;
 
@@ -29,11 +32,9 @@ namespace Tooth.Backend
         [STAThread]
         static void Main(string[] args)
         {
-#if !DEBUG
             // Hide console window only in Release mode
             var handle = GetConsoleWindow();
             ShowWindow(handle, SW_HIDE);
-#endif
 
             _mutex = new Mutex(true, "Tooth.Backend");
             if (!_mutex.WaitOne(TimeSpan.Zero, true))
@@ -88,21 +89,40 @@ namespace Tooth.Backend
                 trayIcon = new NotifyIcon()
                 {
                     Icon = Properties.Resources.tooth,
-                    Text = "Tooth Backend",
+                    Text = "ToothNClaw Service",
                     Visible = true,
                     ContextMenuStrip = new ContextMenuStrip()
                     {
                         Items = {
-                        new ToolStripMenuItem("Open", null, OnOpen),
+                        new ToolStripMenuItem("Show/Hide", null, OnOpen),
                         new ToolStripMenuItem("Exit", null, OnExit)
                     }
                     }
                 };
+
+                // Handle double-click to toggle show/hide
+                trayIcon.DoubleClick += OnOpen;
             }
 
             void OnOpen(object sender, EventArgs e)
             {
-                MessageBox.Show("App opened!");
+
+                var handle = GetConsoleWindow();
+                if (handle == IntPtr.Zero)
+                    return;
+                // Check visibility
+                bool isVisible = IsWindowVisible(handle);
+
+                if (isVisible)
+                {
+                    ShowWindow(handle, SW_HIDE);
+                    Console.WriteLine("Console hidden.");
+                }
+                else
+                {
+                    ShowWindow(handle, SW_SHOW);
+                    Console.WriteLine("Console shown.");
+                }
             }
 
             void OnExit(object sender, EventArgs e)

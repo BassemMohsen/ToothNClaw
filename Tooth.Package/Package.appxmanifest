@@ -11,7 +11,7 @@
   <Identity
     Name="Tooth.Package"
     Publisher="CN=BassemMohsen"
-    Version="1.0.38.0" />
+    Version="1.0.39.0" />
 
   <Properties>
     <DisplayName>ToothNClaw.Package</DisplayName>
@@ -56,7 +56,7 @@
             <uap3:Properties>
               <GameBarWidget Type="Standard">
                 <HomeMenuVisible>true</HomeMenuVisible>
-                <ActivateAfterInstall>true</ActivateAfterInstall>
+                <ActivateAfterInstall>false</ActivateAfterInstall>
 				 <SupportsPinning>true</SupportsPinning>
                 <Window>
                   <Size>
