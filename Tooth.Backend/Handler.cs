@@ -335,7 +335,87 @@ namespace Tooth.Backend
                         launchIntelGraphicsSofware();
                     }
                     break;
-				case "init":
+                case "set-resolution":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Resolution to {args[1]}");
+                        bool result = false;
+                        switch (args[1])
+                        {
+                            case "0":
+                                result = intelGPUController.SetGPUScaling(false);
+                                Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
+                                result = intelGPUController.SetScalingMode(0);
+                                Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+
+                                result = DisplayController.SetResolution(1920, 1200);
+                                Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
+                                break;
+                            case "1":
+
+                                result = intelGPUController.SetGPUScaling(true);
+                                Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
+                                result = intelGPUController.SetScalingMode(1);
+                                Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+
+                                result = DisplayController.SetResolution(1680, 1050);
+                                Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
+                                break;
+                            case "2":
+                                result = intelGPUController.SetGPUScaling(true);
+                                Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
+                                result = intelGPUController.SetScalingMode(1);
+                                Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+
+                                result = DisplayController.SetResolution(1440, 900);
+                                Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
+                                break;
+                            case "3":
+                                result = intelGPUController.SetGPUScaling(true);
+                                Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
+                                result = intelGPUController.SetScalingMode(1);
+                                Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+
+                                result = DisplayController.SetResolution(1280, 800);
+                                Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
+                                break;
+                            default:
+                                Console.WriteLine($"[Server Handler] Wrong Arg value: Display Resolution won't be set {args[1]}");
+                                break;
+                        }
+                    }
+                    break;
+                case "get-resolution":
+                    {
+                        DisplayController.Resolution currentResolution = DisplayController.GetResolution();
+
+                        if (currentResolution.Width == 1920 && currentResolution.Height == 1200)
+                        {
+                            Console.WriteLine($"[Server Handler] Responding with Resolution 0");
+                            (sender as Communication).Send("resolution" + ' ' + "0");
+                        }
+                        else if (currentResolution.Width == 1680 && currentResolution.Height == 1050)
+                        {
+                            Console.WriteLine($"[Server Handler] Responding with Resolution 1");
+                            (sender as Communication).Send("resolution" + ' ' + "1");
+                        }
+                        else if (currentResolution.Width == 1440 && currentResolution.Height == 900)
+                        {
+                            Console.WriteLine($"[Server Handler] Responding with Resolution 2");
+                            (sender as Communication).Send("resolution" + ' ' + "2");
+                        }
+                        else if (currentResolution.Width == 1280 && currentResolution.Height == 800)
+                        {
+                            Console.WriteLine($"[Server Handler] Responding with Resolution 3");
+                            (sender as Communication).Send("resolution" + ' ' + "3");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[Server Handler] Responding with Resolution Unknown");
+                            (sender as Communication).Send("resolution" + ' ' + "-1");
+                        }
+                    }
+                    break;
+                case "init":
                     {
                         bool enabled = AutoStart.IsEnabled(_autoStart.name);
                         Console.WriteLine($"[Handler] Get AutoStart Status: {enabled}");

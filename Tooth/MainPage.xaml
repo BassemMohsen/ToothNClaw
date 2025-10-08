@@ -200,7 +200,7 @@
 
                 <!-- Adjust Display Resolution -->
                 <StackPanel Orientation="Vertical" Spacing="4">
-                    <TextBlock Text="Display Resolution: To be done"
+                    <TextBlock Text="Display Resolution"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
                     <ComboBox x:Name="ResolutionComboBox"

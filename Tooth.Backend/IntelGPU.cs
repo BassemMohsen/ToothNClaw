@@ -145,7 +145,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => IGCLBackend.GetIntegerScaling(deviceIdx), false);
+            return IGCLBackend.GetIntegerScaling(deviceIdx);
         }
 
         // GPUScaling can't be disabled on Intel GPU ?
@@ -154,7 +154,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => IGCLBackend.SetGPUScaling(deviceIdx, 0), false);
+            return IGCLBackend.SetGPUScaling(deviceIdx, 0 , enabled);
         }
 
         public bool SetImageSharpening(bool enable)
@@ -178,7 +178,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => IGCLBackend.SetScalingMode(deviceIdx, 0, mode), false);
+            return IGCLBackend.SetScalingMode(deviceIdx, 0, mode);
         }
 
         public bool SetIntegerScaling(bool enabled, byte type)
@@ -186,7 +186,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type), false);
+            return IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type);
         }
 
         // helper to test whether enumValue is supported:

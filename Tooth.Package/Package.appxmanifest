@@ -11,7 +11,7 @@
   <Identity
     Name="Tooth.Package"
     Publisher="CN=BassemMohsen"
-    Version="1.0.35.0" />
+    Version="1.0.38.0" />
 
   <Properties>
     <DisplayName>ToothNClaw.Package</DisplayName>

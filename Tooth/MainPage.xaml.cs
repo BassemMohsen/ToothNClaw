@@ -130,6 +130,7 @@ namespace Tooth
                     _model.SetAutoStartVar(bool.Parse(args[1]));
                     break;
                 case "resolution":
+                    _model.Resolution = double.Parse(args[1]);
                     _model.SetResolutionVar(double.Parse(args[1]));
                     break;
             }
@@ -181,7 +182,7 @@ namespace Tooth
 
         private void FpsLimiterToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            // TODO: handle FPS Limiter toggle changes
+            // handle FPS Limiter toggle changes
             if (FpsLimiterToggle.IsOn)
             {
                 // Focus the slider when enabling
