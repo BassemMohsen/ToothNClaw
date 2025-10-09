@@ -1,4 +1,4 @@
-# Tooth on Claw
+# Tooth N Claw
 
 Claw 8 AI+ extra Settings Widget.
 
