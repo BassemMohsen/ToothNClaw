@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -7,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Windows.Storage;
+using Windows.System;
 
 namespace Tooth.Backend
 {
@@ -69,6 +71,23 @@ namespace Tooth.Backend
             handler.Register(comm);
             Task.Run(() => comm.Run()); // Run in background
 
+            // Handle Controller combo shortcut listerner
+            var comboListener = new XboxComboListener();
+
+            comboListener.ComboPressed += () =>
+            {
+                Console.WriteLine("View + A pressed!");
+                LaunchToothGameBarWidget();
+            };
+
+            comboListener.ComboReleased += () =>
+            {
+                Console.WriteLine("View + A released.");
+            };
+
+            comboListener.Start();
+
+
             // Run hidden message loop to keep app alive
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
@@ -130,6 +149,50 @@ namespace Tooth.Backend
         private static void OnExitClicked(object sender, EventArgs e)
         {
             Application.Exit();
+        }
+
+        private static async void LaunchToothGameBarWidget()
+        {
+            string uriString = "ms-gamebar://launch/activate/Tooth.Package_c7kwspyh8mqh4_Tooth.App_Tooth.XboxGameBarUI";
+            var uri = new Uri(uriString);
+            try
+            {
+                Console.WriteLine($"Open Game Bar: {uri}");
+
+                bool success = await Launcher.LaunchUriAsync(uri);
+
+                if (!success)
+                {
+                    Console.WriteLine($"Failed to launch widget {uriString}.");
+                }
+
+                /*Process.Start(new ProcessStartInfo
+                {
+                    FileName = uri,
+                    UseShellExecute = true
+                });*/
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to open Game Bar: {ex.Message}");
+            }
+        }
+
+        private static void HideGameBar()
+        {
+            string uri = "ms-gamebar://hide";
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = uri,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to open Game Bar: {ex.Message}");
+            }
         }
     }
 }
