@@ -5,11 +5,19 @@ Claw 8 AI+ extra Settings Widget.
 ![App Preview](images/Tooth-Widget.png)
 
 Designed to be lightweight and complement MSI Quick Settings options.
-This is not full blown feature set and is not replace MSI Quick Settings.
+This is not intended to replace MSI Quick Settings.
 
-Some of the feature is based on the amazing work by:
-- Valkirie/HandheldCompanion
-- chenx-dust/RyzenAdjUWP
+## Supported Devices
+- MSI Claw 8 AI+ A2VM with Intel Lunar Lake.
 
-The only hardware this has been tested to work on is:
-- MSI Claw 8 with Intel Lunar Lake.
+### Bugs & Features
+Found a bug and want it fixed? Have an idea for a new feature?
+Please [open an issue](https://github.com/BassemMohsen/ToothNClaw/issues) in the tracker.  
+
+## Credits & Libraries
+- [Valkirie/HandheldCompanion](https://github.com/Valkirie/HandheldCompanion)
+- [chenx-dust/RyzenAdjUWP](https://github.com/chenx-dust/RyzenAdjUWP)
+
+## ☕ Support Me
+If you like my work, consider buying me a coffee:  
+[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bassemnomany)
