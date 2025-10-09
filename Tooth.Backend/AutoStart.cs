@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using System.Xml.Linq;
 using Windows.System;
 
@@ -24,20 +26,6 @@ namespace Tooth.Backend
         {
             this.name = name;
             this._action = action;
-
-            _taskDefinition = TaskService.Instance.NewTask();
-            _taskDefinition.RegistrationInfo.Description = "Tooth Server in the background ";
-
-            _taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
-            _taskDefinition.Principal.UserId = WindowsIdentity.GetCurrent().Name;
-            _taskDefinition.Principal.LogonType = TaskLogonType.InteractiveToken;
-            _taskDefinition.Settings.DisallowStartIfOnBatteries = false;
-            _taskDefinition.Settings.StopIfGoingOnBatteries = false;
-            _taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
-            _taskDefinition.Settings.Enabled = false;
-            _taskDefinition.Triggers.Add(new LogonTrigger() { UserId = WindowsIdentity.GetCurrent().Name });
-            _taskDefinition.Actions.Add(_action);
-            
 
         }
 
@@ -65,6 +53,19 @@ namespace Tooth.Backend
             }
             if (enabled)
             {
+                _taskDefinition = TaskService.Instance.NewTask();
+                _taskDefinition.RegistrationInfo.Description = "Tooth Server in the background ";
+
+                _taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
+                _taskDefinition.Principal.UserId = WindowsIdentity.GetCurrent().Name;
+                _taskDefinition.Principal.LogonType = TaskLogonType.InteractiveToken;
+                _taskDefinition.Settings.DisallowStartIfOnBatteries = false;
+                _taskDefinition.Settings.StopIfGoingOnBatteries = false;
+                _taskDefinition.Settings.ExecutionTimeLimit = TimeSpan.Zero;
+                _taskDefinition.Settings.Enabled = false;
+                _taskDefinition.Triggers.Add(new LogonTrigger() { UserId = WindowsIdentity.GetCurrent().Name });
+                _taskDefinition.Actions.Add(_action);
+
                 try
                 {
                     Console.WriteLine($"[AutoStart] Task is {name} about to be registered, and wasn't found");
@@ -76,6 +77,7 @@ namespace Tooth.Backend
                 {
                     Console.WriteLine($"[AutoStart] Failed to Create and register task {name}: {ex}");
                 }
+                Console.WriteLine($"[AutoStart] Task is {name} is now schedualed to auto start");
             }
         }
 

@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Windows.Storage;
 
-
-
 namespace Tooth.Backend
 {
     internal static class Program
@@ -50,9 +48,6 @@ namespace Tooth.Backend
                 MessageBox.Show("Tooth Backend must run as Administrator.", "Permission", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
 
             // Start your backend communication
             Console.WriteLine($"{PROGRAM_NAME}");

@@ -43,13 +43,13 @@
 
         <!-- Backend Panel -->
         <StackPanel x:Name="BackendPanel" VerticalAlignment="Top" Spacing="5" Visibility="Collapsed">
-            <TextBlock HorizontalTextAlignment="Center">Tooth Backend is not connected</TextBlock>
+            <TextBlock HorizontalTextAlignment="Center">Tooth Service is not connected</TextBlock>
             <Button x:Name="LaunchBackendButton"
                     HorizontalAlignment="Stretch"
                     Click="LaunchBackendButton_OnClick"
                     FontSize="18"
                     Height="47">
-                Launch Backend
+                Start Tooth Service
             </Button>
         </StackPanel>
 
@@ -319,7 +319,7 @@
                             <ColumnDefinition/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Start Backend Automatically" FontSize="18"/>
+                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Auto Start Tooth Service" FontSize="18"/>
                         <ToggleSwitch Grid.Column="1" x:Name="AutoStartToggle" IsOn="{Binding AutoStart, Mode=TwoWay}"/>
 
                     </Grid>
