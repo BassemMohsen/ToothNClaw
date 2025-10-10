@@ -9,19 +9,18 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="Tooth.Package"
+    Name="ToothNClaw"
     Publisher="CN=BassemMohsen"
-    Version="1.0.39.0" />
+    Version="1.0.42.0" />
 
   <Properties>
-    <DisplayName>ToothNClaw.Package</DisplayName>
+    <DisplayName>ToothNClaw</DisplayName>
     <PublisherDisplayName>BassemMohsen</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+	  <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
   </Dependencies>
 
   <Resources>
@@ -29,22 +28,24 @@
   </Resources>
 
   <Applications>
-    <Application Id="Tooth.App"
+    <Application Id="Tooth.XboxGameBarUI"
       Executable="$targetnametoken$.exe"
-      EntryPoint="Tooth.App">
+      EntryPoint="windows.fullTrustApplication">
       <uap:VisualElements
-        DisplayName="ToothNClaw.Package"
-        Description="ToothNClaw.Package"
+        DisplayName="Tooth N Claw"
+        Description="Tooth N Claw is APU Tuner, Display and Performance tweaker"
         BackgroundColor="transparent"
-        Square44x44Logo="Assets\Square44x44Logo.png" Square150x150Logo="Assets\Square150x150Logo.png">
-        <uap:DefaultTile  Wide310x150Logo="Assets\Wide310x150Logo.png" >
-          <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo"/>
-            <uap:ShowOn Tile="wide310x150Logo"/>
-          </uap:ShowNameOnTiles>
-        </uap:DefaultTile >
-        <uap:SplashScreen Image="Assets\SplashScreen.png" />
-      </uap:VisualElements>
+        Square44x44Logo="Assets\Square44x44Logo.png"
+		Square150x150Logo="Assets\Square150x150Logo.png"
+		AppListEntry="none" >
+		<uap:DefaultTile  Wide310x150Logo="Assets\Wide310x150Logo.png" >
+			<uap:ShowNameOnTiles>
+				<uap:ShowOn Tile="square150x150Logo"/>
+				 <uap:ShowOn Tile="wide310x150Logo"/>
+			</uap:ShowNameOnTiles>
+		</uap:DefaultTile >
+		<uap:SplashScreen Image="Assets\SplashScreen.png" />
+		</uap:VisualElements>
       <Extensions>
         <desktop:Extension Category="windows.fullTrustProcess" Executable="Tooth.Backend/Tooth.Backend.exe" />
         <uap3:Extension Category="windows.appExtension">
