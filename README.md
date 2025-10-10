@@ -15,7 +15,7 @@ Tooth N Claw XBox widget allows on the fly adjust the APU power and graphics set
 - **Xe Low Latency (XeLL)** – Reduces input latency by intelligently delaying frame presentation for improved responsiveness.
 - **Intel Graphics Software Launcher** – Provides quick access to the Intel Graphics Control Center, even when running in Xbox Game Bar full-screen mode.
 
-# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/download/v1.0.39.0/Tooth.Package_1.0.39.0_Test.zip)
+# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/download/v1.0.40.0/Tooth.Package_1.0.40.0_x64.zip)
 
 Note: This is designed to be lightweight and complement MSI Quick Settings options. This is not intended to replace MSI Quick Settings.
 
