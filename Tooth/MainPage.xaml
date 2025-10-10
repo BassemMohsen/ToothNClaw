@@ -40,25 +40,26 @@
 
     <Grid Padding="12">
 
-
-        <!-- Backend Panel -->
-        <StackPanel x:Name="BackendPanel" VerticalAlignment="Top" Spacing="5" Visibility="Collapsed">
-            <TextBlock HorizontalTextAlignment="Center">Tooth Service is not connected</TextBlock>
-            <Button x:Name="LaunchBackendButton"
-                    HorizontalAlignment="Stretch"
-                    Click="LaunchBackendButton_OnClick"
-                    FontSize="18"
-                    Height="47">
-                Start Tooth Service
-            </Button>
-        </StackPanel>
-
         <ScrollViewer Margin="5,5,5,7"
                       VerticalScrollMode="Auto"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollMode="Disabled">
 
             <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16" Margin="15,5,15,5">
+
+                <StackPanel Orientation="Vertical" Spacing="4" x:Name="StartingBackgroundserviceTextBlock">
+                    <TextBlock Text="Starting Background service ..."
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Margin="0,0,0,4"/>
+                    <Button x:Name="LaunchBackendButton"
+                    HorizontalAlignment="Stretch"
+                    Click="LaunchBackendButton_OnClick"
+                    FontSize="18"
+                    Height="47">
+                        Start Tooth Service manually
+                    </Button>
+                </StackPanel>
 
                 <!-- CPU Boost -->
                 <StackPanel Orientation="Vertical" Spacing="4">
@@ -311,19 +312,6 @@
                         Height="53">
                     Launch Intel Graphics Software
                 </Button>
-
-                <StackPanel Orientation="Vertical" Spacing="4">
-                    <TextBlock VerticalAlignment="Center" TextWrapping="Wrap" Text="Settings" FontSize="18" FontWeight="Bold"/>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="Auto Start Tooth Service" FontSize="18"/>
-                        <ToggleSwitch Grid.Column="1" x:Name="AutoStartToggle" IsOn="{Binding AutoStart, Mode=TwoWay}"/>
-
-                    </Grid>
-                </StackPanel>
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -54,7 +54,7 @@ namespace Tooth.Backend
             if (enabled)
             {
                 _taskDefinition = TaskService.Instance.NewTask();
-                _taskDefinition.RegistrationInfo.Description = "Tooth Server in the background ";
+                _taskDefinition.RegistrationInfo.Description = "Tooth N Claw Service";
 
                 _taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
                 _taskDefinition.Principal.UserId = WindowsIdentity.GetCurrent().Name;

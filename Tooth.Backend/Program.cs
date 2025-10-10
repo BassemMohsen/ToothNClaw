@@ -25,7 +25,7 @@ namespace Tooth.Backend
         const int SW_SHOW = 5;
 
         private static Mutex _mutex;
-        const string PROGRAM_NAME = "Tooth.Backend";
+        const string PROGRAM_NAME = "ToothNClaw.Service";
 
         [STAThread]
         static void Main(string[] args)
@@ -37,7 +37,7 @@ namespace Tooth.Backend
             _mutex = new Mutex(true, "Tooth.Backend");
             if (!_mutex.WaitOne(TimeSpan.Zero, true))
             {
-                MessageBox.Show("Tooth Backend is already running.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //MessageBox.Show("Tooth Backend is already running.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -62,8 +62,9 @@ namespace Tooth.Backend
             var comm = new Communication(packageSid);
             var handler = new Handler(
                 new AutoStart(PROGRAM_NAME,
-                new Microsoft.Win32.TaskScheduler.ExecAction(
-                    Assembly.GetEntryAssembly().Location, packageSid
+                new Microsoft.Win32.TaskScheduler.ExecAction("cmd.exe",
+                    "/c start /min powershell.exe -NoProfile -Command \"Invoke-CommandInDesktopPackage -PackageFamilyName ToothNClaw_c7kwspyh8mqh4 -AppId Tooth.XboxGameBarUI -Command \'" +
+                    Assembly.GetEntryAssembly().Location + "'" + " -Args " + "\'" + packageSid + "\'" + "\""
                     )));
 
             handler.Register(comm);

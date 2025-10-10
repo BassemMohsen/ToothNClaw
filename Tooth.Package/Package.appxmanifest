@@ -11,7 +11,7 @@
   <Identity
     Name="ToothNClaw"
     Publisher="CN=BassemMohsen"
-    Version="1.0.42.0" />
+    Version="1.0.45.0" />
 
   <Properties>
     <DisplayName>ToothNClaw</DisplayName>
