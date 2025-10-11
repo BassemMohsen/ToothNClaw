@@ -27,12 +27,13 @@
     <EntryPointProjectUniqueName>..\Tooth\Tooth.csproj</EntryPointProjectUniqueName>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppInstallerUri>C:\Users\Bassem Nomany\Downloads\Tooth</AppInstallerUri>
     <HoursBetweenUpdateChecks>720</HoursBetweenUpdateChecks>
-    <PackageCertificateKeyFile>Tooth.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <PackageCertificateThumbprint>21E32417DAA01F5F0FB1C6579C132E88E8CD7DE4</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -60,5 +61,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Tooth.Backend\Tooth.Backend.csproj" />
     <ProjectReference Include="..\Tooth\Tooth.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
 </Project>

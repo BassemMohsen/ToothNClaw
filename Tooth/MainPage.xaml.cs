@@ -71,13 +71,11 @@ namespace Tooth
         {
             if (isBackendAlive)
             {
-                MainPanel.Visibility = Visibility.Visible;
-                BackendPanel.Visibility = Visibility.Collapsed;
+                StartingBackgroundserviceTextBlock.Visibility = Visibility.Collapsed;
             }
             else
             {
-                MainPanel.Visibility = Visibility.Collapsed;
-                BackendPanel.Visibility = Visibility.Visible;
+                StartingBackgroundserviceTextBlock.Visibility = Visibility.Visible;
             }
         }
 

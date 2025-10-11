@@ -1,10 +1,11 @@
 # Tooth N Claw
 
-Claw 8 AI+ extra Settings Widget.
+Tooth N Claw XBox widget allows on the fly adjust the APU power and graphics settings mid game.
+Windows Fullscreen Experience lacks launchers for Intel Graphics Software, and easy controller based settings toggles.
+This improves XBox FSX and gamers don't have to drop off to Desktop mode often to adjust simple APU settings.
 
 ![App Preview](images/Tooth-Widget.png)
 
-Tooth N Claw XBox widget allows on the fly adjust the APU power and graphics settings mid game.
 
 ## Features
 - **CPU Boost Toggle** – Enable or disable CPU Boost to reduce power consumption by up to 50%, freeing power headroom for the GPU.
@@ -15,7 +16,9 @@ Tooth N Claw XBox widget allows on the fly adjust the APU power and graphics set
 - **Xe Low Latency (XeLL)** – Reduces input latency by intelligently delaying frame presentation for improved responsiveness.
 - **Intel Graphics Software Launcher** – Provides quick access to the Intel Graphics Control Center, even when running in Xbox Game Bar full-screen mode.
 
-# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/download/v1.0.39.0/Tooth.Package_1.0.39.0_Test.zip)
+
+# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/download/v1.0.45.0/Tooth.Package_1.0.45.0_x64.zip)
+
 
 Note: This is designed to be lightweight and complement MSI Quick Settings options. This is not intended to replace MSI Quick Settings.
 

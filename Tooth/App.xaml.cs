@@ -1,6 +1,7 @@
 ﻿using Microsoft.Gaming.XboxGameBar;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -87,6 +88,12 @@ namespace Tooth
                         rootFrame);
                     rootFrame.Navigate(typeof(MainPage), _xboxGameBarWidget);
 
+                    if (!Backend.Instance.IsConnected)
+                        _ = Backend.LaunchBackend();
+
+                    // --- Hook up visibility event here ---
+                    _xboxGameBarWidget.VisibleChanged += XboxGameBarWidget_VisibleChanged;
+
                     Window.Current.Closed += XboxGameBarWidgetWindow_Closed;
 
                     Window.Current.Activate();
@@ -95,6 +102,15 @@ namespace Tooth
                 {
                     // You can perform whatever behavior you need based on the URI payload.
                 }
+            }
+        }
+
+        private void XboxGameBarWidget_VisibleChanged(XboxGameBarWidget sender, object e)
+        {
+            if (sender.Visible) // Only launch backend when it is visible and Backend is nsot r
+            {
+                if (!Backend.Instance.IsConnected)
+                    _ = Backend.LaunchBackend();
             }
         }
 

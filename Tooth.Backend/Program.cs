@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -27,7 +26,7 @@ namespace Tooth.Backend
         const int SW_SHOW = 5;
 
         private static Mutex _mutex;
-        const string PROGRAM_NAME = "Tooth.Backend";
+        const string PROGRAM_NAME = "ToothNClaw.Service";
 
         [STAThread]
         static void Main(string[] args)
@@ -39,15 +38,7 @@ namespace Tooth.Backend
             _mutex = new Mutex(true, "Tooth.Backend");
             if (!_mutex.WaitOne(TimeSpan.Zero, true))
             {
-                MessageBox.Show("Tooth Backend is already running.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            // Check admin privileges
-            var principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
-            if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
-            {
-                MessageBox.Show("Tooth Backend must run as Administrator.", "Permission", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                //MessageBox.Show("Tooth Backend is already running.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -62,11 +53,7 @@ namespace Tooth.Backend
                 packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
 
             var comm = new Communication(packageSid);
-            var handler = new Handler(
-                new AutoStart(PROGRAM_NAME,
-                new Microsoft.Win32.TaskScheduler.ExecAction(
-                    Assembly.GetEntryAssembly().Location, packageSid
-                    )));
+            var handler = new Handler();
 
             handler.Register(comm);
             Task.Run(() => comm.Run()); // Run in background
