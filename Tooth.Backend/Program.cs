@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -41,14 +40,6 @@ namespace Tooth.Backend
                 return;
             }
 
-            // Check admin privileges
-            var principal = new WindowsPrincipal(WindowsIdentity.GetCurrent());
-            if (!principal.IsInRole(WindowsBuiltInRole.Administrator))
-            {
-                MessageBox.Show("Tooth Backend must run as Administrator.", "Permission", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
             // Start your backend communication
             Console.WriteLine($"{PROGRAM_NAME}");
             Console.WriteLine($"[Program] Started with Argument {args[0]}");
@@ -60,12 +51,7 @@ namespace Tooth.Backend
                 packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
 
             var comm = new Communication(packageSid);
-            var handler = new Handler(
-                new AutoStart(PROGRAM_NAME,
-                new Microsoft.Win32.TaskScheduler.ExecAction("cmd.exe",
-                    "/c start /min powershell.exe -NoProfile -Command \"Invoke-CommandInDesktopPackage -PackageFamilyName ToothNClaw_c7kwspyh8mqh4 -AppId Tooth.XboxGameBarUI -Command \'" +
-                    Assembly.GetEntryAssembly().Location + "'" + " -Args " + "\'" + packageSid + "\'" + "\""
-                    )));
+            var handler = new Handler();
 
             handler.Register(comm);
             Task.Run(() => comm.Run()); // Run in background

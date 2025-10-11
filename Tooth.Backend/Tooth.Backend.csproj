@@ -72,7 +72,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AutoStart.cs" />
     <Compile Include="Communication.cs" />
     <Compile Include="ctl_fps_limiter_t.cs" />
     <Compile Include="DisplayController.cs" />

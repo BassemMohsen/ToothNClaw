@@ -17,14 +17,12 @@ namespace Tooth.Backend
     {
         private CpuBoostController cpuBoostController;
         private IntelGPU intelGPUController;
-		private readonly AutoStart _autoStart;
 
 
-		public Handler(AutoStart autoStart)
+		public Handler()
         {
             cpuBoostController = new CpuBoostController();
             intelGPUController = new IntelGPU();
-            _autoStart = autoStart;
 		}
 
         public void Register(Communication comm)
@@ -417,7 +415,7 @@ namespace Tooth.Backend
                     break;
                 case "init":
                     {
-                        bool enabled = AutoStart.IsEnabled(_autoStart.name);
+                        bool enabled = false;
                         Console.WriteLine($"[Handler] Get AutoStart Status: {enabled}");
                         comm.Send($"autostart {enabled}");
                     }
@@ -425,9 +423,6 @@ namespace Tooth.Backend
 				case "autostart":
 					{
 						Console.WriteLine($"[Handler] Set Auto Start: {args[1]}");
-						bool enabled = bool.Parse(args[1]);
-						_autoStart.SetEnabled(enabled);
-						comm.Send($"autostart {AutoStart.IsEnabled(_autoStart.name)}");
 					}
 					break;
 			}
