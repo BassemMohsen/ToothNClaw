@@ -33,6 +33,7 @@
     <AppInstallerUri>C:\Users\Bassem Nomany\Downloads\Tooth</AppInstallerUri>
     <HoursBetweenUpdateChecks>720</HoursBetweenUpdateChecks>
     <PackageCertificateKeyFile>Tooth.Package_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <DefaultLanguage>en-US</DefaultLanguage>
@@ -60,5 +61,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Tooth.Backend\Tooth.Backend.csproj" />
     <ProjectReference Include="..\Tooth\Tooth.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
 </Project>

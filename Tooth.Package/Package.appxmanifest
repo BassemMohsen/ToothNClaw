@@ -9,13 +9,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="ToothNClaw"
-    Publisher="CN=BassemMohsen"
-    Version="1.0.45.0" />
+    Name="BassemNomany.ToothNClaw"
+    Publisher="CN=0E013939-CEFB-4F80-B4B4-B857260CB91A"
+    Version="1.0.53.0" />
 
   <Properties>
-    <DisplayName>ToothNClaw</DisplayName>
-    <PublisherDisplayName>BassemMohsen</PublisherDisplayName>
+    <DisplayName>Tooth N Claw</DisplayName>
+    <PublisherDisplayName>Bassem Nomany</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -122,6 +122,5 @@
 	
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
-    <rescap:Capability Name="allowElevation" />
   </Capabilities>
 </Package>
