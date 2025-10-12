@@ -20,7 +20,7 @@ This improves XBox FSX and gamers don't have to drop off to Desktop mode often t
 # ☕ Support Me
 If you like my work, you can buy me a coffee:   [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bassemnomany)
 
-# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/download/v1.0.45.0/Tooth.Package_1.0.45.0_x64.zip)
+# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/download/v1.0.57.0/Tooth.Package_1.0.57.0_x64.zip)
 
 
 Note: This is designed to be lightweight and complement MSI Quick Settings options. This is not intended to replace MSI Quick Settings.
