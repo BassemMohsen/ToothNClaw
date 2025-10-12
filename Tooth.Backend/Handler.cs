@@ -17,9 +17,11 @@ namespace Tooth.Backend
     {
         private CpuBoostController cpuBoostController;
         private IntelGPU intelGPUController;
+        private Communication _communication;
 
 
-		public Handler()
+
+        public Handler()
         {
             cpuBoostController = new CpuBoostController();
             intelGPUController = new IntelGPU();
@@ -27,6 +29,7 @@ namespace Tooth.Backend
 
         public void Register(Communication comm)
         {
+            _communication = comm;
             comm.ConnectedEvent += OnConnected;
             comm.ReceivedEvent += OnReceived;
         }
@@ -452,6 +455,14 @@ namespace Tooth.Backend
             {
 				// Catch any other exceptions and log them
 				Console.WriteLine($"[Error] Failed to launch Intel Graphics Software: {ex.Message}");
+            }
+        }
+
+        public void sendLaunchGameBarWidget()
+        {
+            if (_communication != null) { 
+                Console.WriteLine($"[Server Handler] Send launch-gamebar-widget");
+                _communication.Send("launch-gamebar-widget");
             }
         }
     }

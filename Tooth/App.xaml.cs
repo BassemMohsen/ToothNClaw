@@ -26,6 +26,7 @@ namespace Tooth
     sealed partial class App : Application
     {
         private XboxGameBarWidget _xboxGameBarWidget;
+        public XboxGameBarWidgetControl _xboxGameBarWidgetControl { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -40,6 +41,7 @@ namespace Tooth
 
         protected override void OnActivated(IActivatedEventArgs args)
         {
+            Trace.WriteLine($"[App.xaml.cs] OnActivated");
             XboxGameBarWidgetActivatedEventArgs widgetArgs = null;
             if (args.Kind == ActivationKind.Protocol)
             {
@@ -94,6 +96,10 @@ namespace Tooth
                     // --- Hook up visibility event here ---
                     _xboxGameBarWidget.VisibleChanged += XboxGameBarWidget_VisibleChanged;
 
+                    _xboxGameBarWidgetControl = new XboxGameBarWidgetControl(_xboxGameBarWidget);
+
+                    _xboxGameBarWidgetControl.CreateActivationUri("BassemNomany.ToothNClaw_ah2yj8jdj20z4", "Tooth.XboxGameBarUI", "", "", "");
+
                     Window.Current.Closed += XboxGameBarWidgetWindow_Closed;
 
                     Window.Current.Activate();
@@ -107,6 +113,7 @@ namespace Tooth
 
         private void XboxGameBarWidget_VisibleChanged(XboxGameBarWidget sender, object e)
         {
+            Trace.WriteLine($"[App.xaml.cs] XboxGameBarWidget_VisibleChanged");
             if (sender.Visible) // Only launch backend when it is visible and Backend is nsot r
             {
                 if (!Backend.Instance.IsConnected)
@@ -116,6 +123,7 @@ namespace Tooth
 
         private void XboxGameBarWidgetWindow_Closed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
         {
+            Trace.WriteLine($"[App.xaml.cs] XboxGameBarWidgetWindow_Closed");
             _xboxGameBarWidget = null;
             Window.Current.Closed -= XboxGameBarWidgetWindow_Closed;
         }
@@ -127,6 +135,7 @@ namespace Tooth
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            Trace.WriteLine($"[App.xaml.cs] OnLaunched");
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

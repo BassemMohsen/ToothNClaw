@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Windows.Foundation;
 using Windows.Storage;
+using Windows.System;
+using WindowsInput;
+using WindowsInput.Native;
 
 namespace Tooth.Backend
 {
@@ -24,6 +29,7 @@ namespace Tooth.Backend
         const int SW_SHOW = 5;
 
         private static Mutex _mutex;
+        private static Handler handler;
         const string PROGRAM_NAME = "ToothNClaw.Service";
 
         [STAThread]
@@ -51,10 +57,29 @@ namespace Tooth.Backend
                 packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
 
             var comm = new Communication(packageSid);
-            var handler = new Handler();
+            handler = new Handler();
 
             handler.Register(comm);
             Task.Run(() => comm.Run()); // Run in background
+
+            // Handle Controller combo shortcut listerner
+            var comboListener = new XboxComboListener();
+
+            comboListener.ComboPressed += () =>
+            {
+                Console.WriteLine("View + X pressed!");
+                LaunchToothGameBar();
+                LaunchToothGameBarWidget();
+
+            };
+
+            comboListener.ComboReleased += () =>
+            {
+                Console.WriteLine("View + A released.");
+            };
+
+            comboListener.Start();
+
 
             // Run hidden message loop to keep app alive
             Application.EnableVisualStyles();
@@ -118,5 +143,33 @@ namespace Tooth.Backend
         {
             Application.Exit();
         }
+
+        private static void LaunchToothGameBarWidget()
+        {
+            handler.sendLaunchGameBarWidget();
+        }
+
+        private static void LaunchToothGameBar ()
+        {
+
+            // URIs doesn't work for gamebar, and neither does it work from power shell, which is very strange !
+            // Is this a bug from Microsoft, because this page claims it works:
+            // https://learn.microsoft.com/en-us/gaming/game-bar/api/xgb-widgetcontrol
+            /*bool result = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-gamebar:/activate/BassemNomany.ToothNClaw_ah2yj8jdj20z4_BassemNomany.ToothNClaw_Tooth.XboxGameBarUI_Tooth.XboxGameBarUI"));
+            if(result)
+            {
+                Console.WriteLine("LaunchToothGameBar () successful!");
+            } else
+            {
+                Console.WriteLine("LaunchToothGameBar () failed!");
+            }*/
+
+            var inputSimulator = new InputSimulator();
+            inputSimulator.Keyboard.KeyDown(VirtualKeyCode.LWIN);
+            inputSimulator.Keyboard.KeyPress(VirtualKeyCode.VK_G);
+            inputSimulator.Keyboard.KeyUp(VirtualKeyCode.VK_G);
+            inputSimulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
+        }
+
     }
 }

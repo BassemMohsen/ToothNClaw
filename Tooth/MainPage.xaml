@@ -40,12 +40,12 @@
 
     <Grid Padding="12">
 
-        <ScrollViewer Margin="5,5,5,7"
+        <ScrollViewer Margin="5,0,5,0"
                       VerticalScrollMode="Auto"
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollMode="Disabled">
 
-            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16" Margin="15,5,15,5">
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16" Margin="15,0,15,0">
 
                 <StackPanel Orientation="Vertical" Spacing="4" x:Name="StartingBackgroundserviceTextBlock">
                     <TextBlock Text="Starting Background service ..."
@@ -56,7 +56,7 @@
                     HorizontalAlignment="Stretch"
                     Click="LaunchBackendButton_OnClick"
                     FontSize="18"
-                    Height="47">
+                    Height="47" IsTabStop="false">
                         Start Tooth Service manually
                     </Button>
                 </StackPanel>
@@ -75,6 +75,7 @@
                               FontSize="18"
                               Height="40"
                               Margin="5,0,5,0"
+                              TabIndex="0"
                               SelectionChanged="CpuBoostModeSelector_SelectionChanged"
                               >
                         <ComboBox.ItemTemplate>
@@ -102,12 +103,36 @@
                                 <x:Double>2</x:Double>
                             </ComboBoxItem.Tag>
                         </ComboBoxItem>
+
+                        <ComboBoxItem Content="Efficient Enabled" Foreground="Green">
+                            <ComboBoxItem.Tag>
+                                <x:Double>3</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+
+                        <ComboBoxItem Content="Efficient Aggressive" Foreground="Green">
+                            <ComboBoxItem.Tag>
+                                <x:Double>4</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+
+                        <ComboBoxItem Content="Aggressive At Guaranteed" Foreground="Green">
+                            <ComboBoxItem.Tag>
+                                <x:Double>5</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+
+                        <ComboBoxItem Content="Efficient Aggressive At Guaranteed" Foreground="Green">
+                            <ComboBoxItem.Tag>
+                                <x:Double>6</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
 
                 <!-- FPS Limiter -->
-                <StackPanel Orientation="Vertical" Spacing="4">
-                    <Grid>
+                <StackPanel Orientation="Vertical" Spacing="4" >
+                    <Grid >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
@@ -116,13 +141,16 @@
                                    VerticalAlignment="Center"
                                    Grid.Column="0"
                                    FontSize="18"
-                                   FontWeight="Bold" />
+                                   FontWeight="Bold"/>
                         <ToggleSwitch x:Name="FpsLimiterToggle"
                                       Grid.Column="1"
                                       OffContent="Off"
                                       OnContent="On"
                                       IsOn="{Binding FpsLimitEnabled, Mode=TwoWay}"
-                                      Toggled="FpsLimiterToggle_Toggled"/>
+                                      Toggled="FpsLimiterToggle_Toggled"
+                                      IsTabStop="True"
+                                    XYFocusUpNavigationStrategy="Projection"
+                                    XYFocusDownNavigationStrategy="Projection"/>
                     </Grid>
 
                     <Border x:Name="FpsLimiterPanel"
@@ -146,7 +174,10 @@
                                     Minimum="{Binding FpsMin}"
                                     Maximum="{Binding FpsMax}"
                                     Value="{Binding FpsLimitValue, Mode=TwoWay}"
-                                    IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}" Grid.ColumnSpan="2" ValueChanged="FPSSlider_ValueChanged" VerticalAlignment="Center"/>
+                                    IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}" Grid.ColumnSpan="2" ValueChanged="FPSSlider_ValueChanged" VerticalAlignment="Center"
+                                    XYFocusUp="{x:Bind FpsLimiterToggle}"
+                                    XYFocusDownNavigationStrategy="Projection"
+                                    XYFocusUpNavigationStrategy="Projection"/>
 
                             <muxc:NumberBox x:Name="FpsValueBox"
                                             Grid.Column="2"
@@ -158,7 +189,9 @@
                                             VerticalAlignment="Center"
                                             FontSize="18"
                                             Height="40"
-                                            IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}" Margin="10,0,0,0" Width="115"/>
+                                            IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}" Margin="10,0,0,0" Width="115"
+                                            XYFocusUp="{x:Bind FPSSlider}"
+                                            XYFocusDownNavigationStrategy="Projection"/>
                         </Grid>
                     </Border>
                 </StackPanel>

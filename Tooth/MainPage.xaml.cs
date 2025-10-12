@@ -9,6 +9,7 @@ using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.ServiceModel.Channels;
 using System.Windows.Input;
+using Windows.ApplicationModel.AppExtensions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Security.Authentication.Web;
@@ -72,10 +73,14 @@ namespace Tooth
             if (isBackendAlive)
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Collapsed;
+                LaunchBackendButton.IsTapEnabled = false;
+                LaunchBackendButton.IsTabStop = false;
             }
             else
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Visible;
+                LaunchBackendButton.IsTapEnabled = true;
+                LaunchBackendButton.IsTabStop = true;
             }
         }
 
@@ -131,6 +136,23 @@ namespace Tooth
                     _model.Resolution = double.Parse(args[1]);
                     _model.SetResolutionVar(double.Parse(args[1]));
                     break;
+                case "launch-gamebar-widget":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Recieved launch-gamebar-widget");
+                    launchGameBarWidget();
+                    break;
+
+            }
+        }
+
+        private async void launchGameBarWidget()
+        {
+            var app = (App)Application.Current;
+            var widgetControl = app._xboxGameBarWidgetControl;
+
+            if (widgetControl != null)
+            {
+                Trace.WriteLine($"[MainPage.xaml.cs] widgetControl.ActivateAsync");
+                await widgetControl.ActivateAsync("Tooth.XboxGameBarUI");
             }
         }
 
@@ -183,8 +205,15 @@ namespace Tooth
             // handle FPS Limiter toggle changes
             if (FpsLimiterToggle.IsOn)
             {
+                // When enabled, direct focus down to the slider
+                FpsLimiterToggle.XYFocusDown = FPSSlider;
+
                 // Focus the slider when enabling
                 FPSSlider.Focus(FocusState.Programmatic);
+            } else
+            {
+                // When disabled, clear it so focus jumps past the collapsed panel
+                FpsLimiterToggle.XYFocusDown = null;
             }
         }
 
