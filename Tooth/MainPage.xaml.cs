@@ -112,6 +112,23 @@ namespace Tooth
                 case "boost":
                     Trace.WriteLine($"[MainPage.xaml.cs] Updating UI CPU Boost {args[1]}");
                     _model.BoostMode = double.Parse(args[1]);
+                    if (_model.BoostMode< 0)
+                    {
+                        CpuBoostModeSelector.IsEnabled = false;
+                        CpuBoostModeSelector.Opacity = 0.5;
+                        CpuBoostModeTextBlock.FontSize = 14;
+                        CpuBoostModeTextBlock.Text =
+                                                "CPU Boost power changes are disabled in Windows\n" +
+                                                "Please refer to the Github FAQ to enable it";
+                    } else
+                    {
+                        CpuBoostModeSelector.IsEnabled = true;
+                        CpuBoostModeSelector.Opacity = 1.0;
+                        if (CpuBoostModeTextBlock.Text != "CPU Boost Mode") { 
+                            CpuBoostModeTextBlock.Text = "CPU Boost Mode";
+                            CpuBoostModeTextBlock.FontSize = 18;
+                        }
+                    }
                     CpuBoostModeSelector.SelectedValue = _model.BoostMode;
                     break;
                 case "EnduranceGaming":

@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.ServiceModel.Channels;
 using System.Text.RegularExpressions;
 
@@ -10,9 +11,14 @@ namespace Tooth.Backend
     {
         public enum BoostMode
         {
+            UnsupportedAndHidden = -1,
             Disabled = 0,
             Enabled = 1,
-            Aggressive = 2
+            Aggressive = 2,
+            EfficientEnabled = 3,
+            EfficientAggressive = 4,
+            AggressiveAtGuaranteed = 5,
+            EfficientAggressiveAtGuaranteed = 6
         }
 
         private const string BoostSettingGuid = "be337238-0d82-4146-a960-4f3749d470c7";
@@ -32,29 +38,50 @@ namespace Tooth.Backend
 
         }
 
-        public BoostMode? GetBoostMode()
+        public BoostMode GetBoostMode()
         {
-            var scheme = GetActivePowerPlanGuid();
-            string cmd = $"powercfg -query {scheme} {ProcessorGroupGuid} {BoostSettingGuid}";
-            string output = RunCommandWithOutput(cmd);
+            try
+            {
+                var scheme = GetActivePowerPlanGuid();
+                if (scheme == null)
+                    return BoostMode.UnsupportedAndHidden;
 
-            var matchAC = Regex.Match(output, @"Current AC Power Setting Index: 0x(\d+)");
-            var matchDC = Regex.Match(output, @"Current DC Power Setting Index: 0x(\d+)");
+                string cmd = $"powercfg -query {scheme} {ProcessorGroupGuid} {BoostSettingGuid}";
+                string output = RunCommandWithOutputSafe(cmd);
 
-            if (matchAC.Success && int.TryParse(matchAC.Groups[1].Value, out int acValue))
-                Trace.WriteLine($"GetBoostMode AC {acValue}");
+                // Check if the output contains "No such power setting"
+                if (string.IsNullOrWhiteSpace(output) ||
+                    output.IndexOf("No such power setting", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    Trace.WriteLine("CPU Boost is unsupported or hidden");
+                    return BoostMode.UnsupportedAndHidden;
+                }
 
-            if (matchDC.Success && int.TryParse(matchDC.Groups[1].Value, out int dcValue))
-                Trace.WriteLine($"GetBoostMode DC {dcValue}");
+                var matchAC = Regex.Match(output, @"Current AC Power Setting Index: 0x(\d+)");
+                var matchDC = Regex.Match(output, @"Current DC Power Setting Index: 0x(\d+)");
 
-            // Prefer AC value if available, else DC
-            if (matchAC.Success)
-                return (BoostMode)int.Parse(matchAC.Groups[1].Value);
-            if (matchDC.Success)
-                return (BoostMode)int.Parse(matchDC.Groups[1].Value);
+                if (matchAC.Success && int.TryParse(matchAC.Groups[1].Value, out int acValue))
+                    Trace.WriteLine($"GetBoostMode AC {acValue}");
 
-            return null;
+                if (matchDC.Success && int.TryParse(matchDC.Groups[1].Value, out int dcValue))
+                    Trace.WriteLine($"GetBoostMode DC {dcValue}");
+
+                // Prefer AC value if available, else DC
+                if (matchAC.Success)
+                    return (BoostMode)int.Parse(matchAC.Groups[1].Value);
+                if (matchDC.Success)
+                    return (BoostMode)int.Parse(matchDC.Groups[1].Value);
+
+                // If parsing failed, treat as unsupported/hidden
+                return BoostMode.UnsupportedAndHidden;
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Failed to get CPU boost mode: {ex.Message}");
+                return BoostMode.UnsupportedAndHidden;
+            }
         }
+
 
         private string GetActivePowerPlanGuid()
         {
@@ -76,6 +103,20 @@ namespace Tooth.Backend
             };
             p.Start();
             return p.StandardOutput.ReadToEnd();
+        }
+
+        // Helper wrapper for safe command execution
+        private string RunCommandWithOutputSafe(string command)
+        {
+            try
+            {
+                return RunCommandWithOutput(command);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine($"Command failed: {command}, Error: {ex.Message}");
+                return string.Empty;
+            }
         }
 
         private void RunCommand(string command)
@@ -115,13 +156,6 @@ namespace Tooth.Backend
                 disposedValue = true;
             }
         }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~CpuBoostController()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
 
         public void Dispose()
         {
