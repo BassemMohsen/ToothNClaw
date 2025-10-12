@@ -63,7 +63,8 @@
 
                 <!-- CPU Boost -->
                 <StackPanel Orientation="Vertical" Spacing="4">
-                    <TextBlock Text="CPU Boost Mode"
+                    <TextBlock x:Name="CpuBoostModeTextBlock" 
+                        Text="CPU Boost Mode"
                                FontSize="18"
                                FontWeight="Bold"
                                Margin="0,0,0,4"/>

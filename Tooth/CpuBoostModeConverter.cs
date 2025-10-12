@@ -22,6 +22,10 @@ namespace Tooth
                     0 => "Disabled",
                     1 => "Enabled",
                     2 => "Aggressive",
+                    3 => "Efficient Enabled",
+                    4 => "Efficient Aggressive",
+                    5 => "Aggressive At Guaranteed",
+                    6 => "Efficient Aggressive At Guaranteed",
                     _ => "Unknown"
                 };
             }
@@ -32,6 +36,10 @@ namespace Tooth
                     0 => new SolidColorBrush(Colors.Red),
                     1 => new SolidColorBrush(Colors.White),
                     2 => new SolidColorBrush(Colors.Green),
+                    3 => new SolidColorBrush(Colors.Green),
+                    4 => new SolidColorBrush(Colors.Green),
+                    5 => new SolidColorBrush(Colors.Green),
+                    6 => new SolidColorBrush(Colors.Green),
                     _ => new SolidColorBrush(Colors.Red)
                 };
             }
