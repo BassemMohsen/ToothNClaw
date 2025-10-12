@@ -4,7 +4,7 @@ Tooth N Claw XBox widget allows on the fly adjust the APU power and graphics set
 Windows Fullscreen Experience lacks launchers for Intel Graphics Software, and easy controller based settings toggles.
 This improves XBox FSX and gamers don't have to drop off to Desktop mode often to adjust simple APU settings.
 
-![App Preview](images/Tooth-Widget.png)
+<img width="1920" height="857" alt="Tooth-Widget" src="https://github.com/user-attachments/assets/8d1f7695-8fda-4d01-b793-eec0eb274c66" />
 
 
 # Features
@@ -15,6 +15,7 @@ This improves XBox FSX and gamers don't have to drop off to Desktop mode often t
 - **Endurance Gaming (Auto-TDP)** – Intel’s adaptive power management feature that automatically adjusts CPU/GPU power allocation to maintain a target frame rate while extending battery life.
 - **Xe Low Latency (XeLL)** – Reduces input latency by intelligently delaying frame presentation for improved responsiveness.
 - **Intel Graphics Software Launcher** – Provides quick access to the Intel Graphics Control Center, even when running in Xbox Game Bar full-screen mode.
+- Hot Key function using View button and X button [Only in Desktop mode, not XBox Fullscreen experience]
 
 # ☕ Support Me
 If you like my work, you can buy me a coffee:   [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bassemnomany)
