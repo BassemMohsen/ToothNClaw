@@ -1,5 +1,10 @@
 # Tooth N Claw
 
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/BassemMohsen/ToothNClaw?style=for-the-badge&color=blue)
+![GitHub all releases](https://img.shields.io/github/downloads/BassemMohsen/ToothNClaw/total?style=for-the-badge&color=green)
+![GitHub Repo stars](https://img.shields.io/github/stars/BassemMohsen/ToothNClaw?style=for-the-badge&color=yellow&label=Stars)
+
+
 Tooth N Claw XBox widget allows on the fly adjust the APU power and graphics settings mid game.
 Windows Fullscreen Experience lacks launchers for Intel Graphics Software, and easy controller based settings toggles.
 This improves XBox FSX and gamers don't have to drop off to Desktop mode often to adjust simple APU settings.
