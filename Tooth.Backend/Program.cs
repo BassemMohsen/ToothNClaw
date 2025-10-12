@@ -6,8 +6,11 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.System;
+using WindowsInput;
+using WindowsInput.Native;
 
 namespace Tooth.Backend
 {
@@ -26,6 +29,7 @@ namespace Tooth.Backend
         const int SW_SHOW = 5;
 
         private static Mutex _mutex;
+        private static Handler handler;
         const string PROGRAM_NAME = "ToothNClaw.Service";
 
         [STAThread]
@@ -53,7 +57,7 @@ namespace Tooth.Backend
                 packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
 
             var comm = new Communication(packageSid);
-            var handler = new Handler();
+            handler = new Handler();
 
             handler.Register(comm);
             Task.Run(() => comm.Run()); // Run in background
@@ -63,8 +67,10 @@ namespace Tooth.Backend
 
             comboListener.ComboPressed += () =>
             {
-                Console.WriteLine("View + A pressed!");
+                Console.WriteLine("View + X pressed!");
+                LaunchToothGameBar();
                 LaunchToothGameBarWidget();
+
             };
 
             comboListener.ComboReleased += () =>
@@ -138,48 +144,32 @@ namespace Tooth.Backend
             Application.Exit();
         }
 
-        private static async void LaunchToothGameBarWidget()
+        private static void LaunchToothGameBarWidget()
         {
-            string uriString = "ms-gamebar://launch/activate/Tooth.Package_c7kwspyh8mqh4_Tooth.App_Tooth.XboxGameBarUI";
-            var uri = new Uri(uriString);
-            try
-            {
-                Console.WriteLine($"Open Game Bar: {uri}");
-
-                bool success = await Launcher.LaunchUriAsync(uri);
-
-                if (!success)
-                {
-                    Console.WriteLine($"Failed to launch widget {uriString}.");
-                }
-
-                /*Process.Start(new ProcessStartInfo
-                {
-                    FileName = uri,
-                    UseShellExecute = true
-                });*/
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed to open Game Bar: {ex.Message}");
-            }
+            handler.sendLaunchGameBarWidget();
         }
 
-        private static void HideGameBar()
+        private static void LaunchToothGameBar ()
         {
-            string uri = "ms-gamebar://hide";
-            try
+
+            // URIs doesn't work for gamebar, and neither does it work from power shell, which is very strange !
+            // Is this a bug from Microsoft, because this page claims it works:
+            // https://learn.microsoft.com/en-us/gaming/game-bar/api/xgb-widgetcontrol
+            /*bool result = await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-gamebar:/activate/BassemNomany.ToothNClaw_ah2yj8jdj20z4_BassemNomany.ToothNClaw_Tooth.XboxGameBarUI_Tooth.XboxGameBarUI"));
+            if(result)
             {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = uri,
-                    UseShellExecute = true
-                });
-            }
-            catch (Exception ex)
+                Console.WriteLine("LaunchToothGameBar () successful!");
+            } else
             {
-                Console.WriteLine($"Failed to open Game Bar: {ex.Message}");
-            }
+                Console.WriteLine("LaunchToothGameBar () failed!");
+            }*/
+
+            var inputSimulator = new InputSimulator();
+            inputSimulator.Keyboard.KeyDown(VirtualKeyCode.LWIN);
+            inputSimulator.Keyboard.KeyPress(VirtualKeyCode.VK_G);
+            inputSimulator.Keyboard.KeyUp(VirtualKeyCode.VK_G);
+            inputSimulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
         }
+
     }
 }

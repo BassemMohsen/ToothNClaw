@@ -51,7 +51,6 @@ namespace Tooth
         {
             ApplicationData.Current.LocalSettings.Values["PackageSid"] = WebAuthenticationBroker.GetCurrentApplicationCallbackUri().Host.ToUpper();
             await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-
         }
 
         private void Loop()

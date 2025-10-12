@@ -1,7 +1,6 @@
 ﻿using SharpDX.XInput;
 using System;
 using System.Threading;
-using static System.Windows.Forms.AxHost;
 
 namespace Tooth.Backend
 {
@@ -48,15 +47,16 @@ namespace Tooth.Backend
                 var buttons = state.Gamepad.Buttons;
 
                 bool viewPressed = (buttons & GamepadButtonFlags.Back) != 0;
-                bool aPressed = (buttons & GamepadButtonFlags.A) != 0;
+                bool xPressed = (buttons & GamepadButtonFlags.X) != 0;
 
-                bool comboNow = viewPressed && aPressed;
+                bool comboNow = viewPressed && xPressed;
                 bool comboBefore = IsComboActive;
 
                 if (comboNow && !comboBefore)
                 {
                     IsComboActive = true;
                     ComboPressed?.Invoke();
+
                 }
                 else if (!comboNow && comboBefore)
                 {
