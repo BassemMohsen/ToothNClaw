@@ -15,7 +15,7 @@ This improves XBox FSX and gamers don't have to drop off to Desktop mode often t
 - **Endurance Gaming (Auto-TDP)** – Intel’s adaptive power management feature that automatically adjusts CPU/GPU power allocation to maintain a target frame rate while extending battery life.
 - **Xe Low Latency (XeLL)** – Reduces input latency by intelligently delaying frame presentation for improved responsiveness.
 - **Intel Graphics Software Launcher** – Provides quick access to the Intel Graphics Control Center, even when running in Xbox Game Bar full-screen mode.
-- Hot Key function using View button and X button [Only in Desktop mode, not XBox Fullscreen experience]
+- **Hot Key function** using View button and X button marked in blue in the image [Only in Desktop mode, not XBox Fullscreen experience]
 
 # ☕ Support Me
 If you like my work, you can buy me a coffee:   [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bassemnomany)
