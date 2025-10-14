@@ -42,7 +42,7 @@ namespace Tooth.Backend
             var ps = new PipeSecurity();
             var clientRule = new PipeAccessRule(
                 new SecurityIdentifier(packageSid),
-                PipeAccessRights.ReadWrite,
+                PipeAccessRights.ReadWrite | PipeAccessRights.CreateNewInstance,
                 AccessControlType.Allow);
             var ownerRule = new PipeAccessRule(
                 WindowsIdentity.GetCurrent().User,

@@ -11,7 +11,7 @@
   <Identity
     Name="BassemNomany.ToothNClaw"
     Publisher="CN=0E013939-CEFB-4F80-B4B4-B857260CB91A"
-    Version="1.0.56.0" />
+    Version="1.0.57.0" />
 
   <Properties>
     <DisplayName>Tooth N Claw</DisplayName>
@@ -20,20 +20,21 @@
   </Properties>
 
   <Dependencies>
-	  <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+	  <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0" />
   </Dependencies>
 
   <Resources>
     <Resource Language="x-generate"/>
   </Resources>
 
+	<!-- Apex Performance App -->
   <Applications>
-    <Application Id="Tooth.XboxGameBarUI"
-      Executable="$targetnametoken$.exe"
+    <Application Id="Tooth.ApexPerformance.XboxGameBarUI"
+      Executable="Tooth.Backend\Tooth.Backend.exe"
       EntryPoint="windows.fullTrustApplication">
       <uap:VisualElements
         DisplayName="Tooth N Claw"
-        Description="Tooth N Claw is APU Tuner, Display and Performance tweaker"
+        Description="Intel APU Tuner, Display and Performance tweaker"
         BackgroundColor="transparent"
         Square44x44Logo="Assets\Square44x44Logo.png"
 		Square150x150Logo="Assets\Square150x150Logo.png"
@@ -47,12 +48,14 @@
 		<uap:SplashScreen Image="Assets\SplashScreen.png" />
 		</uap:VisualElements>
       <Extensions>
+		  <!-- Shared FullTrust backend -->
         <desktop:Extension Category="windows.fullTrustProcess" Executable="Tooth.Backend/Tooth.Backend.exe" />
+		  <!-- ApexPerformance Game Bar widget extension -->
         <uap3:Extension Category="windows.appExtension">
           <uap3:AppExtension Name="microsoft.gameBarUIExtension"
-                             Id="Tooth.XboxGameBarUI"
-                             DisplayName="Tooth N Claw"
-                             Description="Tooth N Claw is APU Tuner, Display and Performance tweaker"
+                             Id="Tooth.Performance.XboxGameBarUI"
+                             DisplayName="Tooth N Claw - Apex Performance"
+                             Description="APU Tuner, Display and Performance tweaker"
                              PublicFolder="GameBar">
             <uap3:Properties>
               <GameBarWidget Type="Standard">
@@ -79,7 +82,63 @@
         </uap3:Extension>
       </Extensions>
     </Application>
+
+	  <!-- Color Forge App -->
+	<Application Id="Tooth.ColorForge.XboxGameBarUI"
+		Executable="Tooth.Backend\Tooth.Backend.exe"
+		EntryPoint="windows.fullTrustApplication">
+		  <uap:VisualElements
+			DisplayName="Tooth N Claw - ColorForge"
+			Description="Color grade and remaster your game like an artist"
+			BackgroundColor="transparent"
+			Square44x44Logo="Assets\Square44x44Logo.png"
+			Square150x150Logo="Assets\Square150x150Logo.png"
+			AppListEntry="none" >
+			  <uap:DefaultTile  Wide310x150Logo="Assets\Wide310x150Logo.png" >
+				  <uap:ShowNameOnTiles>
+					  <uap:ShowOn Tile="square150x150Logo"/>
+					  <uap:ShowOn Tile="wide310x150Logo"/>
+				  </uap:ShowNameOnTiles>
+			  </uap:DefaultTile >
+			  <uap:SplashScreen Image="Assets\SplashScreen.png" />
+		  </uap:VisualElements>
+		  <Extensions>
+			  <!-- Shared FullTrust backend -->
+			  <desktop:Extension Category="windows.fullTrustProcess" Executable="Tooth.Backend/Tooth.Backend.exe" />
+			  <!-- ColorForge Game Bar widget extension -->
+			  <uap3:Extension Category="windows.appExtension">
+				  <uap3:AppExtension Name="microsoft.gameBarUIExtension"
+									 Id="Tooth.ColorForge.XboxGameBarUI"
+									 DisplayName="Tooth N Claw - Color Forge"
+									 Description="Color grade and remaster your game like an artist"
+									 PublicFolder="GameBar">
+					  <uap3:Properties>
+						  <GameBarWidget Type="Standard">
+							  <HomeMenuVisible>true</HomeMenuVisible>
+							  <ActivateAfterInstall>false</ActivateAfterInstall>
+							  <SupportsPinning>true</SupportsPinning>
+							  <Window>
+								  <Size>
+									  <Height>650</Height>
+									  <Width>464</Width>
+									  <MinHeight>150</MinHeight>
+									  <MinWidth>200</MinWidth>
+									  <MaxHeight>920</MaxHeight>
+									  <MaxWidth>464</MaxWidth>
+								  </Size>
+								  <ResizeSupported>
+									  <Horizontal>true</Horizontal>
+									  <Vertical>true</Vertical>
+								  </ResizeSupported>
+							  </Window>
+						  </GameBarWidget>
+					  </uap3:Properties>
+				  </uap3:AppExtension>
+			  </uap3:Extension>
+		  </Extensions>
+	  </Application>
   </Applications>
+
 
 	<Extensions>
 		<!-- Enlighten COM on where to find Metadata Based Marshaling (MBM) data for the Game Bar private types 

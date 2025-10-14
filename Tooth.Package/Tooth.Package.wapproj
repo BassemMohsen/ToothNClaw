@@ -24,10 +24,10 @@
     <DefaultLanguage>zh-CN</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NoWarn>$(NoWarn);NU1702</NoWarn>
-    <EntryPointProjectUniqueName>..\Tooth\Tooth.csproj</EntryPointProjectUniqueName>
+    <EntryPointProjectUniqueName>..\Tooth.ApexPerformance\Tooth.ApexPerformance.csproj</EntryPointProjectUniqueName>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <AppInstallerUri>C:\Users\Bassem Nomany\Downloads\Tooth</AppInstallerUri>
@@ -60,7 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Tooth.Backend\Tooth.Backend.csproj" />
-    <ProjectReference Include="..\Tooth\Tooth.csproj" />
+    <ProjectReference Include="..\Tooth.ApexPerformance\Tooth.ApexPerformance.csproj" />
+    <ProjectReference Include="..\Tooth.ColorForge\Tooth.ColorForge.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />

@@ -1,0 +1,61 @@
+﻿<Page
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Tooth"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:Custom="using:Microsoft.UI.Xaml.Controls.Primitives"
+    x:Class="Tooth.MainPage"
+    mc:Ignorable="d"
+    d:DesignWidth="798"
+    d:DesignHeight="949"
+    muxc:BackdropMaterial.ApplyToRootOrPageBackground="True"
+    Background="#25282C"
+    RequestedTheme="Dark" FontSize="18" 
+    d:DataContext="{d:DesignInstance Type=local:MainPageModelWrapper}" >
+
+    <Page.Resources>
+        <SolidColorBrush x:Key="ButtonBackground" Color="#3E434B"/>
+        <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#484E58"/>
+        <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#3A3F47"/>
+        <SolidColorBrush x:Key="ButtonBackgroundDisabled" Color="#2C3035"/>
+        <SolidColorBrush x:Key="ButtonBorderBrush" Color="#6B7584"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushPointerOver" Color="#6B7584"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushPressed" Color="#555D69"/>
+        <SolidColorBrush x:Key="ButtonBorderBrushDisabled" Color="#3A3F46"/>
+        <StaticResource x:Key="RepeatButtonBackground" ResourceKey="ButtonBackground"/>
+        <StaticResource x:Key="RepeatButtonBackgroundPointerOver" ResourceKey="ButtonBackgroundPointerOver"/>
+        <StaticResource x:Key="RepeatButtonBackgroundPressed" ResourceKey="ButtonBackgroundPressed"/>
+        <StaticResource x:Key="RepeatButtonBackgroundDisabled" ResourceKey="ButtonBackgroundDisabled"/>
+        <StaticResource x:Key="RepeatButtonBorderBrush" ResourceKey="ButtonBorderBrush"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="ButtonBorderBrushPointerOver"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="ButtonBorderBrushPressed"/>
+        <StaticResource x:Key="RepeatButtonBorderBrushDisabled" ResourceKey="ButtonBorderBrushDisabled"/>
+        <CornerRadius x:Key="ControlCornerRadius">8,8,8,8</CornerRadius>
+        <Thickness x:Key="ButtonPadding">15,10,15,11</Thickness>
+        <local:BooleanToVisibilityConverter  x:Key="BooleanToVisibilityConverter"/>
+        </Page.Resources>
+
+    <Grid Padding="12">
+
+
+
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16" Margin="15,0,15,0">
+
+                <StackPanel Orientation="Vertical" Spacing="4" x:Name="StartingBackgroundserviceTextBlock">
+                    <TextBlock Text="Starting Background service ..."
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Margin="0,0,0,4"/>
+                    <Button x:Name="LaunchBackendButton"
+                    HorizontalAlignment="Stretch"
+                    Click="LaunchBackendButton_OnClick"
+                    FontSize="18"
+                    Height="47" IsTabStop="false">
+                        Start Tooth Service manually
+                    </Button>
+                </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
