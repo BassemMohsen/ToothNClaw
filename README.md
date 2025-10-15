@@ -2,6 +2,7 @@
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/BassemMohsen/ToothNClaw?style=for-the-badge&color=blue)
 ![GitHub all releases](https://img.shields.io/github/downloads/BassemMohsen/ToothNClaw/total?style=for-the-badge&color=green)
+![Build Status](https://img.shields.io/github/actions/workflow/status/BassemMohsen/ToothNClaw/dotnet-desktop.yml?branch=main&style=for-the-badge&label=Build)
 ![GitHub Repo stars](https://img.shields.io/github/stars/BassemMohsen/ToothNClaw?style=for-the-badge&color=yellow&label=Stars)
 
 
