@@ -5,6 +5,8 @@
 ![Build Status](https://img.shields.io/github/actions/workflow/status/BassemMohsen/ToothNClaw/dotnet-desktop.yml?branch=main&style=for-the-badge&label=Build)
 ![GitHub Repo stars](https://img.shields.io/github/stars/BassemMohsen/ToothNClaw?style=for-the-badge&color=yellow&label=Stars)
 
+<img width="1300" height="650" alt="ToothNClawBanner" src="https://github.com/user-attachments/assets/0d97fe4d-c9ac-45e0-9e22-e711dde6b3c5" />
+
 
 Tooth N Claw XBox widget allows on the fly adjust the APU power and graphics settings mid game.
 Windows Fullscreen Experience lacks launchers for Intel Graphics Software, and easy controller based settings toggles.
