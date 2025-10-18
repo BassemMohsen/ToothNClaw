@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{687D4A40-9ED0-4663-A465-D2C6BBB7B9D1}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>Tooth.Backend</RootNamespace>
     <AssemblyName>Tooth.Backend</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -60,9 +60,14 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RTSSSharedMemoryNET, Version=1.0.9170.27248, Culture=neutral, processorArchitecture=AMD64">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Libraries\RTSSSharedMemoryNET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -92,6 +97,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RTSS.cs" />
     <Compile Include="XboxComboListener.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -118,6 +124,9 @@
     <PackageReference Include="InputSimulator">
       <Version>1.0.4</Version>
     </PackageReference>
+    <PackageReference Include="Interop.IWshRuntimeLibrary">
+      <Version>1.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>
@@ -129,6 +138,9 @@
     </PackageReference>
     <PackageReference Include="SharpDX.XInput">
       <Version>4.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="WindowsAPICodePack">
+      <Version>8.0.9</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

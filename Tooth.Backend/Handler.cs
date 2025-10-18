@@ -1,4 +1,5 @@
-﻿using SharpDX;
+﻿using MS.WindowsAPICodePack.Internal;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,8 +10,11 @@ using System.Threading.Tasks;
 using Tooth.GraphicsProcessingUnit;
 using Tooth.IGCL;
 using Windows.System;
+using static Microsoft.WindowsAPICodePack.Shell.PropertySystem.SystemProperties.System;
 using static Tooth.GraphicsProcessingUnit.IntelGPU;
 using static Tooth.IGCL.IGCLBackend;
+using Task = System.Threading.Tasks.Task;
+
 namespace Tooth.Backend
 {
     internal class Handler
@@ -20,12 +24,16 @@ namespace Tooth.Backend
         private Communication _communication;
 
 
-
         public Handler()
         {
             cpuBoostController = new CpuBoostController();
             intelGPUController = new IntelGPU();
-		}
+            if (!RTSSManager.EnsureRunning())
+            {
+                Console.WriteLine("RTSS not available. Exiting.");
+                return;
+            }
+        }
 
         public void Register(Communication comm)
         {
@@ -82,7 +90,10 @@ namespace Tooth.Backend
                         {
                             intelGPUController = new IntelGPU();
                         }
-                        ctl_fps_limiter_t fpsLimiter = intelGPUController.GetFPSLimiter();
+                        //ctl_fps_limiter_t fpsLimiter = intelGPUController.GetFPSLimiter();
+
+                        ctl_fps_limiter_t fpsLimiter;
+                        fpsLimiter.isLimiterEnabled = RTSSManager.GetGlobalFramerateLimit() > 0;
                         if (fpsLimiter.isLimiterEnabled)
                         {
                             Console.WriteLine($"[Server Handler] Responding with FPS Limiter Enabled 1");
@@ -101,9 +112,11 @@ namespace Tooth.Backend
                         {
                             intelGPUController = new IntelGPU();
                         }
-                        ctl_fps_limiter_t fpsLimiter = intelGPUController.GetFPSLimiter();
-                        Console.WriteLine($"[Server Handler] Responding with FPS Limiter value {fpsLimiter.fpsLimitValue}");
-                        (sender as Communication).Send("fps-limiter-value" + ' ' + fpsLimiter.fpsLimitValue);
+                        //ctl_fps_limiter_t fpsLimiter = intelGPUController.GetFPSLimiter();
+                        //Console.WriteLine($"[Server Handler] Responding with FPS Limiter value {fpsLimiter.fpsLimitValue}");
+                        //(sender as Communication).Send("fps-limiter-value" + ' ' + fpsLimiter.fpsLimitValue);
+                        (sender as Communication).Send("fps-limiter-value" + ' ' + RTSSManager.GetGlobalFramerateLimit());
+
                     }
                     break;
 
@@ -117,20 +130,26 @@ namespace Tooth.Backend
 
                         if (args[1] == "0") // Limiter off
                         {
+                            bool result = RTSSManager.SetGlobalFramerateLimit(0);
+                            Console.WriteLine($"[Server Handler] RTTS Result of execution RTTS.SetTargetFPS {result}"); 
+                            Console.WriteLine($"[Server Handler] RTTS Reading Framerate Limit: {RTSSManager.GetGlobalFramerateLimit()}");
                             // Check that value is between min VRR and max VRR supported by Claw display, min should be 48
-                            if (int.TryParse(args[2], out int fps) && fps >= 30 && fps <= 120)
+                            /*if (int.TryParse(args[2], out int fps) && fps >= 30 && fps <= 120)
                             {
                                 bool result = intelGPUController.SetFPSLimiter(false, fps);
                                 Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFPSLimiter {result}");
-                            }
+                            }*/
                         }
                         else if (args[1] == "1") // Limiter on
                         {
                             // Check that value is between min VRR and max VRR supported by Claw display, min should be 48
                             if (int.TryParse(args[2], out int fps) && fps >= 30 && fps <= 120)
                             {
-                                bool result = intelGPUController.SetFPSLimiter(true, fps);
-                                Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFPSLimiter {result}");
+                                bool result = RTSSManager.SetGlobalFramerateLimit(fps);
+                                Console.WriteLine($"[Server Handler] RTTS Result of execution RTTS.SetTargetFPS {result}");
+                                Console.WriteLine($"[Server Handler] RTTS Reading Framerate Limit: {RTSSManager.GetGlobalFramerateLimit()}");
+                                //bool result = intelGPUController.SetFPSLimiter(true, fps);
+                                //Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetFPSLimiter {result}");
                             }
                             else
                             {
