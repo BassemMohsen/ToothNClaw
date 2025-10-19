@@ -89,16 +89,13 @@ namespace Tooth
                 return;
             }
 
-            // Navigate to the correct page
-            rootFrame.Navigate(targetPage);
-
             // Create the Game Bar widget object
             _xboxGameBarWidget = new XboxGameBarWidget(
                 widgetArgs,
                 Window.Current.CoreWindow,
                 rootFrame);
 
-            // Optionally re-navigate to provide the widget to the page
+            // Navigate to provide the widget to the page
             rootFrame.Navigate(targetPage, _xboxGameBarWidget);
 
             // Ensure backend is running
