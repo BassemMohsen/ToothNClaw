@@ -11,7 +11,8 @@
     d:DesignWidth="798"
     d:DesignHeight="949"
     Background="#25282C"
-    RequestedTheme="Dark" FontSize="18"  >
+    RequestedTheme="Dark" FontSize="18"
+    d:DataContext="{d:DesignInstance Type=local:ColorRemasterModelWrapper}">
 
     <Page.Resources>
         <SolidColorBrush x:Key="ButtonBackground" Color="#3E434B"/>
@@ -53,12 +54,27 @@
         <!-- Sliders Section -->
         <!-- ScrollViewer for Sliders -->
         <ScrollViewer Grid.Row="1" Margin="0,20,0,0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Spacing="10">
 
-                <!-- Vibrancy -->
+            <!-- Launch Backend Button -->
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="10">
+                <StackPanel Orientation="Vertical" Spacing="4" x:Name="StartingBackgroundserviceTextBlock">
+                    <TextBlock Text="Starting Background service ..."
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Margin="0,0,0,4"/>
+                    <Button x:Name="LaunchBackendButton"
+                    HorizontalAlignment="Stretch"
+                    Click="LaunchBackendButton_OnClick"
+                    FontSize="18"
+                    Height="47" IsTabStop="false">
+                        Start Tooth Service manually
+                    </Button>
+                </StackPanel>
+                
+                <!-- Saturation -->
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
                     <StackPanel>
-                        <TextBlock Text="Vibrancy" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
+                        <TextBlock Text="Saturation" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
@@ -66,19 +82,21 @@
                                 <ColumnDefinition Width="125"/>
                             </Grid.ColumnDefinitions>
 
-                            <Slider x:Name="SliderVibrancy"
+                            <Slider x:Name="SliderSaturation"
                                     Grid.Column="0"
                                     Margin="5,0,10,0"
-                                    Minimum="0" Maximum="100"
-                                    Value="50"
+                                    Minimum="{Binding SaturationMin}"
+                                    Maximum="{Binding SaturationMax}"
+                                    Value="{Binding SaturationValue, Mode=TwoWay}"
                                     VerticalAlignment="Center"
                                     Grid.ColumnSpan="2"
-                                    ValueChanged="SliderVibrancy_ValueChanged"/>
+                                    ValueChanged="SliderSaturation_ValueChanged"/>
 
-                            <muxc:NumberBox x:Name="SpinnerVibrancy"
+                            <muxc:NumberBox x:Name="SpinnerSaturation"
                                             Grid.Column="2"
-                                            Value="{Binding ElementName=SliderVibrancy, Path=Value, Mode=TwoWay}"
-                                            Minimum="0" Maximum="100"
+                                            Value="{Binding SaturationValue, Mode=TwoWay}"
+                                            Minimum="{Binding SaturationMin}"
+                                            Maximum="{Binding SaturationMax}"
                                             SpinButtonPlacementMode="Inline"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
@@ -104,16 +122,18 @@
                             <Slider x:Name="SliderContrast"
                                     Grid.Column="0"
                                     Margin="5,0,10,0"
-                                    Minimum="0" Maximum="100"
-                                    Value="50"
+                                    Minimum="{Binding ContrastMin}"
+                                    Maximum="{Binding ContrastMax}"
+                                    Value="{Binding ContrastValue, Mode=TwoWay}"
                                     VerticalAlignment="Center"
                                     Grid.ColumnSpan="2"
                                     ValueChanged="SliderContrast_ValueChanged"/>
 
                             <muxc:NumberBox x:Name="SpinnerContrast"
                                             Grid.Column="2"
-                                            Value="{Binding ElementName=SliderContrast, Path=Value, Mode=TwoWay}"
-                                            Minimum="0" Maximum="100"
+                                            Minimum="{Binding ContrastMin}"
+                                            Maximum="{Binding ContrastMax}"
+                                            Value="{Binding ContrastValue, Mode=TwoWay}"
                                             SpinButtonPlacementMode="Inline"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
@@ -140,16 +160,18 @@
                             <Slider x:Name="SliderBrightness"
                                     Grid.Column="0"
                                     Margin="5,0,10,0"
-                                    Minimum="0" Maximum="100"
-                                    Value="50"
+                                    Minimum="{Binding BrightnessMin}"
+                                    Maximum="{Binding BrightnessMax}"
+                                    Value="{Binding BrightnessValue, Mode=TwoWay}"
                                     VerticalAlignment="Center"
                                     Grid.ColumnSpan="2"
                                     ValueChanged="SliderBrightness_ValueChanged"/>
 
                             <muxc:NumberBox x:Name="SpinnerBrightness"
                                             Grid.Column="2"
-                                            Value="{Binding ElementName=SliderBrightness, Path=Value, Mode=TwoWay}"
-                                            Minimum="0" Maximum="100"
+                                            Minimum="{Binding BrightnessMin}"
+                                            Maximum="{Binding BrightnessMax}"
+                                            Value="{Binding BrightnessValue, Mode=TwoWay}"
                                             SpinButtonPlacementMode="Inline"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
@@ -177,16 +199,18 @@
                             <Slider x:Name="SliderHue"
                                     Grid.Column="0"
                                     Margin="5,0,10,0"
-                                    Minimum="0" Maximum="360"
-                                    Value="180"
+                                    Minimum="{Binding HueMin}"
+                                    Maximum="{Binding HueMax}"
+                                    Value="{Binding HueValue, Mode=TwoWay}"
                                     VerticalAlignment="Center"
                                     Grid.ColumnSpan="2"
                                     ValueChanged="SliderHue_ValueChanged"/>
 
                             <muxc:NumberBox x:Name="SpinnerHue"
                                             Grid.Column="2"
-                                            Value="{Binding ElementName=SliderHue, Path=Value, Mode=TwoWay}"
-                                            Minimum="0" Maximum="360"
+                                            Minimum="{Binding HueMin}"
+                                            Maximum="{Binding HueMax}"
+                                            Value="{Binding HueValue, Mode=TwoWay}"
                                             SpinButtonPlacementMode="Inline"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
@@ -212,8 +236,9 @@
                             <Slider x:Name="SliderGamma"
                                     Grid.Column="0"
                                     Margin="5,0,10,0"
-                                    Minimum="0" Maximum="5"
-                                    Value="1"
+                                    Minimum="{Binding GammaMin}"
+                                    Maximum="{Binding GammaMax}"
+                                    Value="{Binding GammaValue, Mode=TwoWay}"
                                     SmallChange="0.01"
                                     VerticalAlignment="Center"
                                     Grid.ColumnSpan="2"
@@ -221,8 +246,9 @@
 
                             <muxc:NumberBox x:Name="SpinnerGamma"
                                             Grid.Column="2"
-                                            Value="{Binding ElementName=SliderGamma, Path=Value, Mode=TwoWay}"
-                                            Minimum="0" Maximum="5"
+                                            Minimum="{Binding GammaMin}"
+                                            Maximum="{Binding GammaMax}"
+                                            Value="{Binding GammaValue, Mode=TwoWay}"
                                             SpinButtonPlacementMode="Inline"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
@@ -248,17 +274,18 @@
                             <Slider x:Name="SliderSharpness"
                                     Grid.Column="0"
                                     Margin="5,0,10,0"
-                                    Minimum="0" Maximum="100"
-                                    Value="50"
+                                    Minimum="{Binding SharpnessMin}"
+                                    Maximum="{Binding SharpnessMax}"
+                                    Value="{Binding SharpnessValue, Mode=TwoWay}"
                                     VerticalAlignment="Center"
                                     Grid.ColumnSpan="2"
                                     ValueChanged="SliderSharpness_ValueChanged"/>
 
                             <muxc:NumberBox x:Name="SpinnerSharpness"
                                             Grid.Column="2"
-                                            Value="{Binding ElementName=SliderSharpness, Path=Value, Mode=TwoWay}"
-                                            Minimum="0" Maximum="100"
-                                            SpinButtonPlacementMode="Inline"
+                                            Minimum="{Binding SharpnessMin}"
+                                            Maximum="{Binding SharpnessMax}"
+                                            Value="{Binding SharpnessValue, Mode=TwoWay}"                                            SpinButtonPlacementMode="Inline"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             FontSize="16"

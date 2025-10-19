@@ -58,6 +58,7 @@
       <DependentUpon>ColorRemasterMainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="CpuBoostModeConverter.cs" />
+    <Compile Include="ColorRemaster.Model.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>

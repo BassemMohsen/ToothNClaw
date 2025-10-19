@@ -32,6 +32,9 @@ namespace Tooth
     /// </summary>
     public sealed partial class ColorRemasterMainPage : IDisposable
     {
+        private static ColorRemasterModel _modelBase = new ColorRemasterModel();
+        private ColorRemasterModelWrapper _model;
+
         private string[] _images = new string[]
         {
             "ms-appx:///Assets/stray.png",
@@ -49,7 +52,16 @@ namespace Tooth
         public ColorRemasterMainPage()
         {
             InitializeComponent();
+            _model = _modelBase.GetWrapper(Dispatcher);
+            this.DataContext = _model;
             UpdateImage();
+
+            Backend.Instance.MessageReceivedEvent += Backend_OnMessageReceived;
+            Backend.Instance.ClosedOrFailedEvent += Backend_OnClosedOrFailed;
+            if (Backend.Instance.IsConnected)
+                ConnectedInitialize();
+            else
+                PanelSwitch(false);
         }
 
         private void UpdateImage()
@@ -59,6 +71,88 @@ namespace Tooth
 
         public void Dispose()
         {
+            Backend.Instance.MessageReceivedEvent -= Backend_OnMessageReceived;
+            Backend.Instance.ClosedOrFailedEvent -= Backend_OnClosedOrFailed;
+        }
+
+        private void ConnectedInitialize()
+        {
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PanelSwitch(true));
+            Backend.Instance.Send("get-Hue-limit");
+            Backend.Instance.Send("get-Saturation-limit");
+            Backend.Instance.Send("get-Brightness-limit");
+            Backend.Instance.Send("get-Contrast-limit");
+            Backend.Instance.Send("get-Sharpness-limit");
+            Backend.Instance.Send("get-Gamma-limit");
+        }
+
+        private void PanelSwitch(bool isBackendAlive)
+        {
+            if (isBackendAlive)
+            {
+                StartingBackgroundserviceTextBlock.Visibility = Visibility.Collapsed;
+                LaunchBackendButton.IsTapEnabled = false;
+                LaunchBackendButton.IsTabStop = false;
+            }
+            else
+            {
+                StartingBackgroundserviceTextBlock.Visibility = Visibility.Visible;
+                LaunchBackendButton.IsTapEnabled = true;
+                LaunchBackendButton.IsTabStop = true;
+            }
+        }
+
+        private void Backend_OnMessageReceived(object sender, string message)
+        {
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Backend_OnMessageReceived_Impl(sender, message));
+        }
+
+        private void Backend_OnMessageReceived_Impl(object sender, string message)
+        {
+            var backend = sender as Backend;
+            string[] args = message.Split(' ');
+            if (args.Length == 0)
+                return;
+            switch (args[0])
+            {
+                case "connected":
+                    ConnectedInitialize();
+                    break;
+                case "Saturation-value":
+                    _model.SaturationValue = int.Parse(args[1]);
+                    SliderSaturation.Value = _model.SaturationValue;
+                    break;
+                case "Contrast-value":
+                    _model.ContrastValue = int.Parse(args[1]);
+                    SliderContrast.Value = _model.ContrastValue;
+                    break;
+                case "Brightness-value":
+                    _model.BrightnessValue = int.Parse(args[1]);
+                    SliderBrightness.Value = _model.BrightnessValue;
+                    break;
+                case "Sharpness-value":
+                    _model.SharpnessValue = int.Parse(args[1]);
+                    SliderSharpness.Value = _model.SharpnessValue;
+                    break;
+                case "Gamma-value":
+                    _model.GammaValue = int.Parse(args[1]);
+                    SliderGamma.Value = _model.GammaValue;
+                    break;
+                case "Hue-value":
+                    _model.HueValue = int.Parse(args[1]);
+                    SliderHue.Value = _model.HueValue;
+                    break;
+            }
+        }
+
+        private void Backend_OnClosedOrFailed(object _, EventArgs args)
+        {
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PanelSwitch(false));
+        }
+
+        private void LaunchBackendButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _ = Backend.LaunchBackend();
         }
 
         private void LeftButton_Click(object sender, RoutedEventArgs e)
@@ -84,25 +178,33 @@ namespace Tooth
 
         private void SliderBrightness_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            Backend.Instance.Send($"set-Brightness-Value {_model.BrightnessValue}");
         }
         private void SliderContrast_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            Backend.Instance.Send($"set-Contrast-Value {_model.ContrastValue}");
         }
         private void SliderGamma_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            Backend.Instance.Send($"set-Gamma-Value {_model.GammaValue}");
         }
-        private void SliderVibrancy_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        private void SliderSaturation_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            Backend.Instance.Send($"set-Saturation-Value {_model.SaturationValue}");
         }
         private void SliderHue_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            Backend.Instance.Send($"set-Hue-Value {_model.HueValue}");
         }
         private void SliderSharpness_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            Backend.Instance.Send($"set-Sharpness-Value {_model.SharpnessValue}");
         }
 
         private void ResetToDefaultsButton_OnClick(object sender, RoutedEventArgs e)
         {
+            // Todo: Reset sliders to default values
+
         }
     }
 }
