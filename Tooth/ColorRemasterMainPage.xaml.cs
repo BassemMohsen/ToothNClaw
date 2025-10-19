@@ -203,8 +203,12 @@ namespace Tooth
 
         private void ResetToDefaultsButton_OnClick(object sender, RoutedEventArgs e)
         {
-            // Todo: Reset sliders to default values
-
+            _model.ContrastValue = 50;
+            _model.SaturationValue = 50;
+            _model.BrightnessValue = 50;
+            _model.HueValue = 0;
+            _model.SharpnessValue = 0;
+            _model.GammaValue = 1;
         }
     }
 }
