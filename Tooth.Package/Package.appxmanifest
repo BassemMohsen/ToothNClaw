@@ -11,7 +11,7 @@
   <Identity
     Name="BassemNomany.ToothNClaw"
     Publisher="CN=0E013939-CEFB-4F80-B4B4-B857260CB91A"
-    Version="1.0.56.0" />
+    Version="1.0.58.0" />
 
   <Properties>
     <DisplayName>Tooth N Claw</DisplayName>
@@ -47,18 +47,24 @@
 		<uap:SplashScreen Image="Assets\SplashScreen.png" />
 		</uap:VisualElements>
       <Extensions>
+		  <!-- Shared Tooth backend -->
         <desktop:Extension Category="windows.fullTrustProcess" Executable="Tooth.Backend/Tooth.Backend.exe" />
+		  <!-- Performance Tooth Widget -->
         <uap3:Extension Category="windows.appExtension">
           <uap3:AppExtension Name="microsoft.gameBarUIExtension"
                              Id="Tooth.XboxGameBarUI"
-                             DisplayName="Tooth N Claw"
+                             DisplayName="Tooth N Claw: Performance"
                              Description="Tooth N Claw is APU Tuner, Display and Performance tweaker"
                              PublicFolder="GameBar">
             <uap3:Properties>
               <GameBarWidget Type="Standard">
                 <HomeMenuVisible>true</HomeMenuVisible>
                 <ActivateAfterInstall>false</ActivateAfterInstall>
+				  <FavoriteAfterInstall>true</FavoriteAfterInstall>
 				 <SupportsPinning>true</SupportsPinning>
+				  <ActivationUri>ms-gamebarwidget://Tooth.XboxGameBarUI</ActivationUri>
+				  <Icon>Assets\Performance_icon.png</Icon>
+				  <Logo>Assets\Performance_icon.png</Logo>
                 <Window>
                   <Size>
                     <Height>650</Height>
@@ -77,6 +83,45 @@
             </uap3:Properties>
           </uap3:AppExtension>
         </uap3:Extension>
+
+		  <!-- Color Remaster Tooth Widget -->
+		  <uap3:Extension Category="windows.appExtension">
+			  <uap3:AppExtension Name="microsoft.gameBarUIExtension"
+								 Id="ColorRemaster.XboxGameBarUI"
+								 DisplayName="Tooth N Claw: Color Remaster"
+								 Description="Remaster your game colors, vibrancy and brightness"
+								 PublicFolder="ColorRemaster">
+				  <uap3:Properties>
+					  <GameBarWidget Type="Standard">
+						  <HomeMenuVisible>true</HomeMenuVisible>
+						  <ActivateAfterInstall>false</ActivateAfterInstall>
+						  <FavoriteAfterInstall>true</FavoriteAfterInstall>
+						  
+						  <SupportsPinning>true</SupportsPinning>
+						  <ActivationUri>ms-gamebarwidget://ColorRemaster.XboxGameBarUI</ActivationUri>
+						  <Icon>Assets\ColorRemaster_icon.png</Icon>
+						  <Logo>Assets\ColorRemaster_icon.png</Logo>
+						  <Square44x44Logo>="Assets\ColorRemaster_icon.png"</Square44x44Logo>
+						  <Square150x150Logo>="Assets\ColorRemaster_icon.png"</Square150x150Logo>
+						  <Window>
+							  <Size>
+								  <Height>650</Height>
+								  <Width>464</Width>
+								  <MinHeight>150</MinHeight>
+								  <MinWidth>200</MinWidth>
+								  <MaxHeight>920</MaxHeight>
+								  <MaxWidth>464</MaxWidth>
+							  </Size>
+							  <ResizeSupported>
+								  <Horizontal>true</Horizontal>
+								  <Vertical>true</Vertical>
+							  </ResizeSupported>
+						  </Window>
+					  </GameBarWidget>
+				  </uap3:Properties>
+			  </uap3:AppExtension>
+		  </uap3:Extension>
+		  
       </Extensions>
     </Application>
   </Applications>

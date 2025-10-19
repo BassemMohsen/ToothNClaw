@@ -41,74 +41,83 @@ namespace Tooth
 
         protected override void OnActivated(IActivatedEventArgs args)
         {
-            Trace.WriteLine($"[App.xaml.cs] OnActivated");
-            XboxGameBarWidgetActivatedEventArgs widgetArgs = null;
-            if (args.Kind == ActivationKind.Protocol)
+            Trace.WriteLine("[App.xaml.cs] OnActivated");
+
+            if (args.Kind != ActivationKind.Protocol)
+                return;
+
+            var protocolArgs = args as IProtocolActivatedEventArgs;
+            var uri = protocolArgs?.Uri;
+
+            Trace.WriteLine($"Widget OnActivated uri: {uri}");
+            if (uri == null || !uri.Scheme.Equals("ms-gamebarwidget", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            var widgetArgs = args as XboxGameBarWidgetActivatedEventArgs;
+            if (widgetArgs == null)
+                return;
+
+            string host = uri.Host;
+            string widgetId = null;
+            widgetId = uri.Host;
+            if (string.IsNullOrEmpty(widgetId))
+                widgetId = uri.AbsolutePath.TrimStart('/');
+            Trace.WriteLine($"Widget OnActivated widgetId: {widgetId}");
+
+            if (!widgetArgs.IsLaunchActivation)
             {
-                var protocolArgs = args as IProtocolActivatedEventArgs;
-                string scheme = protocolArgs.Uri.Scheme;
-                if (scheme.Equals("ms-gamebarwidget"))
-                {
-                    widgetArgs = args as XboxGameBarWidgetActivatedEventArgs;
-                }
+                // Handle reactivation or URI commands if needed.
+                Trace.WriteLine($"Widget reactivated for host: {host}");
+                return;
             }
-            if (widgetArgs != null)
+
+            // --- New widget instance ---
+            var rootFrame = new Frame();
+            rootFrame.NavigationFailed += OnNavigationFailed;
+            Window.Current.Content = rootFrame;
+
+            Type targetPage = widgetId switch
             {
-                //
-                // Activation Notes:
-                //
-                //    If IsLaunchActivation is true, this is Game Bar launching a new instance
-                // of our widget. This means we have a NEW CoreWindow with corresponding UI
-                // dispatcher, and we MUST create and hold onto a new XboxGameBarWidget.
-                //
-                // Otherwise this is a subsequent activation coming from Game Bar. We MUST
-                // continue to hold the XboxGameBarWidget created during initial activation
-                // and ignore this repeat activation, or just observe the URI command here and act 
-                // accordingly.  It is ok to perform a navigate on the root frame to switch 
-                // views/pages if needed.  Game Bar lets us control the URI for sending widget to
-                // widget commands or receiving a command from another non-widget process. 
-                //
-                // Important Cleanup Notes:
-                //    When our widget is closed--by Game Bar or us calling XboxGameBarWidget.Close()-,
-                // the CoreWindow will get a closed event.  We can register for Window.Closed
-                // event to know when our particular widget has shutdown, and cleanup accordingly.
-                //
-                // NOTE: If a widget's CoreWindow is the LAST CoreWindow being closed for the process
-                // then we won't get the Window.Closed event.  However, we will get the OnSuspending
-                // call and can use that for cleanup.
-                //
-                if (widgetArgs.IsLaunchActivation)
-                {
-                    var rootFrame = new Frame();
-                    rootFrame.NavigationFailed += OnNavigationFailed;
-                    Window.Current.Content = rootFrame;
+                "Tooth.XboxGameBarUI" => typeof(MainPage),
+                "ColorRemaster.XboxGameBarUI" => typeof(ColorRemasterMainPage),
+                _ => null
+            };
 
-                    // Create Game Bar widget object which bootstraps the connection with Game Bar
-                    _xboxGameBarWidget = new XboxGameBarWidget(
-                        widgetArgs,
-                        Window.Current.CoreWindow,
-                        rootFrame);
-                    rootFrame.Navigate(typeof(MainPage), _xboxGameBarWidget);
-
-                    if (!Backend.Instance.IsConnected)
-                        _ = Backend.LaunchBackend();
-
-                    // --- Hook up visibility event here ---
-                    _xboxGameBarWidget.VisibleChanged += XboxGameBarWidget_VisibleChanged;
-
-                    _xboxGameBarWidgetControl = new XboxGameBarWidgetControl(_xboxGameBarWidget);
-
-                    _xboxGameBarWidgetControl.CreateActivationUri("BassemNomany.ToothNClaw_ah2yj8jdj20z4", "Tooth.XboxGameBarUI", "", "", "");
-
-                    Window.Current.Closed += XboxGameBarWidgetWindow_Closed;
-
-                    Window.Current.Activate();
-                }
-                else
-                {
-                    // You can perform whatever behavior you need based on the URI payload.
-                }
+            if (targetPage == null)
+            {
+                Trace.WriteLine($"Unknown widget widgetId: {widgetId}");
+                return;
             }
+
+            // Navigate to the correct page
+            rootFrame.Navigate(targetPage);
+
+            // Create the Game Bar widget object
+            _xboxGameBarWidget = new XboxGameBarWidget(
+                widgetArgs,
+                Window.Current.CoreWindow,
+                rootFrame);
+
+            // Optionally re-navigate to provide the widget to the page
+            rootFrame.Navigate(targetPage, _xboxGameBarWidget);
+
+            // Ensure backend is running
+            if (!Backend.Instance.IsConnected)
+                _ = Backend.LaunchBackend();
+
+            // Hook visibility and close events
+            _xboxGameBarWidget.VisibleChanged += XboxGameBarWidget_VisibleChanged;
+            Window.Current.Closed += XboxGameBarWidgetWindow_Closed;
+
+            // Initialize widget control
+            _xboxGameBarWidgetControl = new XboxGameBarWidgetControl(_xboxGameBarWidget);
+            _xboxGameBarWidgetControl.CreateActivationUri(
+                "BassemNomany.ToothNClaw_ah2yj8jdj20z4",
+                widgetId,
+                string.Empty, string.Empty, string.Empty);
+
+            // Finally activate the window
+            Window.Current.Activate();
         }
 
         private void XboxGameBarWidget_VisibleChanged(XboxGameBarWidget sender, object e)
@@ -160,9 +169,7 @@ namespace Tooth
             {
                 if (rootFrame.Content == null)
                 {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
+                    // If we launch application manaually, not through gamebar, it will open MainPage
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 // Ensure the current window is active

@@ -54,6 +54,9 @@
     </Compile>
     <Compile Include="Backend.cs" />
     <Compile Include="BooleanToVisibilityConverter.cs" />
+    <Compile Include="ColorRemasterMainPage.xaml.cs">
+      <DependentUpon>ColorRemasterMainPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CpuBoostModeConverter.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -66,6 +69,31 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\celeste.png" />
+    <Content Include="Assets\ColorRemaster_icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\doom.png" />
+    <Content Include="Assets\ghostrunner.png" />
+    <Content Include="Assets\hades.png" />
+    <Content Include="Assets\lastofus.png" />
+    <Content Include="Assets\Performance_icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\silksong.png" />
+    <Content Include="Assets\stray.png" />
+    <Content Include="ColorRemaster\Icons\icon.light.targetsize-16.png" />
+    <Content Include="ColorRemaster\Icons\icon.light.targetsize-20.png" />
+    <Content Include="ColorRemaster\Icons\icon.light.targetsize-24.png" />
+    <Content Include="ColorRemaster\Icons\icon.light.targetsize-256.png" />
+    <Content Include="ColorRemaster\Icons\icon.light.targetsize-33.png" />
+    <Content Include="ColorRemaster\Icons\icon.light.targetsize-44.png" />
+    <Content Include="ColorRemaster\Icons\icon.targetsize-16.png" />
+    <Content Include="ColorRemaster\Icons\icon.targetsize-20.png" />
+    <Content Include="ColorRemaster\Icons\icon.targetsize-24.png" />
+    <Content Include="ColorRemaster\Icons\icon.targetsize-256.png" />
+    <Content Include="ColorRemaster\Icons\icon.targetsize-33.png" />
+    <Content Include="ColorRemaster\Icons\icon.targetsize-44.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -80,6 +108,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ColorRemasterMainPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -107,6 +139,7 @@
   <ItemGroup>
     <Compile Include="MainPage.Model.cs" />
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

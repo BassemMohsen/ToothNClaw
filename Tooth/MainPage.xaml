@@ -36,7 +36,7 @@
         <Thickness x:Key="ButtonPadding">15,10,15,11</Thickness>
         <local:CpuBoostModeConverter x:Key="CpuBoostModeConverter"/>
         <local:BooleanToVisibilityConverter  x:Key="BooleanToVisibilityConverter"/>
-        </Page.Resources>
+    </Page.Resources>
 
     <Grid Padding="12">
 
