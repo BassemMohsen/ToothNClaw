@@ -74,6 +74,8 @@
                 <!-- Saturation -->
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
                     <StackPanel>
+                        <TextBlock Text="Remaster the game’s color and boost vibrancy to match your art style."
+                                   FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5"/>
                         <TextBlock Text="Saturation" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -105,89 +107,7 @@
                                             Margin="10,0,0,0"
                                             Width="115"/>
                         </Grid>
-                    </StackPanel>
-                </Border>
 
-                <!-- Contrast -->
-                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
-                    <StackPanel>
-                        <TextBlock Text="Contrast" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="187*"/>
-                                <ColumnDefinition Width="404*"/>
-                                <ColumnDefinition Width="125"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Slider x:Name="SliderContrast"
-                                    Grid.Column="0"
-                                    Margin="5,0,10,0"
-                                    Minimum="{Binding ContrastMin}"
-                                    Maximum="{Binding ContrastMax}"
-                                    Value="{Binding ContrastValue, Mode=TwoWay}"
-                                    VerticalAlignment="Center"
-                                    Grid.ColumnSpan="2"
-                                    ValueChanged="SliderContrast_ValueChanged"/>
-
-                            <muxc:NumberBox x:Name="SpinnerContrast"
-                                            Grid.Column="2"
-                                            Minimum="{Binding ContrastMin}"
-                                            Maximum="{Binding ContrastMax}"
-                                            Value="{Binding ContrastValue, Mode=TwoWay}"
-                                            SpinButtonPlacementMode="Inline"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            FontSize="16"
-                                            Height="40"
-                                            Margin="10,0,0,0"
-                                            Width="115"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-
-                <!-- Brightness -->
-                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
-                    <StackPanel>
-                        <TextBlock Text="Brightness" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="187*"/>
-                                <ColumnDefinition Width="404*"/>
-                                <ColumnDefinition Width="125"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Slider x:Name="SliderBrightness"
-                                    Grid.Column="0"
-                                    Margin="5,0,10,0"
-                                    Minimum="{Binding BrightnessMin}"
-                                    Maximum="{Binding BrightnessMax}"
-                                    Value="{Binding BrightnessValue, Mode=TwoWay}"
-                                    VerticalAlignment="Center"
-                                    Grid.ColumnSpan="2"
-                                    ValueChanged="SliderBrightness_ValueChanged"/>
-
-                            <muxc:NumberBox x:Name="SpinnerBrightness"
-                                            Grid.Column="2"
-                                            Minimum="{Binding BrightnessMin}"
-                                            Maximum="{Binding BrightnessMax}"
-                                            Value="{Binding BrightnessValue, Mode=TwoWay}"
-                                            SpinButtonPlacementMode="Inline"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            FontSize="16"
-                                            Height="40"
-                                            Margin="10,0,0,0"
-                                            Width="115"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-
-
-                <!-- Hue -->
-                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
-                    <StackPanel>
                         <TextBlock Text="Hue" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -219,12 +139,79 @@
                                             Margin="10,0,0,0"
                                             Width="115"/>
                         </Grid>
+
                     </StackPanel>
                 </Border>
 
-                <!-- Gamma -->
+                <!-- Contrast -->
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
                     <StackPanel>
+                        <TextBlock Text="Remaster darkness, shadows, lighting, and midtones."
+                                        FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5"/>
+                        <TextBlock Text="Contrast" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="187*"/>
+                                <ColumnDefinition Width="404*"/>
+                                <ColumnDefinition Width="125"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Slider x:Name="SliderContrast"
+                                    Grid.Column="0"
+                                    Margin="5,0,10,0"
+                                    Minimum="{Binding ContrastMin}"
+                                    Maximum="{Binding ContrastMax}"
+                                    Value="{Binding ContrastValue, Mode=TwoWay}"
+                                    VerticalAlignment="Center"
+                                    Grid.ColumnSpan="2"
+                                    ValueChanged="SliderContrast_ValueChanged"/>
+
+                            <muxc:NumberBox x:Name="SpinnerContrast"
+                                            Grid.Column="2"
+                                            Minimum="{Binding ContrastMin}"
+                                            Maximum="{Binding ContrastMax}"
+                                            Value="{Binding ContrastValue, Mode=TwoWay}"
+                                            SpinButtonPlacementMode="Inline"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            FontSize="16"
+                                            Height="40"
+                                            Margin="10,0,0,0"
+                                            Width="115"/>
+                        </Grid>
+
+                        <TextBlock Text="Brightness" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="187*"/>
+                                <ColumnDefinition Width="404*"/>
+                                <ColumnDefinition Width="125"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Slider x:Name="SliderBrightness"
+                                    Grid.Column="0"
+                                    Margin="5,0,10,0"
+                                    Minimum="{Binding BrightnessMin}"
+                                    Maximum="{Binding BrightnessMax}"
+                                    Value="{Binding BrightnessValue, Mode=TwoWay}"
+                                    VerticalAlignment="Center"
+                                    Grid.ColumnSpan="2"
+                                    ValueChanged="SliderBrightness_ValueChanged"/>
+
+                            <muxc:NumberBox x:Name="SpinnerBrightness"
+                                            Grid.Column="2"
+                                            Minimum="{Binding BrightnessMin}"
+                                            Maximum="{Binding BrightnessMax}"
+                                            Value="{Binding BrightnessValue, Mode=TwoWay}"
+                                            SpinButtonPlacementMode="Inline"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            FontSize="16"
+                                            Height="40"
+                                            Margin="10,0,0,0"
+                                            Width="115"/>
+                        </Grid>
+
                         <TextBlock Text="Gamma" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -263,7 +250,9 @@
                 <!-- Sharpness -->
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
                     <StackPanel>
-                        <TextBlock Text="Sharpness" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
+                        <TextBlock Text="Intelligently enhance details while preserving overall image quality."
+                                    FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5"/>
+                        <TextBlock Text="Intel Adaptive Sharpening" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
