@@ -428,7 +428,36 @@ namespace Tooth.Backend
 						Console.WriteLine($"[Handler] Set Auto Start: {args[1]}");
 					}
 					break;
-			}
+
+                case "get-Sharpness-Value":
+                    {
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        int sharpnessValue = intelGPUController.GetImageSharpeningSharpness();
+                        Console.WriteLine($"[Server Handler] Responding with Sharpness value {sharpnessValue}");
+                        (sender as Communication).Send("Sharpness-Value" + ' ' + sharpnessValue);
+                    }
+                    break;
+
+                case "set-Sharpness-Value":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Sharpness to {args[1]}");
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        if (int.TryParse(args[1], out int sharpness) && sharpness >= 0 && sharpness <= 100)
+                        {
+                            bool result = intelGPUController.SetImageSharpeningSharpness(sharpness);
+                            Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetImageSharpeningSharpness {result}");
+                        }
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         async void launchIntelGraphicsSofware()

@@ -946,8 +946,10 @@ namespace Tooth.IGCL
             if (GetSharpness.Intensity == sharpness)
                 return true;
 
-            // fill custom scaling details
+            // fill custom scaling details with Adaptive Sharpning
             GetSharpness.Intensity = sharpness;
+            GetSharpness.Enable = (sharpness > 0);
+            GetSharpness.FilterType = ctl_sharpness_filter_type_flag_t.CTL_SHARPNESS_FILTER_TYPE_FLAG_ADAPTIVE;
 
             Result = SetSharpnessSettings(hDevice, displayIdx, GetSharpness);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)

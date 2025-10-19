@@ -78,12 +78,12 @@ namespace Tooth
         private void ConnectedInitialize()
         {
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PanelSwitch(true));
-            Backend.Instance.Send("get-Hue-limit");
-            Backend.Instance.Send("get-Saturation-limit");
-            Backend.Instance.Send("get-Brightness-limit");
-            Backend.Instance.Send("get-Contrast-limit");
-            Backend.Instance.Send("get-Sharpness-limit");
-            Backend.Instance.Send("get-Gamma-limit");
+            Backend.Instance.Send("get-Hue-Value");
+            Backend.Instance.Send("get-Saturation-Value");
+            Backend.Instance.Send("get-Brightness-Value");
+            Backend.Instance.Send("get-Contrast-Value");
+            Backend.Instance.Send("get-Sharpness-Value");
+            Backend.Instance.Send("get-Gamma-Value");
         }
 
         private void PanelSwitch(bool isBackendAlive)
@@ -118,27 +118,27 @@ namespace Tooth
                 case "connected":
                     ConnectedInitialize();
                     break;
-                case "Saturation-value":
+                case "Saturation-Value":
                     _model.SaturationValue = int.Parse(args[1]);
                     SliderSaturation.Value = _model.SaturationValue;
                     break;
-                case "Contrast-value":
+                case "Contrast-Value":
                     _model.ContrastValue = int.Parse(args[1]);
                     SliderContrast.Value = _model.ContrastValue;
                     break;
-                case "Brightness-value":
+                case "Brightness-Value":
                     _model.BrightnessValue = int.Parse(args[1]);
                     SliderBrightness.Value = _model.BrightnessValue;
                     break;
-                case "Sharpness-value":
+                case "Sharpness-Value":
                     _model.SharpnessValue = int.Parse(args[1]);
                     SliderSharpness.Value = _model.SharpnessValue;
                     break;
-                case "Gamma-value":
+                case "Gamma-Value":
                     _model.GammaValue = int.Parse(args[1]);
                     SliderGamma.Value = _model.GammaValue;
                     break;
-                case "Hue-value":
+                case "Hue-Value":
                     _model.HueValue = int.Parse(args[1]);
                     SliderHue.Value = _model.HueValue;
                     break;
@@ -209,6 +209,13 @@ namespace Tooth
             _model.HueValue = 0;
             _model.SharpnessValue = 0;
             _model.GammaValue = 1;
+
+            Backend.Instance.Send($"set-Brightness-Value {_model.BrightnessValue}");
+            Backend.Instance.Send($"set-Contrast-Value {_model.ContrastValue}");
+            Backend.Instance.Send($"set-Gamma-Value {_model.GammaValue}");
+            Backend.Instance.Send($"set-Saturation-Value {_model.SaturationValue}");
+            Backend.Instance.Send($"set-Hue-Value {_model.HueValue}");
+            Backend.Instance.Send($"set-Sharpness-Value {_model.SharpnessValue}");
         }
     }
 }

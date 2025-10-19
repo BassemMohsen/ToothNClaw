@@ -129,7 +129,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => IGCLBackend.GetImageSharpening(deviceIdx, 0), false);
+            return IGCLBackend.GetImageSharpening(deviceIdx, 0);
         }
 
         public int GetImageSharpeningSharpness()
@@ -137,7 +137,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return 0;
 
-            return Execute(() => IGCLBackend.GetImageSharpeningSharpness(deviceIdx, 0), 0);
+            return IGCLBackend.GetImageSharpeningSharpness(deviceIdx, 0);
         }
 
         public bool GetIntegerScaling()
@@ -162,7 +162,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => IGCLBackend.SetImageSharpening(deviceIdx, 0, enable), false);
+            return IGCLBackend.SetImageSharpening(deviceIdx, 0, enable);
         }
 
         public bool SetImageSharpeningSharpness(int sharpness)
@@ -170,7 +170,7 @@ namespace Tooth.GraphicsProcessingUnit
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => IGCLBackend.SetImageSharpeningSharpness(deviceIdx, 0, sharpness), false);
+            return IGCLBackend.SetImageSharpeningSharpness(deviceIdx, 0, sharpness);
         }
 
         public bool SetScalingMode(int mode)

@@ -53,10 +53,12 @@
         </Grid>
         <!-- Sliders Section -->
         <!-- ScrollViewer for Sliders -->
-        <ScrollViewer Grid.Row="1" Margin="0,20,0,0" VerticalScrollBarVisibility="Auto">
-
-            <!-- Launch Backend Button -->
-            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="10">
+            <ScrollViewer Grid.Row="1" Margin="5,0,5,0"
+                      VerticalScrollMode="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollMode="Disabled">
+                <!-- Launch Backend Button -->
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="10" Margin="15,0,15,0">
                 <StackPanel Orientation="Vertical" Spacing="4" x:Name="StartingBackgroundserviceTextBlock">
                     <TextBlock Text="Starting Background service ..."
                            FontSize="18"
