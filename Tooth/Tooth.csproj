@@ -77,6 +77,7 @@
     <Content Include="Assets\doom.png" />
     <Content Include="Assets\ghostrunner.png" />
     <Content Include="Assets\hades.png" />
+    <Content Include="Assets\info.png" />
     <Content Include="Assets\lastofus.png" />
     <Content Include="Assets\Performance_icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

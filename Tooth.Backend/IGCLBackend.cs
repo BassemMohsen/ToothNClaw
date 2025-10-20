@@ -426,6 +426,8 @@ namespace Tooth.IGCL
         private delegate ctl_result_t GetLowLatencySettingDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_3d_low_latency_types_t setting);
         private delegate ctl_result_t SetFrameSyncSettingDelegate(ctl_device_adapter_handle_t hDevice, ctl_gaming_flip_mode_flag_t setting);
         private delegate ctl_result_t GetFrameSyncSettingDelegate(ctl_device_adapter_handle_t hDevice, ref ctl_gaming_flip_mode_flag_t setting);
+        private delegate ctl_result_t SetHueSaturationValuesDelegate(ctl_device_adapter_handle_t hDevice, double Hue, double Saturation);
+        private delegate ctl_result_t SetBrightnessContrastGammaValuesDelegate(ctl_device_adapter_handle_t hDevice, double contrast, double panelGamma, double brightness);
 
         // Define the function pointers
         private static InitializeIgclDelegate? InitializeIgcl;
@@ -451,6 +453,8 @@ namespace Tooth.IGCL
         private static GetLowLatencySettingDelegate? GetLowLatencySetting;
         private static SetFrameSyncSettingDelegate? SetFrameSyncSetting;
         private static GetFrameSyncSettingDelegate? GetFrameSyncSetting;
+        private static SetHueSaturationValuesDelegate? SetHueSaturationValues;
+        private static SetBrightnessContrastGammaValuesDelegate? SetBrightnessContrastGammaValues;
 
         public static IntPtr[] devices = new IntPtr[1] { IntPtr.Zero };
         private static IntPtr pDll = IntPtr.Zero;
@@ -512,7 +516,9 @@ namespace Tooth.IGCL
                         SetLowLatencySetting = (SetLowLatencySettingDelegate)GetDelegate("SetLowLatencySetting", typeof(SetLowLatencySettingDelegate));
                         GetFrameSyncSetting = (GetFrameSyncSettingDelegate)GetDelegate("GetFrameSyncSetting", typeof(GetFrameSyncSettingDelegate));
                         SetFrameSyncSetting = (SetFrameSyncSettingDelegate)GetDelegate("SetFrameSyncSetting", typeof(SetFrameSyncSettingDelegate));
-                        
+                        SetHueSaturationValues = (SetHueSaturationValuesDelegate)GetDelegate("SetHueSaturationValues", typeof(SetHueSaturationValuesDelegate));
+                        SetBrightnessContrastGammaValues = (SetBrightnessContrastGammaValuesDelegate)GetDelegate("SetBrightnessContrastGammaValues", typeof(SetBrightnessContrastGammaValuesDelegate));
+
                         status = IGCLStatus.DLL_INITIALIZE_SUCCESS;
 
                         Console.WriteLine("IGCL Wrapper initialized successfully.");
@@ -544,6 +550,8 @@ namespace Tooth.IGCL
                         SetLowLatencySetting = null;
                         GetFrameSyncSetting = null;
                         SetFrameSyncSetting = null;
+                        SetHueSaturationValues = null;
+                        SetBrightnessContrastGammaValues = null;
 
                         Console.WriteLine("IGCL Wrapper initialization failed.");
                     }
@@ -1042,6 +1050,41 @@ namespace Tooth.IGCL
                 return false;
 
             return RetroScalingSettings.Enable == enabled;
+        }
+
+
+        internal static bool SetHueSaturation(int deviceIdx, double Hue, double Saturation)
+        {
+            ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
+
+            IntPtr device = devices[deviceIdx];
+            if (device == IntPtr.Zero)
+                return false;
+
+            ctl_device_adapter_handle_t hDevice = new()
+            {
+                handle = device
+            };
+
+            Result = SetHueSaturationValues(hDevice, Hue, Saturation);
+            return Result == ctl_result_t.CTL_RESULT_SUCCESS;
+        }
+
+        internal static bool SetBrightnessContrastGamma(int deviceIdx, double contrast, double panelGamma, double brightness)
+        {
+            ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
+
+            IntPtr device = devices[deviceIdx];
+            if (device == IntPtr.Zero)
+                return false;
+
+            ctl_device_adapter_handle_t hDevice = new()
+            {
+                handle = device
+            };
+
+            Result = SetBrightnessContrastGammaValues(hDevice, contrast, panelGamma, brightness);
+            return Result == ctl_result_t.CTL_RESULT_SUCCESS;
         }
 
         public static ctl_telemetry_data GetTelemetry(nint deviceIdx)

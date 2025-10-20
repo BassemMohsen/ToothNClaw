@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Tooth.GraphicsProcessingUnit;
 using Tooth.IGCL;
 using Windows.System;
+using Windows.UI.Xaml.Controls;
 using static Tooth.GraphicsProcessingUnit.IntelGPU;
 using static Tooth.IGCL.IGCLBackend;
 namespace Tooth.Backend
@@ -19,7 +20,11 @@ namespace Tooth.Backend
         private IntelGPU intelGPUController;
         private Communication _communication;
 
-
+        private double _hueValue;
+        private double _saturationValue;
+        private double _brightnessValue;
+        private double _gammaValue;
+        private double _contrastValue;
 
         public Handler()
         {
@@ -452,6 +457,83 @@ namespace Tooth.Backend
                         {
                             bool result = intelGPUController.SetImageSharpeningSharpness(sharpness);
                             Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetImageSharpeningSharpness {result}");
+                        }
+                    }
+                    break;
+                case "set-Hue-Value":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Hue to {args[1]}");
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        if (int.TryParse(args[1], out int hue) && hue >= -180 && hue <= 180)
+                        {
+                            _hueValue = hue;
+                            bool result = intelGPUController.SetHueSaturation(hue, _saturationValue);
+                            Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetHueSaturation {result}");
+                        }
+                    }
+                    break;
+                case "set-Saturation-Value":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Saturation to {args[1]}");
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        if (int.TryParse(args[1], out int saturation) && saturation >= 0 && saturation <= 100)
+                        {
+                            _saturationValue = saturation;
+                            bool result = intelGPUController.SetHueSaturation(_hueValue, saturation);
+                            Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetHueSaturation {result}");
+                        }
+                    }
+                    break;
+
+                case "set-Contrast-Value":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Contrast to {args[1]}");
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        if (int.TryParse(args[1], out int contrast) && contrast >= 0 && contrast <= 100)
+                        {
+                            _contrastValue = contrast;
+                            bool result = intelGPUController.SetBrightnessContrastGamma(_contrastValue, _gammaValue, _brightnessValue);
+                            Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetBrightnessContrastGamma {result}");
+                        }
+                    }
+                    break;
+                case "set-Brightness-Value":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Brightness to {args[1]}");
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        if (int.TryParse(args[1], out int brightness) && brightness >= 0 && brightness <= 100)
+                        {
+                            _brightnessValue = brightness;
+                            bool result = intelGPUController.SetBrightnessContrastGamma(_contrastValue, _gammaValue, _brightnessValue);
+                            Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetBrightnessContrastGamma {result}");
+                        }
+                    }
+                    break;
+
+                case "set-Gamma-Value":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Panel Gamma to {args[1]}");
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+                        if (int.TryParse(args[1], out int gamma) && gamma >= 0 && gamma <= 100)
+                        {
+                            _gammaValue = gamma;
+                            bool result = intelGPUController.SetBrightnessContrastGamma(_contrastValue, _gammaValue, _brightnessValue);
+                            Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetBrightnessContrastGamma {result}");
                         }
                     }
                     break;

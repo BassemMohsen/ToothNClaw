@@ -76,8 +76,17 @@
                 <!-- Saturation -->
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
                     <StackPanel>
-                        <TextBlock Text="Remaster the game’s color and boost vibrancy to match your art style."
-                                   FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
+                            <Image Source="ms-appx:///Assets//info.png"
+                                   Width="12" Height="12"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,5,0"/>
+                            <!-- small spacing between icon and text -->
+                            <TextBlock Text="Remaster game’s color and vibrancy"
+                                       FontWeight="SemiBold"
+                                       FontSize="12"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
                         <TextBlock Text="Saturation" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -148,9 +157,17 @@
                 <!-- Contrast -->
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
                     <StackPanel>
-                        <TextBlock Text="Remaster darkness, shadows, lighting, and midtones."
-                                        FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5"/>
-                        <TextBlock Text="Contrast" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
+                                <Image Source="ms-appx:///Assets//info.png"
+                                   Width="12" Height="12"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,5,0"/>
+                                <TextBlock Text="Remaster darkness, shadows, lighting, and midtones"
+                                       FontWeight="SemiBold"
+                                       FontSize="12"
+                                       VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="Contrast" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
@@ -252,9 +269,17 @@
                 <!-- Sharpness -->
                 <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10">
                     <StackPanel>
-                        <TextBlock Text="Intelligently enhance details while preserving overall image quality."
-                                    FontWeight="SemiBold" FontSize="12" Margin="0,0,0,5"/>
-                        <TextBlock Text="Intel Adaptive Sharpening" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,0,5">
+                                <Image Source="ms-appx:///Assets//info.png"
+                                   Width="12" Height="12"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,5,0"/>
+                                <TextBlock Text="Rnhance details while preserving overall image quality"
+                                       FontWeight="SemiBold"
+                                       FontSize="12"
+                                       VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <TextBlock Text="Intel Adaptive Sharpening" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,5"/>
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>

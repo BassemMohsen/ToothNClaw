@@ -189,6 +189,22 @@ namespace Tooth.GraphicsProcessingUnit
             return IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type);
         }
 
+        public bool SetHueSaturation(double hue, double saturation)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return IGCLBackend.SetHueSaturation(deviceIdx, hue, saturation);
+        }
+
+        public bool SetBrightnessContrastGamma(double contrast, double panelGamma, double brightness)
+        {
+            if (!IsInitialized)
+                return false;
+
+            return IGCLBackend.SetBrightnessContrastGamma(deviceIdx, contrast, panelGamma, brightness);
+        }
+
         // helper to test whether enumValue is supported:
         bool IsSupported<T>(uint mask, T enumValue) where T : Enum
         {
