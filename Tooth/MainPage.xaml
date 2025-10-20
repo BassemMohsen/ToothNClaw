@@ -185,7 +185,7 @@
                                             Value="{Binding FpsLimitValue, Mode=TwoWay}"
                                             Minimum="{Binding FpsMin}"
                                             Maximum="{Binding FpsMax}"
-                                            SpinButtonPlacementMode="Inline"
+                                            SpinButtonPlacementMode="Compact"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             FontSize="18"

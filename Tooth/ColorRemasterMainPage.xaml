@@ -58,7 +58,7 @@
                       VerticalScrollBarVisibility="Auto"
                       HorizontalScrollMode="Disabled">
                 <!-- Launch Backend Button -->
-            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="10" Margin="15,0,15,0">
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="10" Margin="5,0,15,0">
                 <StackPanel Orientation="Vertical" Spacing="4" x:Name="StartingBackgroundserviceTextBlock">
                     <TextBlock Text="Starting Background service ..."
                            FontSize="18"
@@ -83,7 +83,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
                                 <ColumnDefinition Width="404*"/>
-                                <ColumnDefinition Width="125"/>
+                                <ColumnDefinition Width="135"/>
                             </Grid.ColumnDefinitions>
 
                             <Slider x:Name="SliderSaturation"
@@ -101,12 +101,12 @@
                                             Value="{Binding SaturationValue, Mode=TwoWay}"
                                             Minimum="{Binding SaturationMin}"
                                             Maximum="{Binding SaturationMax}"
-                                            SpinButtonPlacementMode="Inline"
-                                            HorizontalAlignment="Left"
+                                            SpinButtonPlacementMode="Compact"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             FontSize="16"
-                                            Height="40"
-                                            Margin="10,0,0,0"
+                                            Height="45"
+                                            Margin="10,0,5,0"
                                             Width="115"/>
                         </Grid>
 
@@ -115,7 +115,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
                                 <ColumnDefinition Width="404*"/>
-                                <ColumnDefinition Width="125"/>
+                                <ColumnDefinition Width="135"/>
                             </Grid.ColumnDefinitions>
 
                             <Slider x:Name="SliderHue"
@@ -133,12 +133,12 @@
                                             Minimum="{Binding HueMin}"
                                             Maximum="{Binding HueMax}"
                                             Value="{Binding HueValue, Mode=TwoWay}"
-                                            SpinButtonPlacementMode="Inline"
-                                            HorizontalAlignment="Left"
+                                            SpinButtonPlacementMode="Compact"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             FontSize="16"
-                                            Height="40"
-                                            Margin="10,0,0,0"
+                                            Height="45"
+                                            Margin="10,0,5,0"
                                             Width="115"/>
                         </Grid>
 
@@ -155,7 +155,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
                                 <ColumnDefinition Width="404*"/>
-                                <ColumnDefinition Width="125"/>
+                                <ColumnDefinition Width="135"/>
                             </Grid.ColumnDefinitions>
 
                             <Slider x:Name="SliderContrast"
@@ -173,12 +173,12 @@
                                             Minimum="{Binding ContrastMin}"
                                             Maximum="{Binding ContrastMax}"
                                             Value="{Binding ContrastValue, Mode=TwoWay}"
-                                            SpinButtonPlacementMode="Inline"
-                                            HorizontalAlignment="Left"
+                                            SpinButtonPlacementMode="Compact"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             FontSize="16"
-                                            Height="40"
-                                            Margin="10,0,0,0"
+                                            Height="45"
+                                            Margin="10,0,5,0"
                                             Width="115"/>
                         </Grid>
 
@@ -187,7 +187,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
                                 <ColumnDefinition Width="404*"/>
-                                <ColumnDefinition Width="125"/>
+                                <ColumnDefinition Width="135"/>
                             </Grid.ColumnDefinitions>
 
                             <Slider x:Name="SliderBrightness"
@@ -205,12 +205,12 @@
                                             Minimum="{Binding BrightnessMin}"
                                             Maximum="{Binding BrightnessMax}"
                                             Value="{Binding BrightnessValue, Mode=TwoWay}"
-                                            SpinButtonPlacementMode="Inline"
-                                            HorizontalAlignment="Left"
+                                            SpinButtonPlacementMode="Compact"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             FontSize="16"
-                                            Height="40"
-                                            Margin="10,0,0,0"
+                                            Height="5"
+                                            Margin="10,0,5,0"
                                             Width="115"/>
                         </Grid>
 
@@ -219,7 +219,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
                                 <ColumnDefinition Width="404*"/>
-                                <ColumnDefinition Width="125"/>
+                                <ColumnDefinition Width="135"/>
                             </Grid.ColumnDefinitions>
 
                             <Slider x:Name="SliderGamma"
@@ -238,12 +238,12 @@
                                             Minimum="{Binding GammaMin}"
                                             Maximum="{Binding GammaMax}"
                                             Value="{Binding GammaValue, Mode=TwoWay}"
-                                            SpinButtonPlacementMode="Inline"
-                                            HorizontalAlignment="Left"
+                                            SpinButtonPlacementMode="Compact"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             FontSize="16"
-                                            Height="40"
-                                            Margin="10,0,0,0"
+                                            Height="45"
+                                            Margin="10,0,5,0"
                                             Width="115"/>
                         </Grid>
                     </StackPanel>
@@ -259,7 +259,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="187*"/>
                                 <ColumnDefinition Width="404*"/>
-                                <ColumnDefinition Width="125"/>
+                                <ColumnDefinition Width="135"/>
                             </Grid.ColumnDefinitions>
 
                             <Slider x:Name="SliderSharpness"
@@ -276,12 +276,13 @@
                                             Grid.Column="2"
                                             Minimum="{Binding SharpnessMin}"
                                             Maximum="{Binding SharpnessMax}"
-                                            Value="{Binding SharpnessValue, Mode=TwoWay}"                                            SpinButtonPlacementMode="Inline"
-                                            HorizontalAlignment="Left"
+                                            Value="{Binding SharpnessValue, Mode=TwoWay}"
+											SpinButtonPlacementMode="Compact"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             FontSize="16"
-                                            Height="40"
-                                            Margin="10,0,0,0"
+                                            Height="45"
+                                            Margin="10,0,5,0"
                                             Width="115"/>
                         </Grid>
                     </StackPanel>
