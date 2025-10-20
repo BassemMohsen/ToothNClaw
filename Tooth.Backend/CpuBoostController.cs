@@ -1,9 +1,6 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
-using System.ServiceModel.Channels;
-using System.Text.RegularExpressions;
-
+using System.Runtime.InteropServices;
 
 namespace Tooth.Backend
 {
@@ -21,148 +18,144 @@ namespace Tooth.Backend
             EfficientAggressiveAtGuaranteed = 6
         }
 
-        private const string BoostSettingGuid = "be337238-0d82-4146-a960-4f3749d470c7";
-        private const string ProcessorGroupGuid = "54533251-82be-4824-96c1-47b60b740d00";
+        private static readonly Guid ProcessorGroupGuidConst = new("54533251-82be-4824-96c1-47b60b740d00");
+        private static readonly Guid BoostSettingGuidConst = new("be337238-0d82-4146-a960-4f3749d470c7");
 
         private bool disposedValue;
 
+        // Import native Power Management APIs
+        [DllImport("powrprof.dll", SetLastError = true)]
+        private static extern uint PowerGetActiveScheme(IntPtr UserRootPowerKey, out IntPtr ActivePolicyGuid);
+
+        [DllImport("powrprof.dll", SetLastError = true)]
+        private static extern uint PowerSetActiveScheme(IntPtr UserRootPowerKey, ref Guid SchemeGuid);
+
+        [DllImport("powrprof.dll", SetLastError = true)]
+        private static extern uint PowerWriteACValueIndex(
+            IntPtr RootPowerKey,
+            ref Guid SchemeGuid,
+            ref Guid SubGroupOfPowerSettingsGuid,
+            ref Guid PowerSettingGuid,
+            uint AcValueIndex);
+
+        [DllImport("powrprof.dll", SetLastError = true)]
+        private static extern uint PowerWriteDCValueIndex(
+            IntPtr RootPowerKey,
+            ref Guid SchemeGuid,
+            ref Guid SubGroupOfPowerSettingsGuid,
+            ref Guid PowerSettingGuid,
+            uint DcValueIndex);
+
+        [DllImport("powrprof.dll", SetLastError = true)]
+        private static extern uint PowerReadACValueIndex(
+            IntPtr RootPowerKey,
+            ref Guid SchemeGuid,
+            ref Guid SubGroupOfPowerSettingsGuid,
+            ref Guid PowerSettingGuid,
+            out uint AcValueIndex);
+
+        [DllImport("powrprof.dll", SetLastError = true)]
+        private static extern uint PowerReadDCValueIndex(
+            IntPtr RootPowerKey,
+            ref Guid SchemeGuid,
+            ref Guid SubGroupOfPowerSettingsGuid,
+            ref Guid PowerSettingGuid,
+            out uint DcValueIndex);
+
+        [DllImport("kernel32.dll")]
+        private static extern IntPtr LocalFree(IntPtr hMem);
+
         public void SetBoostMode(BoostMode mode)
         {
-            var scheme = GetActivePowerPlanGuid();
-            RunCommand($"powercfg -setacvalueindex {scheme} {ProcessorGroupGuid} {BoostSettingGuid} {(int)mode}");
-            RunCommand($"powercfg -setdcvalueindex {scheme} {ProcessorGroupGuid} {BoostSettingGuid} {(int)mode}");
-            
-            RunCommand($"powercfg -S {scheme}"); // Apply
+            var schemeGuid = GetActiveScheme();
+            if (schemeGuid == Guid.Empty)
+            {
+                Trace.WriteLine("No active power scheme found.");
+                return;
+            }
 
-            Trace.WriteLine($"SetBoostMode {mode}");
+            // Make local copies so we can pass them by ref
+            Guid subgroupGuid = ProcessorGroupGuidConst;
+            Guid settingGuid = BoostSettingGuidConst;
 
+            uint modeValue = (uint)mode;
+            uint result;
+
+            result = PowerWriteACValueIndex(IntPtr.Zero, ref schemeGuid, ref subgroupGuid, ref settingGuid, modeValue);
+            if (result != 0)
+                Trace.WriteLine($"PowerWriteACValueIndex failed: {result}");
+
+            result = PowerWriteDCValueIndex(IntPtr.Zero, ref schemeGuid, ref subgroupGuid, ref settingGuid, modeValue);
+            if (result != 0)
+                Trace.WriteLine($"PowerWriteDCValueIndex failed: {result}");
+
+            result = PowerSetActiveScheme(IntPtr.Zero, ref schemeGuid);
+            if (result != 0)
+                Trace.WriteLine($"PowerSetActiveScheme failed: {result}");
+
+            Trace.WriteLine($"SetBoostMode to {mode}");
         }
 
         public BoostMode GetBoostMode()
         {
             try
             {
-                var scheme = GetActivePowerPlanGuid();
-                if (scheme == null)
+                var schemeGuid = GetActiveScheme();
+                if (schemeGuid == Guid.Empty)
                     return BoostMode.UnsupportedAndHidden;
 
-                string cmd = $"powercfg -query {scheme} {ProcessorGroupGuid} {BoostSettingGuid}";
-                string output = RunCommandWithOutputSafe(cmd);
+                // Make local copies for ref
+                Guid subgroupGuid = ProcessorGroupGuidConst;
+                Guid settingGuid = BoostSettingGuidConst;
 
-                // Check if the output contains "No such power setting"
-                if (string.IsNullOrWhiteSpace(output) ||
-                    output.IndexOf("No such power setting", StringComparison.OrdinalIgnoreCase) >= 0)
+                uint acValue = 0, dcValue = 0;
+                bool acOk = PowerReadACValueIndex(IntPtr.Zero, ref schemeGuid, ref subgroupGuid, ref settingGuid, out acValue) == 0;
+                bool dcOk = PowerReadDCValueIndex(IntPtr.Zero, ref schemeGuid, ref subgroupGuid, ref settingGuid, out dcValue) == 0;
+
+                if (acOk)
                 {
-                    Trace.WriteLine("CPU Boost is unsupported or hidden");
-                    return BoostMode.UnsupportedAndHidden;
+                    Trace.WriteLine($"GetBoostMode (AC): {acValue}");
+                    return (BoostMode)acValue;
+                }
+                if (dcOk)
+                {
+                    Trace.WriteLine($"GetBoostMode (DC): {dcValue}");
+                    return (BoostMode)dcValue;
                 }
 
-                var matchAC = Regex.Match(output, @"Current AC Power Setting Index: 0x(\d+)");
-                var matchDC = Regex.Match(output, @"Current DC Power Setting Index: 0x(\d+)");
-
-                if (matchAC.Success && int.TryParse(matchAC.Groups[1].Value, out int acValue))
-                    Trace.WriteLine($"GetBoostMode AC {acValue}");
-
-                if (matchDC.Success && int.TryParse(matchDC.Groups[1].Value, out int dcValue))
-                    Trace.WriteLine($"GetBoostMode DC {dcValue}");
-
-                // Prefer AC value if available, else DC
-                if (matchAC.Success)
-                    return (BoostMode)int.Parse(matchAC.Groups[1].Value);
-                if (matchDC.Success)
-                    return (BoostMode)int.Parse(matchDC.Groups[1].Value);
-
-                // If parsing failed, treat as unsupported/hidden
+                Trace.WriteLine("CPU Boost mode not supported or hidden.");
                 return BoostMode.UnsupportedAndHidden;
             }
             catch (Exception ex)
             {
-                Trace.WriteLine($"Failed to get CPU boost mode: {ex.Message}");
+                Trace.WriteLine($"Failed to read boost mode: {ex.Message}");
                 return BoostMode.UnsupportedAndHidden;
             }
         }
 
-
-        private string GetActivePowerPlanGuid()
+        private static Guid GetActiveScheme()
         {
-            var output = RunCommandWithOutput("powercfg /getactivescheme");
-            var match = Regex.Match(output, @"GUID: ([a-fA-F0-9\-]+)");
-            return match.Success ? match.Groups[1].Value : null;
-        }
+            if (PowerGetActiveScheme(IntPtr.Zero, out IntPtr pGuid) != 0)
+                return Guid.Empty;
 
-        private string RunCommandWithOutput(string command)
-        {
-            using var p = new Process
-            {
-                StartInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
-                {
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-            p.Start();
-            return p.StandardOutput.ReadToEnd();
-        }
-
-        // Helper wrapper for safe command execution
-        private string RunCommandWithOutputSafe(string command)
-        {
-            try
-            {
-                return RunCommandWithOutput(command);
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine($"Command failed: {command}, Error: {ex.Message}");
-                return string.Empty;
-            }
-        }
-
-        private void RunCommand(string command)
-        {
-            using var p = new Process
-            {
-                StartInfo = new ProcessStartInfo("cmd.exe", "/c " + command)
-                {
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                }
-            };
-            p.Start();
-
-            string  output = p.StandardOutput.ReadToEnd();
-            string  error = p.StandardError.ReadToEnd();
-
-            Trace.WriteLine($"RunCommand Output {output}");
-            Trace.WriteLine($"RunCommand Error {error}");
-
-            p.WaitForExit();
+            var schemeGuid = (Guid)Marshal.PtrToStructure(pGuid, typeof(Guid));
+            LocalFree(pGuid);
+            return schemeGuid;
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
                 disposedValue = true;
             }
         }
 
         public void Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
     }
-
 }
+
