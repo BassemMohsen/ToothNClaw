@@ -359,12 +359,22 @@ namespace Tooth
             {
                 lock (_base)
                 {
-                    value = Math.Min(Math.Max(value, _base.gammaMin), _base.gammaMax);
-                    if (_base.gammaValue != value)
+                    // Clamp to min/max
+                    double clamped = Math.Min(Math.Max(value, _base.gammaMin), _base.gammaMax);
+
+                    // Round to 1 decimal
+                    double rounded = Math.Round(clamped, 1);
+
+                    // Only update if changed
+                    if (_base.gammaValue != rounded)
                     {
-                        _base.gammaValue = value;
+                        _base.gammaValue = rounded;
+
+                        // Notify UI
                         _base.Notify("GammaValue");
-                        Backend.Instance.Send($"set-Gamma-Value {value}");
+
+                        // Send to backend
+                        Backend.Instance.Send($"set-Gamma-Value {rounded}");
                     }
                 }
             }
@@ -479,5 +489,8 @@ namespace Tooth
 		{
 			_wrappers.Remove(wraper);
 		}
-	}
+    }
 }
+
+
+

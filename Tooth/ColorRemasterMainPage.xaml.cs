@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.Globalization.NumberFormatting;
 
 namespace Tooth
 {
@@ -48,6 +49,11 @@ namespace Tooth
 
         private int _currentIndex = 0;
 
+        public DecimalFormatter GammaFormatter { get; } = new DecimalFormatter()
+        {
+            FractionDigits = 1, // show exactly 1 decimal
+            IsGrouped = false
+        };
 
         public ColorRemasterMainPage()
         {
@@ -91,14 +97,10 @@ namespace Tooth
             if (isBackendAlive)
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Collapsed;
-                LaunchBackendButton.IsTapEnabled = false;
-                LaunchBackendButton.IsTabStop = false;
             }
             else
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Visible;
-                LaunchBackendButton.IsTapEnabled = true;
-                LaunchBackendButton.IsTabStop = true;
             }
         }
 
@@ -119,27 +121,27 @@ namespace Tooth
                     ConnectedInitialize();
                     break;
                 case "Saturation-Value":
-                    _model.SaturationValue = int.Parse(args[1]);
+                    _model.SaturationValue = double.Parse(args[1]);
                     SliderSaturation.Value = _model.SaturationValue;
                     break;
                 case "Contrast-Value":
-                    _model.ContrastValue = int.Parse(args[1]);
+                    _model.ContrastValue = double.Parse(args[1]);
                     SliderContrast.Value = _model.ContrastValue;
                     break;
                 case "Brightness-Value":
-                    _model.BrightnessValue = int.Parse(args[1]);
+                    _model.BrightnessValue = double.Parse(args[1]);
                     SliderBrightness.Value = _model.BrightnessValue;
                     break;
                 case "Sharpness-Value":
-                    _model.SharpnessValue = int.Parse(args[1]);
+                    _model.SharpnessValue = double.Parse(args[1]);
                     SliderSharpness.Value = _model.SharpnessValue;
                     break;
                 case "Gamma-Value":
-                    _model.GammaValue = int.Parse(args[1]);
+                    _model.GammaValue = double.Parse(args[1]);
                     SliderGamma.Value = _model.GammaValue;
                     break;
                 case "Hue-Value":
-                    _model.HueValue = int.Parse(args[1]);
+                    _model.HueValue = double.Parse(args[1]);
                     SliderHue.Value = _model.HueValue;
                     break;
             }
@@ -147,7 +149,21 @@ namespace Tooth
 
         private void Backend_OnClosedOrFailed(object _, EventArgs args)
         {
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PanelSwitch(false));
+            try
+            {
+                if (Dispatcher?.HasThreadAccess == true)
+                {
+                    PanelSwitch(false);
+                }
+                else if (Dispatcher != null)
+                {
+                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PanelSwitch(false));
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"[Backend_OnClosedOrFailed] Dispatcher invalid: {ex.Message}");
+            }
         }
 
         private void LaunchBackendButton_OnClick(object sender, RoutedEventArgs e)

@@ -246,6 +246,7 @@
                                     Maximum="{Binding GammaMax}"
                                     Value="{Binding GammaValue, Mode=TwoWay}"
                                     SmallChange="0.01"
+                                    StepFrequency="0.1"
                                     VerticalAlignment="Center"
                                     Grid.ColumnSpan="2"
                                     ValueChanged="SliderGamma_ValueChanged"/>
@@ -255,7 +256,9 @@
                                             Minimum="{Binding GammaMin}"
                                             Maximum="{Binding GammaMax}"
                                             Value="{Binding GammaValue, Mode=TwoWay}"
+                                            NumberFormatter="{x:Bind GammaFormatter, Mode=OneWay}"
                                             SpinButtonPlacementMode="Compact"
+                                            SmallChange="0.1"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             FontSize="16"

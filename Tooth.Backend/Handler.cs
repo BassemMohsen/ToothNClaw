@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Tooth.GraphicsProcessingUnit;
 using Tooth.IGCL;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
 using static Tooth.GraphicsProcessingUnit.IntelGPU;
@@ -19,12 +20,6 @@ namespace Tooth.Backend
         private CpuBoostController cpuBoostController;
         private IntelGPU intelGPUController;
         private Communication _communication;
-
-        private double _hueValue=0;
-        private double _saturationValue=50;
-        private double _brightnessValue=50;
-        private double _gammaValue=1;
-        private double _contrastValue = 50;
 
         public Handler()
         {
@@ -460,6 +455,14 @@ namespace Tooth.Backend
                         }
                     }
                     break;
+
+                case "get-Hue-Value":
+                    {
+                        double hue = SettingsManager.Get<double>("Hue");
+                        Console.WriteLine($"[Server Handler] Responding with Hue Value {hue}");
+                        (sender as Communication).Send("Hue-Value" + ' ' + $"{hue}");
+                    }
+                    break;
                 case "set-Hue-Value":
                     {
                         Console.WriteLine($"[Server Handler] Setting Hue to {args[1]}");
@@ -467,12 +470,19 @@ namespace Tooth.Backend
                         {
                             intelGPUController = new IntelGPU();
                         }
-                        if (int.TryParse(args[1], out int hue) && hue >= -180 && hue <= 180)
+                        if (double.TryParse(args[1], out double hue) && hue >= -180 && hue <= 180)
                         {
-                            _hueValue = hue;
-                            bool result = intelGPUController.SetHueSaturation(hue, _saturationValue);
+                            SettingsManager.Set("Hue", hue);
+                            bool result = intelGPUController.SetHueSaturation(hue, SettingsManager.Get<double>("Saturation"));
                             Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetHueSaturation {result}");
                         }
+                    }
+                    break;
+                case "get-Saturation-Value":
+                    {
+                        double saturation = SettingsManager.Get<double>("Saturation");
+                        Console.WriteLine($"[Server Handler] Responding with Saturation Value {saturation}");
+                        (sender as Communication).Send("Saturation-Value" + ' ' + $"{saturation}");
                     }
                     break;
                 case "set-Saturation-Value":
@@ -482,15 +492,21 @@ namespace Tooth.Backend
                         {
                             intelGPUController = new IntelGPU();
                         }
-                        if (int.TryParse(args[1], out int saturation) && saturation >= 0 && saturation <= 100)
+                        if (double.TryParse(args[1], out double saturation) && saturation >= 0 && saturation <= 100)
                         {
-                            _saturationValue = saturation;
-                            bool result = intelGPUController.SetHueSaturation(_hueValue, saturation);
+                            SettingsManager.Set("Saturation", saturation);
+                            bool result = intelGPUController.SetHueSaturation(SettingsManager.Get<double>("Hue"), saturation);
                             Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetHueSaturation {result}");
                         }
                     }
                     break;
-
+                case "get-Contrast-Value":
+                    {
+                        double contrast = SettingsManager.Get<double>("Contrast");
+                        Console.WriteLine($"[Server Handler] Responding with Contrast Value {contrast}");
+                        (sender as Communication).Send($"Contrast-Value" + ' ' + $"{contrast}");
+                    }
+                    break;
                 case "set-Contrast-Value":
                     {
                         Console.WriteLine($"[Server Handler] Setting Contrast to {args[1]}");
@@ -498,12 +514,19 @@ namespace Tooth.Backend
                         {
                             intelGPUController = new IntelGPU();
                         }
-                        if (int.TryParse(args[1], out int contrast) && contrast >= 0 && contrast <= 100)
+                        if (double.TryParse(args[1], out double contrast) && contrast >= 0 && contrast <= 100)
                         {
-                            _contrastValue = contrast;
-                            bool result = intelGPUController.SetBrightnessContrastGamma(_contrastValue, _gammaValue, _brightnessValue);
+                            SettingsManager.Set("Contrast", contrast);
+                            bool result = intelGPUController.SetBrightnessContrastGamma(contrast, SettingsManager.Get<double>("Gamma"), SettingsManager.Get<double>("Brightness"));
                             Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetBrightnessContrastGamma {result}");
                         }
+                    }
+                    break;
+                case "get-Brightness-Value":
+                    {
+                        double brightness = SettingsManager.Get<double>("Brightness");
+                        Console.WriteLine($"[Server Handler] Responding with Brightness Value {brightness}");
+                        (sender as Communication).Send($"Brightness-Value" + ' ' + $"{brightness}");
                     }
                     break;
                 case "set-Brightness-Value":
@@ -513,15 +536,21 @@ namespace Tooth.Backend
                         {
                             intelGPUController = new IntelGPU();
                         }
-                        if (int.TryParse(args[1], out int brightness) && brightness >= 0 && brightness <= 100)
+                        if (double.TryParse(args[1], out double brightness) && brightness >= 0 && brightness <= 100)
                         {
-                            _brightnessValue = brightness;
-                            bool result = intelGPUController.SetBrightnessContrastGamma(_contrastValue, _gammaValue, _brightnessValue);
-                            Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetBrightnessContrastGamma {result}");
+                            SettingsManager.Set("Brightness", brightness);
+                            bool result = intelGPUController.SetBrightnessContrastGamma(SettingsManager.Get<double>("Contrast"), SettingsManager.Get<double>("Gamma"), brightness);
+                            Console.WriteLine($"[Server Handler] IGCL Result of execution inte GPUController.SetBrightnessContrastGamma {result}");
                         }
                     }
                     break;
-
+                case "get-Gamma-Value":
+                    {
+                        double gamma = SettingsManager.Get<double>("Gamma");
+                        Console.WriteLine($"[Server Handler] Responding with Gamma Value {gamma}");
+                        (sender as Communication).Send($"Gamma-Value" + ' ' + $"{gamma}");
+                    }
+                    break;
                 case "set-Gamma-Value":
                     {
                         Console.WriteLine($"[Server Handler] Setting Panel Gamma to {args[1]}");
@@ -529,10 +558,10 @@ namespace Tooth.Backend
                         {
                             intelGPUController = new IntelGPU();
                         }
-                        if (int.TryParse(args[1], out int gamma) && gamma >= 0.3 && gamma <= 2.8)
+                        if (double.TryParse(args[1], out double gamma) && gamma >= 0.3 && gamma <= 2.8)
                         {
-                            _gammaValue = gamma;
-                            bool result = intelGPUController.SetBrightnessContrastGamma(_contrastValue, _gammaValue, _brightnessValue);
+                            SettingsManager.Set("Gamma", gamma);
+                            bool result = intelGPUController.SetBrightnessContrastGamma(SettingsManager.Get<double>("Contrast"), gamma, SettingsManager.Get<double>("Brightness"));
                             Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetBrightnessContrastGamma {result}");
                         }
                     }

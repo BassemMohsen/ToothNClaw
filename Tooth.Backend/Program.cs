@@ -50,6 +50,8 @@ namespace Tooth.Backend
             Console.WriteLine($"{PROGRAM_NAME}");
             Console.WriteLine($"[Program] Started with Argument {args[0]}");
 
+            SettingsManager.Initialize();
+
             string packageSid;
             if (args.Length >= 1 && args[0].StartsWith("S-1-"))
                 packageSid = args[0];
