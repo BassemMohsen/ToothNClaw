@@ -5,7 +5,10 @@
 ![Build Status](https://img.shields.io/github/actions/workflow/status/BassemMohsen/ToothNClaw/dotnet-desktop.yml?branch=main&style=for-the-badge&label=Build)
 ![GitHub Repo stars](https://img.shields.io/github/stars/BassemMohsen/ToothNClaw?style=for-the-badge&color=yellow&label=Stars)
 
-<img width="1280" height="640" alt="ToothNClawBanner" src="https://github.com/user-attachments/assets/97ffa058-9699-4799-8978-372bfd9b8fc3" />
+<h1 align="center">
+  <img width="788" height="364" alt="Tooth N Claw Banner" src="https://github.com/user-attachments/assets/2405791a-4a9e-4a29-8c4c-8528ac5782e1">
+</h1>
+
 
 **Tooth N Claw Xbox Game Bar Widget** brings native, controller-friendly performance tuning directly into your gameplay experience.
 - On-the-fly tuning: Adjust APU power and graphics settings instantly, mid-game, without interrupting your session.
