@@ -92,6 +92,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="SettingsManager.cs" />
     <Compile Include="XboxComboListener.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -139,9 +140,6 @@
   <ItemGroup>
     <None Include="Images\tooth.ico" />
     <Content Include="Libraries\IGCL_Wrapper.dll" />
-    <Content Include="Libraries\inpoutx64.dll" TargetPath="inpoutx64.dll" />
-    <Content Include="Libraries\WinRing0x64.dll" TargetPath="WinRing0x64.dll" />
-    <Content Include="Libraries\WinRing0x64.sys" TargetPath="WinRing0x64.sys" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

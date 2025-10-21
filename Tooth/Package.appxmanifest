@@ -16,7 +16,7 @@
   <mp:PhoneIdentity PhoneProductId="695778d8-33d0-498d-b7a2-16f87624ef42" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>Tooth N Claw</DisplayName>
+    <DisplayName>Tooth N Claw: Performance</DisplayName>
     <PublisherDisplayName>BassemMohsen</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -35,7 +35,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="Tooth.App">
       <uap:VisualElements
-        DisplayName="Tooth N Claw"
+        DisplayName="Tooth N Claw: Performance"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Tweak Claw 8 Intel CPU and GPU Settings"

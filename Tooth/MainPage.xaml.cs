@@ -27,7 +27,7 @@ using Windows.UI.Xaml.Navigation;
 namespace Tooth
 {
     /// <summary>
-    /// 可用于自身或导航至 Frame 内部的空白页。
+    /// An empty page that can be used on its own or navigated to within a <see cref="Frame">.
     /// </summary>
     public sealed partial class MainPage : IDisposable
     {
