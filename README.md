@@ -1,21 +1,41 @@
-# Tooth N Claw
+# <img src="https://github.com/user-attachments/assets/118f29e9-f890-4fa2-a8e2-7fb228d7f65e" width="50" height="50" alt="LockScreenLogo" style="vertical-align: middle; margin-right: 8px;" /> Tooth N Claw
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/BassemMohsen/ToothNClaw?style=for-the-badge&color=blue)
-![GitHub all releases](https://img.shields.io/github/downloads/BassemMohsen/ToothNClaw/total?style=for-the-badge&color=green)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/BassemMohsen/ToothNClaw?style=for-the-badge&color=blue)](https://github.com/BassemMohsen/ToothNClaw/releases/latest)
+[![GitHub all releases](https://img.shields.io/github/downloads/BassemMohsen/ToothNClaw/total?style=for-the-badge&color=green)](https://github.com/BassemMohsen/ToothNClaw/releases)
 ![Build Status](https://img.shields.io/github/actions/workflow/status/BassemMohsen/ToothNClaw/dotnet-desktop.yml?branch=main&style=for-the-badge&label=Build)
 ![GitHub Repo stars](https://img.shields.io/github/stars/BassemMohsen/ToothNClaw?style=for-the-badge&color=yellow&label=Stars)
 
-<img width="2560" height="1280" alt="ToothNClawBanner" src="https://github.com/user-attachments/assets/97ffa058-9699-4799-8978-372bfd9b8fc3" />
+<img width="1280" height="640" alt="ToothNClawBanner" src="https://github.com/user-attachments/assets/97ffa058-9699-4799-8978-372bfd9b8fc3" />
 
+**Tooth N Claw Xbox Game Bar Widget** brings native, controller-friendly performance tuning directly into your gameplay experience.
+- On-the-fly tuning: Adjust APU power and graphics settings instantly, mid-game, without interrupting your session.
+- Controller-first experience: Designed for handheld and couch gaming — no need to navigate desktop apps with tiny UI elements made for mouse and keyboard.
+- Filling Windows XBox Fullscreen Experience gaps letting gamers fine-tune system performance directly from the Xbox Game Bar — no more dropping to Desktop mode for simple APU changes.
+- Zero footprint: Uses no CPU or GPU compute and has no power impact.
 
-Tooth N Claw XBox widget allows on the fly adjust the APU power and graphics settings mid game.
-Windows Fullscreen Experience lacks launchers for Intel Graphics Software, and easy controller based settings toggles.
-This improves XBox FSX and gamers don't have to drop off to Desktop mode often to adjust simple APU settings.
+<img width="1920" height="1200" alt="Screenshot 2025-10-21 190036" src="https://github.com/user-attachments/assets/3504fcf3-bb55-4cb2-82ef-72573bf96b13" />
 
-<img width="1920" height="857" alt="Tooth-Widget" src="https://github.com/user-attachments/assets/8d1f7695-8fda-4d01-b793-eec0eb274c66" />
+**Tooth N Claw Color Remaster** 
 
+- Bring your games to life with Color Remaster, a hardware-accelerated color enhancement tool inspired by VibrantDeck.
+- Remaster your visuals: Transform your game’s color and mood — go full Matrix with deep green hues or recreate the golden tones of Lisan al Gaib from Dune.
+- OLED-like experience with punchy colors: Boost your display’s color intensity with Saturation and Contrast controls for rich, vivid output. (Contrast 55, Saturation: 58)
+- Hardware-accelerated performance: Powered by LUT (Look-Up Tables) blocks running directly on the display pipeline — delivering 0% GPU compute usage and exceptional power efficiency.
+- Fine-tune your visuals: Adjust Brightness, Contrast, and Gamma to achieve perfect balance between light and darkness.
 
-# Features
+<img width="1920" height="1200" alt="Heroshot_ColorRemaster" src="https://github.com/user-attachments/assets/cedf8565-39e8-44ee-b553-26fff7752bcd" />
+
+- Next-gen LunarLake/PantherLaken sharpness: Unlock Intel Adaptive Sharpening — a hidden, cutting-edge feature that enhances blurred or upscaled content for a crisper, more detailed image while preserving natural textures.
+- Efficient and smart: Runs entirely on Intel’s display engine — no GPU load, no performance hit, and minimal power draw.
+
+<img width="1920" height="1200" alt="Intel_Adaptive_sharpening" src="https://github.com/user-attachments/assets/4093ed32-2707-4a0d-9420-096902a8c04b" />
+
+# ☕ Support Me
+If you like my work, you can buy me a coffee:   [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bassemnomany)
+
+# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/tag/v1.0.60.0)
+
+# Features list
 - **CPU Boost Toggle** – Enable or disable CPU Boost to reduce power consumption by up to 50%, freeing power headroom for the GPU.
 - **Frame Limiter** – Lock your frame rate for consistent performance and thermals. With VRR displays, optimal values are typically 48–116 FPS.
 - **Frame Sync Options** – Choose your preferred frame synchronization mode to balance latency and visual smoothness.
@@ -24,17 +44,14 @@ This improves XBox FSX and gamers don't have to drop off to Desktop mode often t
 - **Xe Low Latency (XeLL)** – Reduces input latency by intelligently delaying frame presentation for improved responsiveness.
 - **Intel Graphics Software Launcher** – Provides quick access to the Intel Graphics Control Center, even when running in Xbox Game Bar full-screen mode.
 - **Hot Key function** using View button and X button marked in blue in the image [Only in Desktop mode, not XBox Fullscreen experience]
-
-# ☕ Support Me
-If you like my work, you can buy me a coffee:   [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bassemnomany)
-
-# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/download/v1.0.57.0/Tooth.Package_1.0.57.0_x64.zip)
-
+- **Color Remaster** Contrast, Saturation, Brightness, Hue and Gamma.
+- **Intel Adaptive Sharpening**
 
 Note: This is designed to be lightweight and complement MSI Quick Settings options. This is not intended to replace MSI Quick Settings.
 
 # Supported Devices
-MSI Claw 8 AI+ A2VM with Intel Lunar Lake.
+- MSI Claw 8 AI+ A2VM with Intel Lunar Lake.
+- Requires Intel Graphics Software and Intel Drivers for Lunar Lake APU.
 
 # Bugs & Features
 Found a bug and want it fixed? Have an idea for a new feature?
@@ -46,14 +63,6 @@ Please [open an issue](https://github.com/BassemMohsen/ToothNClaw/issues) in the
 - [chenx-dust/RyzenAdjUWP](https://github.com/chenx-dust/RyzenAdjUWP)
 
 # Frequently Asked Questions
-## How to unhide or enable CPU Boost policy?
-Open command as administrator and run following commands:
-<pre> ```powershell
-  reg add "HKLM\SYSTEM\CurrentControlSet\Control\Power\PowerSettings\54533251-82be-4824-96c1-47b60b740d00\be337238-0d82-4146-a960-4f3749d470c7" /v Attributes /t REG_DWORD /d 2 /f
-  powercfg -setactive SCHEME_CURRENT
-``` </pre>
-Then close down ToothNClaw widget from Gamebar, and restart the widget. It should work now!
-
 ## Anti-virus warnings
 Some anti-virus programs may flag this software because it is signed with a developer certificate rather than a widely recognized certificate.
 To run it without warnings, you will need to install the included developer certificate first.
