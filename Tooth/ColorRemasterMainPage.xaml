@@ -226,7 +226,7 @@
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             FontSize="16"
-                                            Height="5"
+                                            Height="45"
                                             Margin="10,0,5,0"
                                             Width="115"/>
                         </Grid>

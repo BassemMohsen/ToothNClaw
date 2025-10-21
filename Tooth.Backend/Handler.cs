@@ -20,11 +20,11 @@ namespace Tooth.Backend
         private IntelGPU intelGPUController;
         private Communication _communication;
 
-        private double _hueValue;
-        private double _saturationValue;
-        private double _brightnessValue;
-        private double _gammaValue;
-        private double _contrastValue;
+        private double _hueValue=0;
+        private double _saturationValue=50;
+        private double _brightnessValue=50;
+        private double _gammaValue=1;
+        private double _contrastValue = 50;
 
         public Handler()
         {
@@ -529,7 +529,7 @@ namespace Tooth.Backend
                         {
                             intelGPUController = new IntelGPU();
                         }
-                        if (int.TryParse(args[1], out int gamma) && gamma >= 0 && gamma <= 100)
+                        if (int.TryParse(args[1], out int gamma) && gamma >= 0.3 && gamma <= 2.8)
                         {
                             _gammaValue = gamma;
                             bool result = intelGPUController.SetBrightnessContrastGamma(_contrastValue, _gammaValue, _brightnessValue);
