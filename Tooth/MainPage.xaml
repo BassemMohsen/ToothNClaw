@@ -306,7 +306,7 @@
                 </StackPanel>
 
                 <!-- Xe Low Latency -->
-                <StackPanel Orientation="Vertical" Spacing="4">
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,0,0,10">
                     <TextBlock Text="Xe Low Latency"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
@@ -335,6 +335,7 @@
                         </ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
+                
             </StackPanel>
         </ScrollViewer>
     </Grid>

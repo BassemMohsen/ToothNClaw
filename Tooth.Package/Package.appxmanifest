@@ -11,7 +11,7 @@
   <Identity
     Name="BassemNomany.ToothNClaw"
     Publisher="CN=0E013939-CEFB-4F80-B4B4-B857260CB91A"
-    Version="1.0.58.0" />
+    Version="1.0.61.0" />
 
   <Properties>
     <DisplayName>Tooth N Claw</DisplayName>
