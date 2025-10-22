@@ -256,11 +256,6 @@ namespace Tooth
             CpuBoostModeSelector.SelectedValue = _model.BoostMode;
         }
 
-        private void LaunchIGSButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            Backend.Instance.Send($"IntelGraphicsSofware");
-        }
-
         private void FrameSyncComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // handle Xe Frame Sync selection changes

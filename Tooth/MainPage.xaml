@@ -335,17 +335,6 @@
                         </ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
-
-                <!-- Launch Intel Graphics Software -->
-                <Button x:Name="LaunchIGSButton"
-                        Margin="0,5"
-                        HorizontalAlignment="Stretch"
-                        Click="LaunchIGSButton_OnClick"
-                        FontSize="18"
-                        Background="#FF2256A9"
-                        Height="53">
-                    Launch Intel Graphics Software
-                </Button>
             </StackPanel>
         </ScrollViewer>
     </Grid>

@@ -330,12 +330,6 @@ namespace Tooth.Backend
                         }
                     }
                     break;
-                case "IntelGraphicsSofware":
-                    {
-						Console.WriteLine($"[Server Handler] Launch Intel Graphics Software");
-                        launchIntelGraphicsSofware();
-                    }
-                    break;
                 case "set-resolution":
                     {
                         Console.WriteLine($"[Server Handler] Setting Resolution to {args[1]}");
@@ -568,33 +562,6 @@ namespace Tooth.Backend
                     break;
                 default:
                     break;
-            }
-        }
-
-        async void launchIntelGraphicsSofware()
-        {
-
-            string path = @"C:\Program Files\Intel\Intel Graphics Software\IntelGraphicsSoftware.exe";
-
-            if (!File.Exists(path))
-            {
-				// File doesn’t exist, log or notify gracefully
-				Console.WriteLine($"[Warning] Intel Graphics Software not found at '{path}'");
-                return;
-            }
-
-            try
-            {
-                await Task.Run(() =>
-                {
-                    Process.Start("C:\\Program Files\\Intel\\Intel Graphics Software\\IntelGraphicsSoftware.exe");
-                });
-				Console.WriteLine("[Info] Launched Intel Graphics Software successfully.");
-            }
-            catch (Exception ex)
-            {
-				// Catch any other exceptions and log them
-				Console.WriteLine($"[Error] Failed to launch Intel Graphics Software: {ex.Message}");
             }
         }
 
