@@ -60,6 +60,7 @@ Note: This is designed to be lightweight and complement MSI Quick Settings optio
 
 # Supported Devices
 - MSI Claw 8 AI+ A2VM with Intel Lunar Lake.
+- MSI Claw 7 AI+ A2VM with Intel Lunar Lake (Partial)
 - Requires Intel Graphics Software and Intel Drivers for Lunar Lake APU.
 
 # Bugs & Features
@@ -74,25 +75,7 @@ Please [open an issue](https://github.com/BassemMohsen/ToothNClaw/issues) in the
 > Big shout-out to the Intel Graphics Team for the IGCL library, with its well-designed APIs and useful samples that Tooth N Claw leverages to offer Game Bar widget controls.
 
 # Frequently Asked Questions
-## Anti-virus warnings
-Some anti-virus programs may flag this software because it is signed with a developer certificate rather than a widely recognized certificate.
-To run it without warnings, you will need to install the included developer certificate first.
-Acquiring a widely recognized certificate can be expensive. With enough community support or donations, I hope to obtain one in the future.
-
-## Installation issues: "This app package’s publisher certificate could not be verified."
-Windows need to trust my developer signature on the .msixbundle
-1. Double-click the .cer file → Install Certificate.
-2. Choose **Local Machine** → Place all certificates in the **Trusted Root Certification Authorities** store.
-3. After this, Windows will trust the certificate, and you should be able to install the MSIX bundle.
-   **Note:** Make sure to install it for **Local Machine**, If you only install it to Current User, some apps may still fail depending on execution context.
-
 ## How to uninstall my Tooth N Claw?
 Open Windows Settings -> Apps -> Installed Apps
 Uninstall Tooth N Claw using the ... -> Uninstall
-
-## How to uninstall my developer certificate?
-1. Press Win + R, type: 'certlm.msc'
-2. Navigate to: ' Trusted Root Certification Authorities → Certificates'
-   Find my certificate under name "Bassem Mohsen" or "0E013939-CEFB-4F80-B4B4-B857260CB91A"
-3. Right Click then Delete
    
