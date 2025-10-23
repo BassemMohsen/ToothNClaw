@@ -11,10 +11,10 @@
 
 
 **Tooth N Claw Xbox Game Bar Widget** brings native, controller-friendly performance tuning directly into your gameplay experience.
-- On-the-fly tuning: Adjust APU power and graphics settings instantly, mid-game, without interrupting your session.
+- On-the-fly tuning: Adjust APU power and graphics settings instantly from gamebar, mid-game, without interrupting your session.
 - Controller-first experience: Designed for handheld and couch gaming — no need to navigate desktop apps with tiny UI elements made for mouse and keyboard.
 - Filling Windows XBox Fullscreen Experience gaps letting gamers fine-tune system performance directly from the Xbox Game Bar — no more dropping to Desktop mode for simple APU changes.
-- Zero footprint: Uses no CPU or GPU compute and has no power impact.
+- Zero compute footprint: Uses no CPU or GPU compute and has no power impact.
 
 <img width="1920" height="1200" alt="Screenshot 2025-10-21 190036" src="https://github.com/user-attachments/assets/3504fcf3-bb55-4cb2-82ef-72573bf96b13" />
 
@@ -23,13 +23,13 @@
 - Bring your games to life with Color Remaster, a hardware-accelerated color enhancement tool inspired by VibrantDeck.
 - Remaster your visuals: Transform your game’s color and mood — go full Matrix with deep green hues or recreate the golden tones of Lisan al Gaib from Dune.
 - OLED-like experience with punchy colors: Boost your display’s color intensity with Saturation and Contrast controls for rich, vivid output. (Contrast 55, Saturation: 58)
-- Hardware-accelerated performance: Powered by LUT (Look-Up Tables) blocks running directly on the display pipeline — delivering 0% GPU compute usage and exceptional power efficiency.
-- Fine-tune your visuals: Adjust Brightness, Contrast, and Gamma to achieve perfect balance between light and darkness.
+- Hardware-accelerated performance: Powered by LUT (Look-Up Tables) blocks running directly on the display pipeline — 0% GPU compute usage and exceptional power efficiency from Intel.
+- Fine-tune your visuals: Adjust Brightness, Contrast, and Gamma to find your perfect balance between light and darkness.
 
 <img width="1920" height="1200" alt="Heroshot_ColorRemaster" src="https://github.com/user-attachments/assets/cedf8565-39e8-44ee-b553-26fff7752bcd" />
 
-- Next-gen LunarLake/PantherLaken sharpness: Unlock Intel Adaptive Sharpening — a hidden, cutting-edge feature that enhances blurred or upscaled content for a crisper, more detailed image while preserving natural textures.
-- Efficient and smart: Runs entirely on Intel’s display engine — no GPU load, no performance hit, and minimal power draw.
+- Next-gen LunarLake/PantherLaken sharpness: Unlock Intel Adaptive Sharpening — a novel feature by Intel that enhances blurred or upscaled content for a crisper, more detailed image while preserving natural textures.
+- Adaptive Sharpening is Efficient and smart: Runs entirely on Intel’s display engine block — no GPU load, no performance hit, and minimal power draw.
 
 <img width="1920" height="1200" alt="Intel_Adaptive_sharpening" src="https://github.com/user-attachments/assets/4093ed32-2707-4a0d-9420-096902a8c04b" />
 
@@ -48,7 +48,7 @@ If you like my work, you can buy me a coffee:   [![Donate via PayPal](https://im
 - **Intel Graphics Software Launcher** – Provides quick access to the Intel Graphics Control Center, even when running in Xbox Game Bar full-screen mode.
 - **Hot Key function** using View button and X button marked in blue in the image [Only in Desktop mode, not XBox Fullscreen experience]
 - **Color Remaster** Contrast, Saturation, Brightness, Hue and Gamma.
-- **Intel Adaptive Sharpening**
+- **Intel Adaptive Sharpening** Enhance details in blurred or upscaled content to make it crisper. 
 
 Note: This is designed to be lightweight and complement MSI Quick Settings options. This is not intended to replace MSI Quick Settings.
 
@@ -64,6 +64,8 @@ Please [open an issue](https://github.com/BassemMohsen/ToothNClaw/issues) in the
 - [Valkirie/HandheldCompanion](https://github.com/Valkirie/HandheldCompanion)
 - [Intel IGCL Library](https://github.com/intel/drivers.gpu.control-library)
 - [chenx-dust/RyzenAdjUWP](https://github.com/chenx-dust/RyzenAdjUWP)
+
+> Big shout-out to the Intel Graphics Team for the IGCL library, with its well-designed APIs and useful samples that Tooth N Claw leverages to offer Game Bar widget controls.
 
 # Frequently Asked Questions
 ## Anti-virus warnings
