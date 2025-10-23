@@ -39,9 +39,15 @@ If you like my work, you can buy me a coffee:   [![Donate via PayPal](https://im
 # [:floppy_disk: Download](https://apps.microsoft.com/detail/9MWZPXH1K9LD)
 
 Tooth N Claw is now officially available on the Microsoft Store!  
-Click the badge above or open this link directly: 
+Click the badge below open directly: 
 
-[![Get it from Microsoft Store](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9MWZPXH1K9LD)
+<a href="https://apps.microsoft.com/detail/9MWZPXH1K9LD">
+  <img
+    src="https://get.microsoft.com/images/en-us%20dark.svg"
+    alt="Get it from Microsoft Store"
+    style="width: 320px; max-width: 100%; height: auto;"
+  />
+</a>
 
 
 # Features list
