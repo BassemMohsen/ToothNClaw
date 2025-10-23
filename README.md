@@ -36,7 +36,13 @@
 # ☕ Support Me
 If you like my work, you can buy me a coffee:   [![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://paypal.me/bassemnomany)
 
-# [:floppy_disk: Download](https://github.com/BassemMohsen/ToothNClaw/releases/tag/v1.0.60.0)
+# [:floppy_disk: Download](https://apps.microsoft.com/detail/9MWZPXH1K9LD)
+
+Tooth N Claw is now officially available on the Microsoft Store!  
+Click the badge above or open this link directly: 
+
+[![Get it from Microsoft Store](https://get.microsoft.com/images/en-us%20dark.svg)](https://apps.microsoft.com/detail/9MWZPXH1K9LD)
+
 
 # Features list
 - **CPU Boost Toggle** – Enable or disable CPU Boost to reduce power consumption by up to 50%, freeing power headroom for the GPU.
