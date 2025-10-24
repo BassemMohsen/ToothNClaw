@@ -64,6 +64,11 @@ Click the badge below open directly:
 
 Note: This is designed to be lightweight and complement MSI Quick Settings options. This is not intended to replace MSI Quick Settings.
 
+# 🎥 Featured Demos, Showcases & Community Tutorials
+
+[![Watch the video](https://img.youtube.com/vi/emzgflgQCSM/hqdefault.jpg)](https://www.youtube.com/watch?v=emzgflgQCSM)
+
+
 # Supported Devices
 - MSI Claw 8 AI+ A2VM with Intel Lunar Lake.
 - MSI Claw 7 AI+ A2VM with Intel Lunar Lake (Partial)
