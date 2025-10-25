@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using System.Text.Json;
 
 namespace Tooth
 {
@@ -31,6 +32,8 @@ namespace Tooth
     /// </summary>
     public sealed partial class MainPage : IDisposable
     {
+
+
         private static MainPageModel _modelBase = new MainPageModel();
         private MainPageModelWrapper _model;
 
@@ -60,6 +63,7 @@ namespace Tooth
             Backend.Instance.Send("get-fps-limit");
             Backend.Instance.Send("get-boost");
             Backend.Instance.Send("get-EnduranceGaming");
+            Backend.Instance.Send("get-supported-resolutions");
             Backend.Instance.Send("get-resolution");
             Backend.Instance.Send("get-fps-limiter-value");
             Backend.Instance.Send("get-fps-limiter-enabled");
@@ -150,12 +154,36 @@ namespace Tooth
                     _model.SetAutoStartVar(bool.Parse(args[1]));
                     break;
                 case "resolution":
-                    _model.Resolution = double.Parse(args[1]);
-                    _model.SetResolutionVar(double.Parse(args[1]));
+                    _model.Resolution = int.Parse(args[1]);
+                    _model.SetResolutionVar(int.Parse(args[1]));
+                    Trace.WriteLine($"[MainPage.xaml.cs] Recieved Resolution id: {_model.Resolution}");
+
+                    ResolutionComboBox.SelectedValue = _model.Resolution;
                     break;
                 case "launch-gamebar-widget":
                     Trace.WriteLine($"[MainPage.xaml.cs] Recieved launch-gamebar-widget");
                     launchGameBarWidget();
+                    break;
+                case "supported-resolutions":
+
+                    args = message.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                    if (args.Length < 2)
+                    {
+                        Trace.WriteLine("Malformed message: missing JSON payload");
+                        break;
+                    }
+                    try
+                    {
+                        Trace.WriteLine("Raw payload: " + args[1]);
+                        _model.Resolutions = System.Text.Json.JsonSerializer.Deserialize<List<Resolution>>(args[1]);
+                        ResolutionComboBox.ItemsSource = _model.Resolutions;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"Failed to parse resolutions: {ex.Message}");
+                    }
+
                     break;
 
             }
@@ -278,7 +306,7 @@ namespace Tooth
             if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item)
             {
                 // Extract the Tag (0, 1, or 2)
-                if (item.Tag is double tagValue)
+                if (item.Tag is int tagValue)
                 {
                     if (DataContext is MainPageModelWrapper model)
                     {
