@@ -956,7 +956,7 @@ namespace Tooth.IGCL
 
             // fill custom scaling details with Adaptive Sharpning
             GetSharpness.Intensity = sharpness;
-            GetSharpness.Enable = (sharpness > 0);
+            GetSharpness.Enable = true;
             GetSharpness.FilterType = ctl_sharpness_filter_type_flag_t.CTL_SHARPNESS_FILTER_TYPE_FLAG_ADAPTIVE;
 
             Result = SetSharpnessSettings(hDevice, displayIdx, GetSharpness);
