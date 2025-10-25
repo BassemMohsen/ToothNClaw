@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 
@@ -53,28 +54,98 @@ namespace Tooth.Backend
             return ps;
         }
 
-        public void Run()
+        public async Task Run(CancellationToken token)
         {
-            Console.WriteLine($"[Connection] Waiting for connection");
-            _server.WaitForConnection();
-            Console.WriteLine($"[Connection] Connection established");
-            ConnectedEvent?.Invoke(this, null);
-
-            while (true)
+            try
             {
-                if (!_server.IsConnected)
+                while (!token.IsCancellationRequested)
                 {
-                    _server.Disconnect();
-                    Console.WriteLine("[Connection] Disconnected, waiting for reconnecting");
-                    DisconnectedEvent?.Invoke(this, null);
-                    _server.WaitForConnection();
-                    Console.WriteLine("[Connection] Reconnected");
-                    ConnectedEvent?.Invoke(this, null);
+                    try
+                    {
+                        Console.WriteLine("[Connection] Waiting for connection...");
+
+                        // WaitForConnection is blocking — move to Task.Run so we can cancel
+                        await Task.Run(() => _server.WaitForConnection(), token);
+                        if (token.IsCancellationRequested) break;
+
+                        Console.WriteLine("[Connection] Connection established");
+                        ConnectedEvent?.Invoke(this, EventArgs.Empty);
+
+                        using var reader = _reader;
+                        while (_server.IsConnected && !token.IsCancellationRequested)
+                        {
+                            // Check for cancellation in between blocking reads
+                            if (token.IsCancellationRequested)
+                                break;
+
+                            string? message = null;
+
+                            // ReadLine() can block, so wrap in Task.Run to allow cancellation
+                            try
+                            {
+                                message = await Task.Run(() => reader.ReadLine(), token);
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                break;
+                            }
+
+                            if (message == null)
+                            {
+                                // Null => disconnected or EOF
+                                Console.WriteLine("[Connection] Stream closed");
+                                break;
+                            }
+
+                            Console.WriteLine($"[Server Connection] Received: {message}");
+                            ReceivedEvent?.Invoke(this, message);
+                        }
+                    }
+                    catch (IOException)
+                    {
+                        Console.WriteLine("[Connection] IO Exception — likely disconnected");
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        Console.WriteLine("[Connection] Cancelled");
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[Connection] Exception: {ex}");
+                    }
+                    finally
+                    {
+                        if (_server.IsConnected)
+                        {
+                            try { _server.Disconnect(); } catch { }
+                        }
+
+                        DisconnectedEvent?.Invoke(this, EventArgs.Empty);
+                    }
+
+                    // Small delay before retrying, avoids busy loop on rapid reconnects
+                    await Task.Delay(500, token);
                 }
-                string message = _reader.ReadLine();
-                Console.WriteLine($"[Server Connection] Received: {message}");
-                if (!string.IsNullOrEmpty(message))
-                    ReceivedEvent?.Invoke(this, message);
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("[Connection] Run loop cancelled");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Connection] Unhandled exception in Run: {ex}");
+            }
+            finally
+            {
+                try
+                {
+                    if (_server.IsConnected)
+                        _server.Disconnect();
+                }
+                catch { }
+
+                Console.WriteLine("[Connection] Run loop exited");
             }
         }
 

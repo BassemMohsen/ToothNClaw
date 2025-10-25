@@ -33,11 +33,13 @@ namespace Tooth.Backend
         const string PROGRAM_NAME = "ToothNClaw.Service";
 
         [STAThread]
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            // Hide console window only in Release mode
+            // Hide console window only in Release mode (optional)
+#if !DEBUG
             var handle = GetConsoleWindow();
             ShowWindow(handle, SW_HIDE);
+#endif
 
             _mutex = new Mutex(true, "Tooth.Backend");
             if (!_mutex.WaitOne(TimeSpan.Zero, true))
@@ -46,55 +48,105 @@ namespace Tooth.Backend
                 return;
             }
 
+            // Safe args access
+            string arg0 = args?.Length > 0 ? args[0] : null;
+
             // Start your backend communication
             Console.WriteLine($"{PROGRAM_NAME}");
             Console.WriteLine($"[Program] Started with Argument {args[0]}");
 
-            SettingsManager.Initialize();
+            // Prepare cancellation for background services
+            var cts = new CancellationTokenSource();
 
-            string packageSid;
-            if (args.Length >= 1 && args[0].StartsWith("S-1-"))
-                packageSid = args[0];
-            else
-                packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
-
-            var comm = new Communication(packageSid);
-            handler = new Handler();
-
-            handler.Register(comm);
-            Task.Run(() => comm.Run()); // Run in background
-
-            // Handle Controller combo shortcut listerner
-            var comboListener = new XboxComboListener();
-
-            comboListener.ComboPressed += () =>
-            {
-                Console.WriteLine("View + X pressed!");
-                LaunchToothGameBar();
-                LaunchToothGameBarWidget();
-
-            };
-
-            comboListener.ComboReleased += () =>
-            {
-                Console.WriteLine("View + A released.");
-            };
-
-            comboListener.Start();
-
-
-            // Run hidden message loop to keep app alive
-            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TrayAppContext());
+
+            // Create ApplicationContext early so we have a UI context for non-blocking startup tasks
+            var trayContext = new TrayAppContext(cts);
+
+            // Start message loop on STA thread (this call blocks until Application.Exit is invoked)
+            // But first we start background initialization tasks which will not block UI thread.
+            try
+            {
+                // Kick off initialization in background so UI thread remains responsive
+                var initTask = Task.Run(async () =>
+                {
+                    try
+                    {
+                        // Do potentially blocking init here
+                        SettingsManager.Initialize();
+
+                        string packageSid;
+                        if (!string.IsNullOrEmpty(arg0) && arg0.StartsWith("S-1-"))
+                            packageSid = arg0;
+                        else
+                            packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
+
+                        var comm = new Communication(packageSid);
+                        handler = new Handler();
+
+                        handler.Register(comm);
+
+                        // Start the comm loop and keep a reference so we can cancel it later
+                        var commTask = Task.Run(() => comm.Run(cts.Token), cts.Token);
+
+                        // Start other background services if needed
+                        // e.g. any long-running initializations, network calls, DB opens, etc.
+
+                        // Log and observe communication task
+                        _ = commTask.ContinueWith(t =>
+                        {
+                            if (t.IsFaulted) Console.WriteLine($"[comm] Faulted: {t.Exception}");
+                            else Console.WriteLine("[comm] Exited normally.");
+                        }, TaskScheduler.Default);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[init] Exception: {ex}");
+                        // decide whether to signal exit if init must succeed:
+                        // trayContext.PostLog($"Initialization failed: {ex.Message}");
+                    }
+                }, cts.Token);
+
+                // Start combo listener on UI thread if it relies on message pump, otherwise you can run it on background.
+                var comboListener = new XboxComboListener();
+
+                comboListener.ComboPressed += () =>
+                {
+                    Console.WriteLine("View + X pressed!");
+                    LaunchToothGameBar();
+                    LaunchToothGameBarWidget();
+                };
+
+                comboListener.ComboReleased += () =>
+                {
+                    Console.WriteLine("View + A released.");
+                };
+
+                comboListener.Start();
+
+                // Now run WinForms message loop (keeps process alive, handles tray icon)
+                Application.Run(trayContext);
+
+                // When Application.Exit is called, we reach here: request cancellation for background tasks
+                cts.Cancel();
+                await Task.WhenAny(initTask, Task.Delay(2000)); // short grace period for init to stop
+            }
+            finally
+            {
+                cts.Cancel();
+                _mutex?.ReleaseMutex();
+            }
         }
 
         public class TrayAppContext : ApplicationContext
         {
             private NotifyIcon trayIcon;
+            private readonly CancellationTokenSource _cts;
 
-            public TrayAppContext()
+            public TrayAppContext(CancellationTokenSource cts)
             {
+                _cts = cts ?? new CancellationTokenSource();
+
                 trayIcon = new NotifyIcon()
                 {
                     Icon = Properties.Resources.tooth,
@@ -102,14 +154,14 @@ namespace Tooth.Backend
                     Visible = true,
                     ContextMenuStrip = new ContextMenuStrip()
                     {
-                        Items = {
-                        new ToolStripMenuItem("Show/Hide", null, OnOpen),
-                        new ToolStripMenuItem("Exit", null, OnExit)
-                    }
+                        Items =
+                        {
+                            //new ToolStripMenuItem("Show/Hide", null, OnOpen),
+                            new ToolStripMenuItem("Exit", null, OnExit)
+                        }
                     }
                 };
 
-                // Handle double-click to toggle show/hide
                 trayIcon.DoubleClick += OnOpen;
             }
 
@@ -137,6 +189,8 @@ namespace Tooth.Backend
             void OnExit(object sender, EventArgs e)
             {
                 trayIcon.Visible = false;
+                // signal cancellation to background tasks
+                _cts.Cancel();
                 Application.Exit();
             }
         }
@@ -148,7 +202,9 @@ namespace Tooth.Backend
 
         private static void LaunchToothGameBarWidget()
         {
-            handler.sendLaunchGameBarWidget();
+            // defensive-null check
+            try { handler?.sendLaunchGameBarWidget(); }
+            catch (Exception ex) { Console.WriteLine($"[LaunchWidget] {ex}"); }
         }
 
         private static void LaunchToothGameBar ()
@@ -165,12 +221,18 @@ namespace Tooth.Backend
             {
                 Console.WriteLine("LaunchToothGameBar () failed!");
             }*/
-
-            var inputSimulator = new InputSimulator();
-            inputSimulator.Keyboard.KeyDown(VirtualKeyCode.LWIN);
-            inputSimulator.Keyboard.KeyPress(VirtualKeyCode.VK_G);
-            inputSimulator.Keyboard.KeyUp(VirtualKeyCode.VK_G);
-            inputSimulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
+            try
+            {
+                var inputSimulator = new InputSimulator();
+                inputSimulator.Keyboard.KeyDown(VirtualKeyCode.LWIN);
+                inputSimulator.Keyboard.KeyPress(VirtualKeyCode.VK_G);
+                inputSimulator.Keyboard.KeyUp(VirtualKeyCode.VK_G);
+                inputSimulator.Keyboard.KeyUp(VirtualKeyCode.LWIN);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[LaunchGameBar] {ex}");
+            }
         }
 
     }
