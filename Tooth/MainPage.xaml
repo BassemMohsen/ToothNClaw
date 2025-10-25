@@ -241,31 +241,13 @@
                     <ComboBox x:Name="ResolutionComboBox"
                               HorizontalAlignment="Stretch"
                               SelectionChanged="ResolutionComboBox_SelectionChanged"
+                              DisplayMemberPath="DisplayText"
+                              SelectedValuePath="Id"
+                              ItemsSource="{Binding Resolutions, Mode=OneWay}"
                               SelectedValue="{Binding Resolution, Mode=TwoWay}"
-                              SelectedValuePath="Tag"
                               FontSize="18"
                               Height="40"
                               Margin="5,0,5,0">
-                        <ComboBoxItem Content="1920 x 1200 (Native)" IsSelected="True">
-                            <ComboBoxItem.Tag>
-                                <x:Double>0</x:Double>
-                            </ComboBoxItem.Tag>
-                        </ComboBoxItem>
-                        <ComboBoxItem Content="1680 x 1050">
-                            <ComboBoxItem.Tag>
-                                <x:Double>1</x:Double>
-                            </ComboBoxItem.Tag>
-                        </ComboBoxItem>
-                        <ComboBoxItem Content="1440 x 900" >
-                            <ComboBoxItem.Tag>
-                                <x:Double>2</x:Double>
-                            </ComboBoxItem.Tag>
-                        </ComboBoxItem>
-                        <ComboBoxItem Content="1280 x 800">
-                            <ComboBoxItem.Tag>
-                                <x:Double>3</x:Double>
-                            </ComboBoxItem.Tag>
-                        </ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
 

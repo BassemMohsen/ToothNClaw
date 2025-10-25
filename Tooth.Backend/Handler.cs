@@ -11,6 +11,8 @@ using Tooth.IGCL;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml.Controls;
+using System.Text.Json;
+using static Tooth.Backend.DisplayController;
 using static Tooth.GraphicsProcessingUnit.IntelGPU;
 using static Tooth.IGCL.IGCLBackend;
 namespace Tooth.Backend
@@ -20,6 +22,7 @@ namespace Tooth.Backend
         private CpuBoostController cpuBoostController;
         private IntelGPU intelGPUController;
         private Communication _communication;
+        private List<Resolution> resolutions;
 
         public Handler()
         {
@@ -334,80 +337,65 @@ namespace Tooth.Backend
                     {
                         Console.WriteLine($"[Server Handler] Setting Resolution to {args[1]}");
                         bool result = false;
-                        switch (args[1])
+                        if (int.TryParse(args[1], out int id) && resolutions != null)
                         {
-                            case "0":
-                                result = intelGPUController.SetGPUScaling(false);
-                                Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
-                                result = intelGPUController.SetScalingMode(0);
-                                Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+                            var res = resolutions.FirstOrDefault(r => r.Id == id);
+                            Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
+                            if (!res.Equals(default(Resolution)))
+                            {
+                                result = DisplayController.SetPrimaryResolution(res.Width, res.Height);
+                                if (id == 0)
+                                {
+                                    result = intelGPUController.SetGPUScaling(false);
+                                    Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
+                                    result = intelGPUController.SetScalingMode(0);
+                                    Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+                                }
+                                else
+                                {
+                                    result = intelGPUController.SetGPUScaling(true);
+                                    Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
+                                    result = intelGPUController.SetScalingMode(1);
+                                    Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+                                }
 
-                                result = DisplayController.SetResolution(1920, 1200);
-                                Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
-                                break;
-                            case "1":
-
-                                result = intelGPUController.SetGPUScaling(true);
-                                Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
-                                result = intelGPUController.SetScalingMode(1);
-                                Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
-
-                                result = DisplayController.SetResolution(1680, 1050);
-                                Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
-                                break;
-                            case "2":
-                                result = intelGPUController.SetGPUScaling(true);
-                                Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
-                                result = intelGPUController.SetScalingMode(1);
-                                Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
-
-                                result = DisplayController.SetResolution(1440, 900);
-                                Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
-                                break;
-                            case "3":
-                                result = intelGPUController.SetGPUScaling(true);
-                                Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
-                                result = intelGPUController.SetScalingMode(1);
-                                Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
-
-                                result = DisplayController.SetResolution(1280, 800);
-                                Console.WriteLine($"[Server Handler] Set Display Resolution {result}");
-                                break;
-                            default:
+                            }
+                            else
+                            {
                                 Console.WriteLine($"[Server Handler] Wrong Arg value: Display Resolution won't be set {args[1]}");
-                                break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[Server Handler] Wrong Arg value: Display Resolution won't be set {args[1]}");
+                        }
+
+                    }
+                    break;
+                case "get-supported-resolutions":
+                    {
+                        resolutions = DisplayController.GetPrimaryDisplaySupportedResolutions();
+                        // Serialize to JSON string
+                        string json = System.Text.Json.JsonSerializer.Serialize(resolutions);
+                        (sender as Communication).Send("supported-resolutions " + json);
+
+                        foreach (var res in resolutions)
+                        {
+                            Console.WriteLine($"Supported Resolution: {res.DisplayName} - {res.Id}  - {res.Width}x{res.Height} @{res.Frequency}Hz");
                         }
                     }
                     break;
                 case "get-resolution":
                     {
-                        DisplayController.Resolution currentResolution = DisplayController.GetResolution();
+                        DisplayController.Resolution currentResolution = DisplayController.GetPrimaryDisplayResolution();
 
-                        if (currentResolution.Width == 1920 && currentResolution.Height == 1200)
-                        {
-                            Console.WriteLine($"[Server Handler] Responding with Resolution 0");
-                            (sender as Communication).Send("resolution" + ' ' + "0");
-                        }
-                        else if (currentResolution.Width == 1680 && currentResolution.Height == 1050)
-                        {
-                            Console.WriteLine($"[Server Handler] Responding with Resolution 1");
-                            (sender as Communication).Send("resolution" + ' ' + "1");
-                        }
-                        else if (currentResolution.Width == 1440 && currentResolution.Height == 900)
-                        {
-                            Console.WriteLine($"[Server Handler] Responding with Resolution 2");
-                            (sender as Communication).Send("resolution" + ' ' + "2");
-                        }
-                        else if (currentResolution.Width == 1280 && currentResolution.Height == 800)
-                        {
-                            Console.WriteLine($"[Server Handler] Responding with Resolution 3");
-                            (sender as Communication).Send("resolution" + ' ' + "3");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"[Server Handler] Responding with Resolution Unknown");
-                            (sender as Communication).Send("resolution" + ' ' + "-1");
-                        }
+                        // Try to find matching Id
+                        var match = resolutions.FirstOrDefault(r =>
+                            r.Width == currentResolution.Width && r.Height == currentResolution.Height);
+
+                        int currentId = match.Equals(default(Resolution)) ? 0 : match.Id;
+                        Console.WriteLine($"[Server Handler] Responding with Resolution {currentId}");
+                        (sender as Communication).Send("resolution" + ' ' + currentId);
                     }
                     break;
                 case "init":
