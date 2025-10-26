@@ -971,7 +971,7 @@ namespace Tooth.IGCL
             return RetroScalingCaps.SupportedRetroScaling >= 0;
         }
 
-        internal static bool GetRetroScaling(nint deviceIdx)
+        internal static bool GetRetroScalingEnabled(nint deviceIdx)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             ctl_retro_scaling_settings_t RetroScalingSettings = new();
@@ -992,11 +992,32 @@ namespace Tooth.IGCL
             return RetroScalingSettings.Enable;
         }
 
-        internal static bool SetRetroScaling(nint deviceIdx, bool enabled, byte type)
+        internal static ctl_retro_scaling_type_flags_t GetRetroScalingType(nint deviceIdx)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             ctl_retro_scaling_settings_t RetroScalingSettings = new();
-            ctl_retro_scaling_type_flags_t RetroScalingType = (ctl_retro_scaling_type_flags_t)(type + 1);
+
+            IntPtr device = devices[deviceIdx];
+            if (device == IntPtr.Zero)
+                return ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_MAX;
+
+            ctl_device_adapter_handle_t hDevice = new()
+            {
+                handle = device
+            };
+
+            Result = GetRetroScalingSettings(hDevice, ref RetroScalingSettings);
+            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
+                return ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_MAX;
+
+            return RetroScalingSettings.RetroScalingType;
+        }
+
+        internal static bool SetRetroScaling(nint deviceIdx, bool enabled, ctl_retro_scaling_type_flags_t type)
+        {
+            ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
+            ctl_retro_scaling_settings_t RetroScalingSettings = new();
+            ctl_retro_scaling_type_flags_t RetroScalingType = type;
 
             IntPtr device = devices[deviceIdx];
             if (device == IntPtr.Zero)

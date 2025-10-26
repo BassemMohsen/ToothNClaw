@@ -162,12 +162,20 @@ namespace Tooth.GraphicsProcessingUnit
             return IGCLBackend.GetImageSharpeningSharpness(deviceIdx, 0);
         }
 
-        public bool GetRetroScaling()
+        public bool GetRetroScalingEnabled()
         {
             if (!IsInitialized)
                 return false;
 
-            return IGCLBackend.GetRetroScaling(deviceIdx);
+            return IGCLBackend.GetRetroScalingEnabled(deviceIdx);
+        }
+
+        public ctl_retro_scaling_type_flags_t GetRetroScalingType()
+        {
+            if (!IsInitialized)
+                return ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_MAX;
+
+            return IGCLBackend.GetRetroScalingType(deviceIdx);
         }
 
         public bool SetImageSharpening(bool enable)
@@ -206,7 +214,7 @@ namespace Tooth.GraphicsProcessingUnit
             }
         }
 
-        public bool SetRetroScaling(bool enabled, byte type)
+        public bool SetRetroScaling(bool enabled, ctl_retro_scaling_type_flags_t type)
         {
             if (!IsInitialized)
                 return false;

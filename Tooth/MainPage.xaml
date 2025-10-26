@@ -284,9 +284,9 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Text="Display" Grid.Column="0" HorizontalAlignment="Left"/>
-                                <TextBlock Text="GPU"     Grid.Column="1" HorizontalAlignment="Center"/>
-                                <TextBlock Text="Retro"    Grid.Column="2" HorizontalAlignment="Right"/>
+                                <TextBlock x:Name="ScalingDeviceLabel1" Text="Display" Grid.Column="0" HorizontalAlignment="Left"/>
+                                <TextBlock x:Name="ScalingDeviceLabel2" Text="GPU"     Grid.Column="1" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="ScalingDeviceLabel3" Text="Retro"    Grid.Column="2" HorizontalAlignment="Right"/>
                             </Grid>
 
                             <Slider x:Name="ScalingDeviceSlider"
@@ -297,7 +297,8 @@
                                             SnapsTo="Ticks"
                                             Margin="7,0,10,0"
                                             IsThumbToolTipEnabled="False"
-                                            ValueChanged="ScalingDeviceSlider_ValueChanged">
+                                            ValueChanged="ScalingDeviceSlider_ValueChanged"
+                                            Value="{Binding DeviceScaling, Mode=TwoWay}">
 
                                 <Slider.Resources>
                                     <!-- Base track colors -->

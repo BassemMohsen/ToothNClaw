@@ -69,6 +69,7 @@ namespace Tooth
             Backend.Instance.Send("get-fps-limiter-enabled");
             Backend.Instance.Send("get-Frame-Sync-Mode");
             Backend.Instance.Send("get-Low-Latency-Mode");
+            Backend.Instance.Send("get-Scaling");
             Backend.Instance.Send("init");
         }
 
@@ -161,6 +162,43 @@ namespace Tooth
                 case "launch-gamebar-widget":
                     Trace.WriteLine($"[MainPage.xaml.cs] Recieved launch-gamebar-widget");
                     launchGameBarWidget();
+                    break;
+                case "Scaling":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating GPU-Scaling Mode to {args[1]}");
+                    if (args[1] == "0")
+                    {
+                        _model.DeviceScaling = 0; // Display Maintain Aspect Ratio
+                    }
+                    else if (args[1] == "1")
+                    {
+                        _model.DeviceScaling = 1; // GPU
+                        _model.GpuScalingMode = 0; // Aspect Ratio
+                    }
+                    else if (args[1] == "2")
+                    {
+                        _model.DeviceScaling = 1; // GPU
+                        _model.GpuScalingMode = 1; // Stretch
+                    }
+                    else if (args[1] == "3")
+                    {
+                        _model.DeviceScaling = 1; // GPU
+                        _model.GpuScalingMode = 2; // Center
+                    }
+                    else if (args[1] == "4")
+                    {
+                        _model.DeviceScaling = 2; // Retro Scaling
+                        _model.RetroScalingMode = 0; // Integer
+
+                    }
+                    else if (args[1] == "5")
+                    {
+                        _model.DeviceScaling = 2; // Retro Scaling
+                        _model.RetroScalingMode = 1; // Nearest Neighbor
+                    }
+                    else
+                    {
+                        Trace.WriteLine($"[MainPage.xaml.cs] Wrong value Scaling to {args[1]}");
+                    }
                     break;
                 case "supported-resolutions":
 
@@ -325,13 +363,22 @@ namespace Tooth
         private void ScalingDeviceSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             int value = (int)e.NewValue;
+            // Decide which property to bind to based on slider position
+            Windows.UI.Xaml.Data.Binding newBinding = null;
 
             switch (value)
             {
                 case 0: // Display
-                    break;
+                    BindingOperations.SetBinding(ScalingModeSlider, Slider.ValueProperty, new Windows.UI.Xaml.Data.Binding());
+                    return;
 
                 case 1: // GPU
+                    newBinding = new Windows.UI.Xaml.Data.Binding
+                    {
+                        Path = new PropertyPath("GpuScalingMode"),
+                        Mode = BindingMode.TwoWay
+                    };
+
                     ScalingModeSlider.Minimum = 0;
                     ScalingModeSlider.Maximum = 2; 
                     Label1.Text = "Aspect Ratio";
@@ -341,6 +388,11 @@ namespace Tooth
                     break;
 
                 case 2: // Retro
+                    newBinding = new Windows.UI.Xaml.Data.Binding
+                    {
+                        Path = new PropertyPath("RetroScalingMode"),
+                        Mode = BindingMode.TwoWay
+                    };
                     ScalingModeSlider.Minimum = 0;
                     ScalingModeSlider.Maximum = 1; 
                     Label1.Text = "Integer";
@@ -348,7 +400,12 @@ namespace Tooth
                     Label3.Text = "Nearest Neighbor";
                     Label2.Visibility = Visibility.Collapsed;
                     break;
+                default:
+                    BindingOperations.SetBinding(ScalingModeSlider, Slider.ValueProperty, new Windows.UI.Xaml.Data.Binding());
+                    return;
             }
+            // Apply new binding dynamically
+            BindingOperations.SetBinding(ScalingModeSlider, Slider.ValueProperty, newBinding);
         }
 
         private void SecondaryGrid_Loaded(object sender, RoutedEventArgs e)

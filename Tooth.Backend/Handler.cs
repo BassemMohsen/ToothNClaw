@@ -15,6 +15,7 @@ using System.Text.Json;
 using static Tooth.Backend.DisplayController;
 using static Tooth.GraphicsProcessingUnit.IntelGPU;
 using static Tooth.IGCL.IGCLBackend;
+using System.Diagnostics.Eventing.Reader;
 namespace Tooth.Backend
 {
     internal class Handler
@@ -23,6 +24,21 @@ namespace Tooth.Backend
         private IntelGPU intelGPUController;
         private Communication _communication;
         private List<Resolution> resolutions;
+
+        private bool _gpuScalingEnabled = false;
+        private bool _retroScalingEnabled = false;
+
+
+        public enum ScalingModeMethod : int
+        {
+            DISPLAY_SCALING_MAINTAIN_ASPECT_RATIO = 0,
+            GPU_SCALING_MAINTAIN_ASPECT_RATIO = 1,
+            GPU_SCALING_STRETCH = 2,
+            GPU_SCALING_CENTER = 3,
+            RETRO_SCALING_INTEGER = 4,
+            RETRO_SCALING_NEAREST_NEIGHBOUR = 5,
+            UNKNOWN = 6
+        }
 
         public Handler()
         {
@@ -541,6 +557,149 @@ namespace Tooth.Backend
                             SettingsManager.Set("Gamma", gamma);
                             bool result = intelGPUController.SetBrightnessContrastGamma(SettingsManager.Get<double>("Contrast"), gamma, SettingsManager.Get<double>("Brightness"));
                             Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetBrightnessContrastGamma {result}");
+                        }
+                    }
+                    break;
+                case "get-Scaling":
+                    {
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+
+                        _retroScalingEnabled = intelGPUController.GetRetroScalingEnabled();
+                        if (_retroScalingEnabled)
+                        {
+                            ctl_retro_scaling_type_flags_t scalingType = intelGPUController.GetRetroScalingType();
+                            switch (scalingType)
+                            {
+                                case ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_INTEGER:
+                                    Console.WriteLine($"[Server Handler] Responding with Retro Scaling Type Integer 0");
+                                    (sender as Communication).Send("Scaling" + ' ' + $"{(int)ScalingModeMethod.RETRO_SCALING_INTEGER}");
+                                    break;
+                                case ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_NEAREST_NEIGHBOUR:
+                                    Console.WriteLine($"[Server Handler] Responding with Retro Scaling Type Nearest Neighbour 1");
+                                    (sender as Communication).Send("Scaling" + ' ' + $"{(int)ScalingModeMethod.RETRO_SCALING_NEAREST_NEIGHBOUR}");
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            ScalingModeAndMethod GPUScalingMode = intelGPUController.GetGPUScaling();
+                            switch (GPUScalingMode)
+                            {
+                                case ScalingModeAndMethod.DISPLAY_SCALING:
+                                    Console.WriteLine($"[Server Handler] Responding with GPU Scaling Mode Display Scaling 0");
+                                    (sender as Communication).Send("Scaling" + ' ' + $"{(int)ScalingModeMethod.DISPLAY_SCALING_MAINTAIN_ASPECT_RATIO}");
+                                    break;
+                                case ScalingModeAndMethod.GPU_SCALING_MAINTAIN_ASPECT_RATIO:
+                                    Console.WriteLine($"[Server Handler] Responding with GPU Scaling Mode Maintain Aspect Ratio 1");
+                                    (sender as Communication).Send("Scaling" + ' ' + $"{(int)ScalingModeMethod.GPU_SCALING_MAINTAIN_ASPECT_RATIO}");
+                                    break;
+                                case ScalingModeAndMethod.GPU_SCALING_STRETCH_FIT:
+                                    Console.WriteLine($"[Server Handler] Responding with GPU Scaling Mode Stretch to Fit 2");
+                                    (sender as Communication).Send("Scaling" + ' ' + $"{(int)ScalingModeMethod.GPU_SCALING_STRETCH}");
+                                    break;
+                                case ScalingModeAndMethod.GPU_SCALING_CENTER_IN_SCREEN:
+                                    Console.WriteLine($"[Server Handler] Responding with GPU Scaling Mode Centered 3");
+                                    (sender as Communication).Send("Scaling" + ' ' + $"{(int)ScalingModeMethod.GPU_SCALING_CENTER}");
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+
+                case "set-Scaling":
+                    {
+                        if (intelGPUController == null)
+                        {
+                            intelGPUController = new IntelGPU();
+                        }
+
+                        bool result = false;
+                        // Set GPU Scaling
+                        int scaling = int.Parse(args[1]);
+                        Console.WriteLine($"[Server Handler] Setting Scaling Value Received is {args[1]}");
+                        switch (scaling)
+                        {
+                            case (int)ScalingModeMethod.DISPLAY_SCALING_MAINTAIN_ASPECT_RATIO:
+                                {
+                                    if (_retroScalingEnabled)
+                                    {
+                                        // Disable retro gaming first:
+                                        _retroScalingEnabled = false;
+                                        result = intelGPUController.SetRetroScaling(_retroScalingEnabled, ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_INTEGER);
+                                        Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetRetroScaling {result}");
+                                    }
+
+
+                                    result = intelGPUController.SetGPUScalingTypeMode(true, ScalingModeAndMethod.DISPLAY_SCALING);
+                                    Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetGPUScalingTypeMode {result}");
+                                }
+                                break;
+                            case (int)ScalingModeMethod.GPU_SCALING_MAINTAIN_ASPECT_RATIO:
+                                {
+                                    if (_retroScalingEnabled)
+                                    {
+                                        // Disable retro gaming first:
+                                        _retroScalingEnabled = false;
+                                        result = intelGPUController.SetRetroScaling(_retroScalingEnabled, ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_INTEGER);
+                                        Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetRetroScaling {result}");
+                                    }
+
+                                    result = intelGPUController.SetGPUScalingTypeMode(true, ScalingModeAndMethod.GPU_SCALING_MAINTAIN_ASPECT_RATIO);
+                                    Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetGPUScalingTypeMode {result}");
+                                }
+                                break;
+                            case (int)ScalingModeMethod.GPU_SCALING_STRETCH:
+                                {
+                                    if (_retroScalingEnabled)
+                                    {
+                                        // Disable retro gaming first:
+                                        _retroScalingEnabled = false;
+                                        result = intelGPUController.SetRetroScaling(_retroScalingEnabled, ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_INTEGER);
+                                        Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetRetroScaling {result}");
+                                    }
+
+                                    result = intelGPUController.SetGPUScalingTypeMode(true, ScalingModeAndMethod.GPU_SCALING_STRETCH_FIT);
+                                    Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetGPUScalingTypeMode {result}");
+                                }
+                                break;
+                            case (int)ScalingModeMethod.GPU_SCALING_CENTER:
+                                {
+                                    if (_retroScalingEnabled)
+                                    {
+                                        // Disable retro gaming first:
+                                        _retroScalingEnabled = false;
+                                        result = intelGPUController.SetRetroScaling(_retroScalingEnabled, ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_INTEGER);
+                                        Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetRetroScaling {result}");
+                                    }
+
+                                    result = intelGPUController.SetGPUScalingTypeMode(true, ScalingModeAndMethod.GPU_SCALING_CENTER_IN_SCREEN);
+                                    Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetGPUScalingTypeMode {result}");
+                                }
+                                break;
+                            case (int)ScalingModeMethod.RETRO_SCALING_INTEGER:
+                                {
+                                    _retroScalingEnabled = true;
+                                    result = intelGPUController.SetRetroScaling(_retroScalingEnabled, ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_INTEGER);
+                                    Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetRetroScaling  CTL_RETRO_SCALING_TYPE_FLAG_INTEGER {result}");
+                                }
+                                break;
+                            case (int)ScalingModeMethod.RETRO_SCALING_NEAREST_NEIGHBOUR:
+                                {
+                                    _retroScalingEnabled = true;
+                                    result = intelGPUController.SetRetroScaling(_retroScalingEnabled, ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_NEAREST_NEIGHBOUR);
+                                    Console.WriteLine($"[Server Handler] IGCL Result of execution intelGPUController.SetRetroScaling  CTL_RETRO_SCALING_TYPE_FLAG_NEAREST_NEIGHBOUR {result}");
+                                }
+                                break;
+                            default:
+                                Console.WriteLine($"[Server Handler] Wrong Arg value: Setting GPU Scaling to {args[1]}");
+                                break;
                         }
                     }
                     break;
