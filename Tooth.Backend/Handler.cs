@@ -346,17 +346,13 @@ namespace Tooth.Backend
                                 result = DisplayController.SetPrimaryResolution(res.Width, res.Height);
                                 if (id == 0)
                                 {
-                                    result = intelGPUController.SetGPUScaling(false);
-                                    Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
-                                    result = intelGPUController.SetScalingMode(0);
-                                    Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+                                    result = intelGPUController.SetGPUScalingTypeMode(true, IntelGPU.ScalingModeAndMethod.DISPLAY_SCALING);
+                                    Console.WriteLine($"[Server Handler] Set SetGPUScalingTypeMode to {result}");
                                 }
                                 else
                                 {
-                                    result = intelGPUController.SetGPUScaling(true);
-                                    Console.WriteLine($"[Server Handler] Set SetGPUScaling to {result}");
-                                    result = intelGPUController.SetScalingMode(1);
-                                    Console.WriteLine($"[Server Handler] Set SetScalingMode to {result}");
+                                    result = intelGPUController.SetGPUScalingTypeMode(true, IntelGPU.ScalingModeAndMethod.GPU_SCALING_STRETCH_FIT);
+                                    Console.WriteLine($"[Server Handler] Set SetGPUScalingTypeMode to {result}");
                                 }
 
                             }

@@ -321,5 +321,63 @@ namespace Tooth
         {
             Backend.Instance.Send($"set-Fps-limiter" + ' ' + $"{Convert.ToInt32(_model.FpsLimitEnabled)}" + ' ' + $"{_model.FpsLimitValue}");
         }
+
+        private void ScalingDeviceSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            int value = (int)e.NewValue;
+
+            switch (value)
+            {
+                case 0: // Display
+                    break;
+
+                case 1: // GPU
+                    ScalingModeSlider.Minimum = 0;
+                    ScalingModeSlider.Maximum = 2; 
+                    Label1.Text = "Aspect Ratio";
+                    Label2.Text = "Stretch";
+                    Label3.Text = "Center";
+                    Label2.Visibility = Visibility.Visible; 
+                    break;
+
+                case 2: // Retro
+                    ScalingModeSlider.Minimum = 0;
+                    ScalingModeSlider.Maximum = 1; 
+                    Label1.Text = "Integer";
+                    Label2.Text = "";
+                    Label3.Text = "Nearest Neighbor";
+                    Label2.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
+
+        private void SecondaryGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            double value = ScalingDeviceSlider.Value;
+
+            switch (value)
+            {
+                case 0: // Display
+                    break;
+
+                case 1: // GPU
+                    ScalingModeSlider.Minimum = 0;
+                    ScalingModeSlider.Maximum = 2;
+                    Label1.Text = "Aspect Ratio";
+                    Label2.Text = "Stretch";
+                    Label3.Text = "Center";
+                    Label2.Visibility = Visibility.Visible;
+                    break;
+
+                case 2: // Retro
+                    ScalingModeSlider.Minimum = 0;
+                    ScalingModeSlider.Maximum = 1;
+                    Label1.Text = "Integer";
+                    Label2.Text = "";
+                    Label3.Text = "Nearest Neighbor";
+                    Label2.Visibility = Visibility.Collapsed;
+                    break;
+            }
+        }
     }
 }

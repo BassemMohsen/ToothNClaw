@@ -36,6 +36,7 @@
         <Thickness x:Key="ButtonPadding">15,10,15,11</Thickness>
         <local:CpuBoostModeConverter x:Key="CpuBoostModeConverter"/>
         <local:BooleanToVisibilityConverter  x:Key="BooleanToVisibilityConverter"/>
+        <local:DisplayToVisibilityConverter x:Key="DisplayToVisibility"/>
     </Page.Resources>
 
     <Grid Padding="12">
@@ -190,7 +191,8 @@
                                             VerticalAlignment="Center"
                                             FontSize="18"
                                             Height="40"
-                                            IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}" Margin="10,0,0,0" Width="115"
+                                            IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}"
+                                            Margin="10,0,0,0" Width="115"
                                             XYFocusUp="{x:Bind FPSSlider}"
                                             XYFocusDownNavigationStrategy="Projection"/>
                         </Grid>
@@ -249,6 +251,105 @@
                               Height="40"
                               Margin="5,0,5,0">
                     </ComboBox>
+                </StackPanel>
+
+                <!-- Scaling Method and Scalign Mode -->
+                <StackPanel Orientation="Vertical" Spacing="4">
+                    <TextBlock Text="Scaling Settings" 
+                                   FontWeight="Bold"
+                                   FontSize="18"
+                                   Margin="0,0,0,4"/>
+
+                    <Border x:Name="ScalingPanel"
+                            Margin="0,6,0,0"
+                            CornerRadius="8"
+                            Background="#30343A"
+                            BorderBrush="#50555C"
+                            BorderThickness="1"
+                            Padding="8">
+                        <StackPanel>
+                            <!-- Labels above slider -->
+                            <Grid Margin="0,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Text="Display" Grid.Column="0" HorizontalAlignment="Left"/>
+                                <TextBlock Text="GPU"     Grid.Column="1" HorizontalAlignment="Center"/>
+                                <TextBlock Text="Retro"    Grid.Column="2" HorizontalAlignment="Right"/>
+                            </Grid>
+
+                            <Slider x:Name="ScalingDeviceSlider"
+                                            Minimum="0"
+                                            Maximum="2"
+                                            StepFrequency="1"
+                                            TickFrequency="1"
+                                            SnapsTo="Ticks"
+                                            Margin="7,0,10,0"
+                                            IsThumbToolTipEnabled="False"
+                                            ValueChanged="ScalingDeviceSlider_ValueChanged">
+
+                                <Slider.Resources>
+                                    <!-- Base track colors -->
+                                    <SolidColorBrush x:Key="SliderTrackValueFill" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackFill" Color="#A1A3A5"/>
+
+                                    <!-- Hover / pressed / focused states -->
+                                    <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackValueFillFocused" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackFillPressed" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackFillFocused" Color="#A1A3A5"/>
+                                </Slider.Resources>
+                            </Slider>
+
+                            <!-- Labels above slider -->
+                            <Grid x:Name="SecondaryGrid"
+                                  Margin="0,20,0,0"
+                                  Visibility="{Binding Value, ElementName=ScalingDeviceSlider, Converter={StaticResource DisplayToVisibility}}"
+                                  Loaded="SecondaryGrid_Loaded">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="Label1" Grid.Column="0" HorizontalAlignment="Left"/>
+                                <TextBlock x:Name="Label2" Grid.Column="1" HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="Label3" Grid.Column="2" HorizontalAlignment="Right"/>
+                            </Grid>
+
+                            <Slider x:Name="ScalingModeSlider"
+                                            Minimum="0"
+                                            Maximum="2"
+                                            StepFrequency="1"
+                                            TickFrequency="1"
+                                            SnapsTo="Ticks"
+                                            Margin="7,0,10,0"
+                                            IsThumbToolTipEnabled="False"
+                                            Foreground="#A1A3A5"
+                                            Visibility="{Binding Value, ElementName=ScalingDeviceSlider, Converter={StaticResource DisplayToVisibility}}">
+
+                                <Slider.Resources>
+                                    <!-- Base track colors -->
+                                    <SolidColorBrush x:Key="SliderTrackValueFill" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackFill" Color="#A1A3A5"/>
+
+                                    <!-- Hover / pressed / focused states -->
+                                    <SolidColorBrush x:Key="SliderTrackValueFillPointerOver" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackValueFillPressed" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackValueFillFocused" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackFillPointerOver" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackFillPressed" Color="#A1A3A5"/>
+                                    <SolidColorBrush x:Key="SliderTrackFillFocused" Color="#A1A3A5"/>
+                                </Slider.Resources>
+                                
+                            </Slider>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
 
                 <!-- Endurance Gaming -->

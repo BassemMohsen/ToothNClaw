@@ -53,6 +53,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Backend.cs" />
+    <Compile Include="DisplayToVisibilityConverter.cs" />
     <Compile Include="BooleanToVisibilityConverter.cs" />
     <Compile Include="ColorRemasterMainPage.xaml.cs">
       <DependentUpon>ColorRemasterMainPage.xaml</DependentUpon>

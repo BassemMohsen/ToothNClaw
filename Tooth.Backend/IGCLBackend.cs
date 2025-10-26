@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using static Tooth.GraphicsProcessingUnit.IntelGPU;
 
 namespace Tooth.IGCL
 {
@@ -650,14 +651,14 @@ namespace Tooth.IGCL
             return ScalingCaps.SupportedScaling >= 0;
         }
 
-        internal static bool GetGPUScaling(nint deviceIdx, uint displayIdx)
+        internal static ctl_scaling_type_flag_t GetGPUScaling(nint deviceIdx, uint displayIdx)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             ctl_scaling_settings_t ScalingSettings = new();
 
             IntPtr device = devices[deviceIdx];
             if (device == IntPtr.Zero)
-                return false;
+                return 0;
 
             ctl_device_adapter_handle_t hDevice = new()
             {
@@ -666,15 +667,16 @@ namespace Tooth.IGCL
 
             Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
-                return false;
+                return 0;
 
-            return ScalingSettings.Enable;
+            return ScalingSettings.ScalingType;
         }
 
-        internal static bool SetGPUScaling(nint deviceIdx, uint displayIdx, bool enabled = true)
+        internal static bool SetGPUScalingTypeMode (nint deviceIdx, uint displayIdx, bool enabled = true, int mode = 0)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
-            ctl_scaling_settings_t ScalingSettings = new();
+            ctl_scaling_settings_t NewScalingSettings = new();
+            ctl_scaling_settings_t CurrentScalingSettings = new();
 
             IntPtr device = devices[deviceIdx];
             if (device == IntPtr.Zero)
@@ -685,27 +687,58 @@ namespace Tooth.IGCL
                 handle = device
             };
 
-            Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
+            Result = GetScalingSettings(hDevice, displayIdx, ref CurrentScalingSettings);
             if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
                 return false;
 
-            // skip if not needeed
-            if (ScalingSettings.Enable == enabled)
-                return true;
+            // 0: Display Scaling
+            // 1: GPU Scaling: Maintain Aspect Ratio
+            // 2: GPU Scaling: Full Stretch
+            // 3: GPU Scaling: Center in the screen
+            ctl_scaling_type_flag_t ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_IDENTITY;
+            switch (mode)
+            {
+                case 0:
+                    ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_IDENTITY;
+                    break;
+                case 1:
+                    ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_ASPECT_RATIO_CENTERED_MAX;
+                    break;
+                case 2:
+                    ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_STRETCHED;
+                    break;
+                case 3:
+                    ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_CENTERED;
+                    break;
+            }
+
+            // Get Current Scaling Settings
+            Result = GetScalingSettings(hDevice, displayIdx, ref CurrentScalingSettings);
+            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
+                return false;
 
             // fill custom scaling details
-            ScalingSettings.Enable = enabled;
+            NewScalingSettings.ScalingType = ScalingType;
 
-            Result = SetScalingSettings(hDevice, displayIdx, ScalingSettings);
-            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
+            // fill custom scaling details
+            NewScalingSettings.Enable = enabled;
+
+            // This should be set to false if we do custom scaling, but custom scaling doesn't make sense for Handhelds.
+            // if we are switching between Display and GPU scaling, we need to modeset, otherwise don't modeset.
+            // Modeset flashes the display, which is not nice for the user experience.
+            // Should be avoided if not necessary.
+            if ((CurrentScalingSettings.ScalingType == 0) && (NewScalingSettings.ScalingType > 0))
+                NewScalingSettings.HardwareModeSet = true;
+            else if((CurrentScalingSettings.ScalingType > 0) && (NewScalingSettings.ScalingType == 0))
+                NewScalingSettings.HardwareModeSet = true;
+            else
+                NewScalingSettings.HardwareModeSet = false;
+
+            Result = SetScalingSettings(hDevice, displayIdx, NewScalingSettings);
+            if (Result == ctl_result_t.CTL_RESULT_SUCCESS)
+                return true;
+            else
                 return false;
-
-            // check if value was properly applied
-            Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
-            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
-                return false;
-
-            return ScalingSettings.Enable == enabled;
         }
 
         internal static bool SetImageSharpening(nint deviceIdx, uint displayIdx, bool enable)
@@ -835,60 +868,6 @@ namespace Tooth.IGCL
             return res == ctl_result_t.CTL_RESULT_SUCCESS;
         }
 
-        internal static bool SetScalingMode(nint deviceIdx, uint displayIdx, int mode)
-        {
-            ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
-            ctl_scaling_settings_t ScalingSettings = new();
-
-            IntPtr device = devices[deviceIdx];
-            if (device == IntPtr.Zero)
-                return false;
-
-            ctl_device_adapter_handle_t hDevice = new()
-            {
-                handle = device
-            };
-
-            Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
-            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
-                return false;
-
-            // 0: aspect
-            // 1: full
-            // 2: center
-            ctl_scaling_type_flag_t ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_IDENTITY;
-            switch (mode)
-            {
-                case 0:
-                    ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_ASPECT_RATIO_CENTERED_MAX;
-                    break;
-                case 1:
-                    ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_STRETCHED;
-                    break;
-                case 2:
-                    ScalingType = ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_CENTERED;
-                    break;
-            }
-
-            // skip if not needeed
-            if (ScalingSettings.ScalingType == ScalingType)
-                return true;
-
-            // fill custom scaling details
-            ScalingSettings.ScalingType = ScalingType;
-
-            Result = SetScalingSettings(hDevice, displayIdx, ScalingSettings);
-            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
-                return false;
-
-            // check if value was properly applied
-            Result = GetScalingSettings(hDevice, displayIdx, ref ScalingSettings);
-            if (Result != ctl_result_t.CTL_RESULT_SUCCESS)
-                return false;
-
-            return ScalingSettings.ScalingType == ScalingType;
-        }
-
         internal static bool GetImageSharpening(nint deviceIdx, uint displayIdx)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
@@ -971,7 +950,7 @@ namespace Tooth.IGCL
             return GetSharpness.Intensity == sharpness;
         }
 
-        internal static bool HasIntegerScalingSupport(nint deviceIdx, uint displayIdx)
+        internal static bool HasRetroScalingSupport(nint deviceIdx, uint displayIdx)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             ctl_retro_scaling_caps_t RetroScalingCaps = new();
@@ -992,7 +971,7 @@ namespace Tooth.IGCL
             return RetroScalingCaps.SupportedRetroScaling >= 0;
         }
 
-        internal static bool GetIntegerScaling(nint deviceIdx)
+        internal static bool GetRetroScaling(nint deviceIdx)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             ctl_retro_scaling_settings_t RetroScalingSettings = new();
@@ -1013,7 +992,7 @@ namespace Tooth.IGCL
             return RetroScalingSettings.Enable;
         }
 
-        internal static bool SetIntegerScaling(nint deviceIdx, bool enabled, byte type)
+        internal static bool SetRetroScaling(nint deviceIdx, bool enabled, byte type)
         {
             ctl_result_t Result = ctl_result_t.CTL_RESULT_SUCCESS;
             ctl_retro_scaling_settings_t RetroScalingSettings = new();

@@ -33,7 +33,7 @@ namespace Tooth.Backend
         const string PROGRAM_NAME = "ToothNClaw.Service";
 
         [STAThread]
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
             // Hide console window only in Release mode (optional)
 #if !DEBUG
@@ -63,79 +63,41 @@ namespace Tooth.Backend
             // Create ApplicationContext early so we have a UI context for non-blocking startup tasks
             var trayContext = new TrayAppContext(cts);
 
-            // Start message loop on STA thread (this call blocks until Application.Exit is invoked)
-            // But first we start background initialization tasks which will not block UI thread.
-            try
+            // Do potentially blocking init here
+            SettingsManager.Initialize();
+
+            string packageSid;
+            if (!string.IsNullOrEmpty(arg0) && arg0.StartsWith("S-1-"))
+                packageSid = arg0;
+            else
+                packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
+
+            var comm = new Communication(packageSid);
+            handler = new Handler();
+
+            handler.Register(comm);
+            // Start the comm loop and keep a reference so we can cancel it later
+            var commTask = Task.Run(comm.Run);
+
+            // Start combo listener on UI thread if it relies on message pump, otherwise you can run it on background.
+            var comboListener = new XboxComboListener();
+
+            comboListener.ComboPressed += () =>
             {
-                // Kick off initialization in background so UI thread remains responsive
-                var initTask = Task.Run(async () =>
-                {
-                    try
-                    {
-                        // Do potentially blocking init here
-                        SettingsManager.Initialize();
+                Console.WriteLine("View + X pressed!");
+                LaunchToothGameBar();
+                LaunchToothGameBarWidget();
+            };
 
-                        string packageSid;
-                        if (!string.IsNullOrEmpty(arg0) && arg0.StartsWith("S-1-"))
-                            packageSid = arg0;
-                        else
-                            packageSid = ApplicationData.Current.LocalSettings.Values["PackageSid"] as string;
-
-                        var comm = new Communication(packageSid);
-                        handler = new Handler();
-
-                        handler.Register(comm);
-
-                        // Start the comm loop and keep a reference so we can cancel it later
-                        var commTask = Task.Run(() => comm.Run(cts.Token), cts.Token);
-
-                        // Start other background services if needed
-                        // e.g. any long-running initializations, network calls, DB opens, etc.
-
-                        // Log and observe communication task
-                        _ = commTask.ContinueWith(t =>
-                        {
-                            if (t.IsFaulted) Console.WriteLine($"[comm] Faulted: {t.Exception}");
-                            else Console.WriteLine("[comm] Exited normally.");
-                        }, TaskScheduler.Default);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"[init] Exception: {ex}");
-                        // decide whether to signal exit if init must succeed:
-                        // trayContext.PostLog($"Initialization failed: {ex.Message}");
-                    }
-                }, cts.Token);
-
-                // Start combo listener on UI thread if it relies on message pump, otherwise you can run it on background.
-                var comboListener = new XboxComboListener();
-
-                comboListener.ComboPressed += () =>
-                {
-                    Console.WriteLine("View + X pressed!");
-                    LaunchToothGameBar();
-                    LaunchToothGameBarWidget();
-                };
-
-                comboListener.ComboReleased += () =>
-                {
-                    Console.WriteLine("View + A released.");
-                };
-
-                comboListener.Start();
-
-                // Now run WinForms message loop (keeps process alive, handles tray icon)
-                Application.Run(trayContext);
-
-                // When Application.Exit is called, we reach here: request cancellation for background tasks
-                cts.Cancel();
-                await Task.WhenAny(initTask, Task.Delay(2000)); // short grace period for init to stop
-            }
-            finally
+            comboListener.ComboReleased += () =>
             {
-                cts.Cancel();
-                _mutex?.ReleaseMutex();
-            }
+                Console.WriteLine("View + A released.");
+            };
+
+            comboListener.Start();
+
+            // Now run WinForms message loop (keeps process alive, handles tray icon)
+            Application.Run(trayContext);
         }
 
         public class TrayAppContext : ApplicationContext
