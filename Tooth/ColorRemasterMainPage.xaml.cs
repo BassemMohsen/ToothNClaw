@@ -97,10 +97,13 @@ namespace Tooth
             if (isBackendAlive)
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Collapsed;
+                StartingBackgroundserviceTextBlock.IsTapEnabled = false;
             }
             else
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Visible;
+                StartingBackgroundserviceTextBlock.IsTapEnabled = true;
+
             }
         }
 

@@ -78,13 +78,11 @@ namespace Tooth
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Collapsed;
                 LaunchBackendButton.IsTapEnabled = false;
-                LaunchBackendButton.IsTabStop = false;
             }
             else
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Visible;
                 LaunchBackendButton.IsTapEnabled = true;
-                LaunchBackendButton.IsTabStop = true;
             }
         }
 
@@ -174,6 +172,8 @@ namespace Tooth
                     }
                     try
                     {
+                        if (args.Length < 2)
+                            return;
                         Trace.WriteLine("Raw payload: " + args[1]);
                         _model.Resolutions = System.Text.Json.JsonSerializer.Deserialize<List<Resolution>>(args[1]);
                         ResolutionComboBox.ItemsSource = _model.Resolutions;

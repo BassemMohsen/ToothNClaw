@@ -41,34 +41,46 @@
 
     <Grid Padding="12">
 
-        <ScrollViewer Margin="5,0,5,0"
-                      VerticalScrollMode="Auto"
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollMode="Disabled">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Image Carousel -->
+            <RowDefinition Height="*"/>
+            <!-- Sliders -->
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Top">
 
-            <StackPanel x:Name="MainPanel" Orientation="Vertical" Spacing="16" Margin="15,0,15,0">
-
-                <StackPanel Orientation="Vertical" Spacing="4" x:Name="StartingBackgroundserviceTextBlock">
-                    <TextBlock Text="Starting Background service ..."
+        <StackPanel Orientation="Vertical" Spacing="4" x:Name="StartingBackgroundserviceTextBlock">
+                <TextBlock Text="Starting Background service ..."
                            FontSize="18"
                            FontWeight="Bold"
                            Margin="0,0,0,4"/>
-                    <Button x:Name="LaunchBackendButton"
-                    HorizontalAlignment="Stretch"
-                    Click="LaunchBackendButton_OnClick"
-                    FontSize="18"
-                    Height="47" IsTabStop="false">
-                        Start Tooth Service manually
-                    </Button>
-                </StackPanel>
+                <Button x:Name="LaunchBackendButton"
+                                    HorizontalAlignment="Stretch"
+                                    Click="LaunchBackendButton_OnClick"
+                                    FontSize="18"
+                                    Height="47">
+                    Start Tooth Service manually
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <ScrollViewer Margin="5,0,5,0"
+                      VerticalScrollMode="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollMode="Disabled"
+                       Grid.Row="1">
+
+
+            <StackPanel x:Name="MainPanel" Orientation="Vertical" Margin="15,0,15,0">
 
                 <!-- CPU Boost -->
-                <StackPanel Orientation="Vertical" Spacing="4">
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
                     <TextBlock x:Name="CpuBoostModeTextBlock" 
                         Text="CPU Boost Mode"
                                FontSize="18"
                                FontWeight="Bold"
                                Margin="0,0,0,4"/>
+                    
                     <ComboBox x:Name="CpuBoostModeSelector"
                               SelectedValue="{Binding BoostMode, Mode=TwoWay}"
                               Loaded="CpuBoostModeSelector_Loaded"
@@ -77,9 +89,10 @@
                               FontSize="18"
                               Height="40"
                               Margin="5,0,5,0"
-                              TabIndex="0"
                               SelectionChanged="CpuBoostModeSelector_SelectionChanged"
-                              >
+                              XYFocusUp="{x:Bind LaunchBackendButton}" 
+                              XYFocusDown="{x:Bind FpsLimiterToggle}">
+                        
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Content}"
@@ -133,7 +146,7 @@
                 </StackPanel>
 
                 <!-- FPS Limiter -->
-                <StackPanel Orientation="Vertical" Spacing="4" >
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
                     <Grid >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -150,9 +163,7 @@
                                       OnContent="On"
                                       IsOn="{Binding FpsLimitEnabled, Mode=TwoWay}"
                                       Toggled="FpsLimiterToggle_Toggled"
-                                      IsTabStop="True"
-                                    XYFocusUpNavigationStrategy="Projection"
-                                    XYFocusDownNavigationStrategy="Projection"/>
+                                      XYFocusUp="{x:Bind CpuBoostModeSelector}"/>
                     </Grid>
 
                     <Border x:Name="FpsLimiterPanel"
@@ -177,9 +188,7 @@
                                     Maximum="{Binding FpsMax}"
                                     Value="{Binding FpsLimitValue, Mode=TwoWay}"
                                     IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}" Grid.ColumnSpan="2" ValueChanged="FPSSlider_ValueChanged" VerticalAlignment="Center"
-                                    XYFocusUp="{x:Bind FpsLimiterToggle}"
-                                    XYFocusDownNavigationStrategy="Projection"
-                                    XYFocusUpNavigationStrategy="Projection"/>
+                                    XYFocusUp="{x:Bind FpsLimiterToggle}"/>
 
                             <muxc:NumberBox x:Name="FpsValueBox"
                                             Grid.Column="2"
@@ -192,15 +201,13 @@
                                             FontSize="18"
                                             Height="40"
                                             IsEnabled="{Binding IsOn, ElementName=FpsLimiterToggle}"
-                                            Margin="10,0,0,0" Width="115"
-                                            XYFocusUp="{x:Bind FPSSlider}"
-                                            XYFocusDownNavigationStrategy="Projection"/>
+                                            Margin="10,0,0,0" Width="115"/>
                         </Grid>
                     </Border>
                 </StackPanel>
 
                 <!-- Frame Synchronization -->
-                <StackPanel Orientation="Vertical" Spacing="4">
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
                     <TextBlock Text="Frame Sync"
                                 FontSize="18"
                                 Margin="0,0,0,4" FontWeight="Bold"/>
@@ -212,7 +219,8 @@
                                 FontSize="18"
                                 Height="40"
                                 Margin="5,0,5,0">
-                        <ComboBoxItem Content="Application Choice" IsSelected="True">
+                        <ComboBoxItem Content="Application Choice"
+                                      IsSelected="True">
                             <ComboBoxItem.Tag>
                                 <x:Double>0</x:Double>
                             </ComboBoxItem.Tag>
@@ -236,7 +244,7 @@
                 </StackPanel>
 
                 <!-- Adjust Display Resolution -->
-                <StackPanel Orientation="Vertical" Spacing="4">
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
                     <TextBlock Text="Display Resolution"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
@@ -254,7 +262,7 @@
                 </StackPanel>
 
                 <!-- Scaling Method and Scalign Mode -->
-                <StackPanel Orientation="Vertical" Spacing="4">
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
                     <TextBlock Text="Scaling Settings" 
                                    FontWeight="Bold"
                                    FontSize="18"
@@ -353,7 +361,7 @@
                 </StackPanel>
 
                 <!-- Endurance Gaming -->
-                <StackPanel Orientation="Vertical" Spacing="4">
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
                     <TextBlock Text="Endurance Gaming: Target Framerate"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
@@ -389,7 +397,7 @@
                 </StackPanel>
 
                 <!-- Xe Low Latency -->
-                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,0,0,10">
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
                     <TextBlock Text="Xe Low Latency"
                                FontSize="18"
                                Margin="0,0,0,4" FontWeight="Bold"/>
@@ -400,7 +408,7 @@
                               FontSize="18"
                               Height="40"
                               Margin="5,0,5,0"
-                          SelectedValuePath="Tag">
+                              SelectedValuePath="Tag">
                         <ComboBoxItem Content="OFF" IsSelected="True">
                             <ComboBoxItem.Tag>
                                 <x:Double>0</x:Double>
