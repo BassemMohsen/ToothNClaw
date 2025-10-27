@@ -12,17 +12,17 @@ namespace Tooth
     public struct Resolution
     {
         public int Id { get; set; }
-        public string DisplayName { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
         public int Frequency { get; set; }
+        public bool IsNative { get; set; }
 
         public string DisplayText
         {
             get
             {
                 string aspect = GetAspectRatio(Width, Height);
-                string nativeLabel = Id == 0 ? " (Native)" : "";
+                string nativeLabel = (IsNative == true) ? " (Native)" : "";
                 return $"{Width} x {Height} ({aspect}){nativeLabel}";
             }
         }

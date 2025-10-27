@@ -16,6 +16,8 @@ using static Tooth.Backend.DisplayController;
 using static Tooth.GraphicsProcessingUnit.IntelGPU;
 using static Tooth.IGCL.IGCLBackend;
 using System.Diagnostics.Eventing.Reader;
+
+
 namespace Tooth.Backend
 {
     internal class Handler
@@ -393,7 +395,7 @@ namespace Tooth.Backend
 
                         foreach (var res in resolutions)
                         {
-                            Console.WriteLine($"Supported Resolution: {res.DisplayName} - {res.Id}  - {res.Width}x{res.Height} @{res.Frequency}Hz");
+                            Console.WriteLine($"Supported Resolution Is Native: {res.IsNative} - Id: {res.Id}  - {res.Width}x{res.Height} @{res.Frequency}Hz");
                         }
                     }
                     break;
