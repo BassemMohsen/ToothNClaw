@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.ServiceModel.Channels;
+using System.Text.Json;
 using System.Windows.Input;
 using Windows.ApplicationModel.AppExtensions;
 using Windows.Foundation;
@@ -15,6 +16,7 @@ using Windows.Foundation.Collections;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,7 +25,6 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using System.Text.Json;
 
 namespace Tooth
 {
@@ -223,7 +224,6 @@ namespace Tooth
                     }
 
                     break;
-
             }
         }
 
@@ -341,6 +341,28 @@ namespace Tooth
 
         private void ResolutionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
+            if (ResolutionComboBox.SelectedValue is int resolution && resolution != 0)
+            {
+                // Disable "Display" option on the slider
+                ScalingDeviceSlider.Minimum = 1;
+                if (ScalingDeviceSlider.Value < 1)
+                    ScalingDeviceSlider.Value = 1; // move slider to GPU
+
+                ScalingDeviceLabel1.Text = "GPU";
+                ScalingDeviceLabel2.Text = "";
+                ScalingDeviceLabel3.Text = "Retro";
+            }
+            else
+            {
+                // Enable full range
+                ScalingDeviceSlider.Minimum = 0;
+
+                ScalingDeviceLabel1.Text = "Display";
+                ScalingDeviceLabel2.Text = "GPU";
+                ScalingDeviceLabel3.Text = "Retro";
+            }
+
             if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item)
             {
                 // Extract the Tag (0, 1, or 2)
@@ -362,7 +384,15 @@ namespace Tooth
 
         private void ScalingDeviceSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            int value = (int)e.NewValue;
+            if (ResolutionComboBox.SelectedValue is int resolution && resolution != 0)
+            {
+                if (ScalingDeviceSlider.Value < 1)
+                {
+                    ScalingDeviceSlider.Value = 1; // force slider to GPU
+                }
+            }
+
+                int value = (int)e.NewValue;
             // Decide which property to bind to based on slider position
             Windows.UI.Xaml.Data.Binding newBinding = null;
 
