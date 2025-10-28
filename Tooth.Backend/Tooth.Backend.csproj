@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{687D4A40-9ED0-4663-A465-D2C6BBB7B9D1}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>Tooth.Backend</RootNamespace>
     <AssemblyName>Tooth.Backend</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>

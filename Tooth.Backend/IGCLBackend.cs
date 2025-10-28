@@ -738,11 +738,14 @@ namespace Tooth.IGCL
 
             NewScalingSettings.HardwareModeSet = false;
             // skip if not needeed
-            if ( (CurrentScalingSettings.ScalingType != NewScalingSettings.ScalingType) ||
+            /*if ( (CurrentScalingSettings.ScalingType != NewScalingSettings.ScalingType) ||
                 (CurrentScalingSettings.Enable != NewScalingSettings.Enable) )
             {
                 Result = SetScalingSettings(hDevice, displayIdx, NewScalingSettings);
             }
+            */
+
+            Result = SetScalingSettings(hDevice, displayIdx, NewScalingSettings);
 
             if (Result == ctl_result_t.CTL_RESULT_SUCCESS)
                 return true;

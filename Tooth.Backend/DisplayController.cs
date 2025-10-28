@@ -23,6 +23,8 @@ namespace Tooth.Backend
         private const int QDC_ONLY_ACTIVE_PATHS = 0x00000002;
         private const int ENUM_CURRENT_SETTINGS = -1;
         private const int CDS_UPDATEREGISTRY = 0x00000001;
+        private const int CDS_NORESET = 0x04;
+
         private const int CDS_TEST = 0x00000002;
         private const int DISP_CHANGE_SUCCESSFUL = 0;
 
@@ -64,12 +66,46 @@ namespace Tooth.Backend
             public int dmDisplayFrequency;
         }
 
+        public enum DISP_CHANGE : int
+        {
+            Successful = 0,
+            Restart = 1,
+            Failed = -1,
+            BadMode = -2,
+            NotUpdated = -3,
+            BadFlags = -4,
+            BadParam = -5,
+            BadDualView = -6
+        }
+
+        [Flags()]
+        public enum ChangeDisplaySettingsFlags : uint
+        {
+            CDS_NONE = 0,
+            CDS_UPDATEREGISTRY = 0x00000001,
+            CDS_TEST = 0x00000002,
+            CDS_FULLSCREEN = 0x00000004,
+            CDS_GLOBAL = 0x00000008,
+            CDS_SET_PRIMARY = 0x00000010,
+            CDS_VIDEOPARAMETERS = 0x00000020,
+            CDS_ENABLE_UNSAFE_MODES = 0x00000100,
+            CDS_DISABLE_UNSAFE_MODES = 0x00000200,
+            CDS_RESET = 0x40000000,
+            CDS_RESET_EX = 0x20000000,
+            CDS_NORESET = 0x10000000
+        }
+
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern bool EnumDisplaySettings(string deviceName, int modeNum, ref DEVMODE devMode);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern int ChangeDisplaySettings(ref DEVMODE devMode, int flags);
 
+        [DllImport("user32.dll")]
+        public static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, ref DEVMODE lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, IntPtr lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
 
         [DllImport("User32.dll")]
         public static extern int GetDisplayConfigBufferSizes(uint flags, ref uint numPathArrayElements, ref uint numModeInfoArrayElements);
@@ -394,45 +430,166 @@ namespace Tooth.Backend
             return resolution;
         }
 
+        private static DEVMODE GetDevMode1()
+        {
+            DEVMODE dm = new DEVMODE();
+            dm.dmDeviceName = new string(new char[32]);
+            dm.dmFormName = new string(new char[32]);
+            dm.dmSize = (short)Marshal.SizeOf(dm);
+            return dm;
+        }
+
+        public static DEVMODE GetCurrentDisplayMode(string deviceName)
+        {
+            DEVMODE dm = GetDevMode1();
+            if (false != EnumDisplaySettings(deviceName, ENUM_CURRENT_SETTINGS, ref dm))
+            {
+                return dm;
+            }
+            throw new InvalidOperationException("An error occurred getting current display mode for '" + deviceName + "'.");
+        }
+
+        public static int ComputeDisplayModeScore(String deviceName, DEVMODE mode)
+        {
+            return ComputeDisplayModeScore(deviceName, mode, true);
+
+        }
+
+        public static int ComputeDisplayModeScore(String deviceName, DEVMODE mode, bool checkIfSupportedMode)
+        {
+            if (checkIfSupportedMode && !IsDeviceSupportedDisplayMode(deviceName, mode))
+            {
+                return 0;
+            }
+
+            return mode.dmPelsWidth * mode.dmPelsHeight * mode.dmBitsPerPel + mode.dmDisplayFrequency;
+        }
+        public static bool DisplayModesAreEqual(DEVMODE first, DEVMODE second)
+        {
+            return first.dmPelsWidth == second.dmPelsWidth && first.dmPelsHeight == second.dmPelsHeight && first.dmBitsPerPel == second.dmBitsPerPel && first.dmDisplayFrequency == second.dmDisplayFrequency;
+        }
+
+        public static bool IsDeviceSupportedDisplayMode(string deviceName, DEVMODE checkedDevMode)
+        {
+            DEVMODE mode = new DEVMODE();
+            mode.dmSize = (short)Marshal.SizeOf(mode);
+            int modeIndex = 0;
+
+            while (false != EnumDisplaySettings(deviceName, modeIndex, ref mode))
+            {
+                if (DisplayModesAreEqual(checkedDevMode, mode))
+                {
+                    return true;
+                }
+
+                modeIndex++;
+            }
+
+            return false;
+        }
+
+        public static DEVMODE GetOptimalDisplayMode(string deviceName)
+        {
+            DEVMODE mode = new DEVMODE();
+            mode.dmSize = (short)Marshal.SizeOf(mode);
+
+            int modeIndex = 0;
+            int bestModeIndex = 0;
+            int bestScore = 0;
+
+            //Console.WriteLine("Get optimal displaymode " + deviceName);
+
+            while (false != EnumDisplaySettings(deviceName, modeIndex, ref mode))
+            {
+                int currentModeScore = ComputeDisplayModeScore(deviceName, mode, false);
+
+                //Console.WriteLine("Found a mode for " + deviceName + ": " + mode.dmPelsWidth + "x" + mode.dmPelsHeight + " at " + mode.dmDisplayFrequency + "Hz");
+
+                if (currentModeScore > bestScore)
+                {
+                    bestModeIndex = modeIndex;
+                    bestScore = currentModeScore;
+                    Console.WriteLine("Found a better mode for " + deviceName + ": " + mode.dmPelsWidth + "x" + mode.dmPelsHeight + " at " + mode.dmDisplayFrequency + "Hz" + " at index " + modeIndex);
+                }
+                modeIndex++;
+            }
+
+            if (bestModeIndex < 0)
+            {
+                throw new InvalidOperationException("An error occurred getting optimal display mode for '" + deviceName + "'.");
+            }
+
+            if (false != EnumDisplaySettings(deviceName, bestModeIndex, ref mode))
+            {
+                return mode;
+            }
+
+            throw new InvalidOperationException("An error occurred getting optimal display mode for '" + deviceName + "' at index " + bestModeIndex + ".");
+        }
+
+        /**
+         * Compares two display modes to determine the best. 
+         * Returns a negative integer, zero, or a positive integer 
+         * as the first mode is worse than, equal to, or better than the 
+         * second mode based on the "score" of the display mode
+         **/
+        public static int CompareDisplayModes(String deviceName, DEVMODE first, DEVMODE second)
+        {
+            int firstScore = ComputeDisplayModeScore(deviceName, first);
+            int secondScore = ComputeDisplayModeScore(deviceName, second);
+            if (firstScore < secondScore)
+            {
+                return -1;
+            }
+            else if (firstScore > secondScore)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
         /// <summary>
         /// Set the resolution of the primary display.
         /// </summary>
         public static bool SetPrimaryResolution(int width, int height)
         {
-            // Prepare DEVMODE structure
-            DEVMODE devMode = new DEVMODE();
-            devMode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
+            // Device name for the primary display
+            string primaryDisplayName = @"\\.\DISPLAY1";
 
-            // Get current settings
-            if (!EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref devMode))
-                throw new InvalidOperationException("Failed to get current display settings.");
+            DEVMODE devMode = GetCurrentDisplayMode(primaryDisplayName);
 
-            // Update only width and height
+            devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
             devMode.dmPelsWidth = width;
             devMode.dmPelsHeight = height;
-            devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
-
-            // Device name for the primary display
-            string deviceName = @"\\.\DISPLAY1";
-
-            // Test if the mode is supported
-            int testResult = ChangeDisplaySettings(ref devMode, CDS_TEST);
-            if (testResult != DISP_CHANGE_SUCCESSFUL)
-            {
-                Console.WriteLine($"Resolution {width}x{height} not supported. Error code: {testResult}");
-                return false;
-            }
 
             // Apply the mode (and store in registry)
-            int applyResult = ChangeDisplaySettings( ref devMode, CDS_UPDATEREGISTRY);
-            if (applyResult != DISP_CHANGE_SUCCESSFUL)
+            int applyResult = ChangeDisplaySettings( ref devMode, CDS_UPDATEREGISTRY | CDS_NORESET);
+            return applyResult == 0;
+
+            /*DISP_CHANGE applyResult =  ChangeDisplaySettingsEx(
+                        primaryDisplayName,
+                        ref devMode,
+                        (IntPtr)null,
+                        ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET,
+                        IntPtr.Zero);
+
+            if (applyResult != DISP_CHANGE.Successful)
             {
                 Console.WriteLine($"Failed to apply resolution {width}x{height}. Error code: {applyResult}");
                 return false;
             }
+            else
+            {
 
-            return true;
+                // Apply the settings and update the registry
+                ChangeDisplaySettingsEx(null, IntPtr.Zero, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_NONE, (IntPtr)null);
+                Console.WriteLine($"Successfully applied resolution {width}x{height}.");
 
+                return true;
+            }*/
         }
     }
 }

@@ -369,7 +369,7 @@ namespace Tooth.Backend
 
                                     // When new resolution applied, Scaling doesn't apply automatically,
                                     // Reapply last user scaling choice.
-
+                                    /*
                                     _retroScalingEnabled = intelGPUController.GetRetroScalingEnabled();
                                     if (_retroScalingEnabled)
                                     {
@@ -408,6 +408,7 @@ namespace Tooth.Backend
                                                 break;
                                         }
                                     }
+                                    */
                                 }
                                 else
                                     result = false;
