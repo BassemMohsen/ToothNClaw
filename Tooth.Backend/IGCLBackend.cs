@@ -727,14 +727,23 @@ namespace Tooth.IGCL
             // if we are switching between Display and GPU scaling, we need to modeset, otherwise don't modeset.
             // Modeset flashes the display, which is not nice for the user experience.
             // Should be avoided if not necessary.
+            /*
             if ((CurrentScalingSettings.ScalingType == 0) && (NewScalingSettings.ScalingType > 0))
                 NewScalingSettings.HardwareModeSet = true;
             else if((CurrentScalingSettings.ScalingType > 0) && (NewScalingSettings.ScalingType == 0))
                 NewScalingSettings.HardwareModeSet = true;
             else
                 NewScalingSettings.HardwareModeSet = false;
+            */
 
-            Result = SetScalingSettings(hDevice, displayIdx, NewScalingSettings);
+            NewScalingSettings.HardwareModeSet = false;
+            // skip if not needeed
+            if ( (CurrentScalingSettings.ScalingType != NewScalingSettings.ScalingType) ||
+                (CurrentScalingSettings.Enable != NewScalingSettings.Enable) )
+            {
+                Result = SetScalingSettings(hDevice, displayIdx, NewScalingSettings);
+            }
+
             if (Result == ctl_result_t.CTL_RESULT_SUCCESS)
                 return true;
             else

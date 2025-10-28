@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SharpDX.Direct3D9;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -24,6 +25,12 @@ namespace Tooth.Backend
         private const int CDS_UPDATEREGISTRY = 0x00000001;
         private const int CDS_TEST = 0x00000002;
         private const int DISP_CHANGE_SUCCESSFUL = 0;
+
+        const int DM_PELSWIDTH = 0x00080000;
+        const int DM_PELSHEIGHT = 0x00100000;
+
+        public static int nativeWidth = 0;
+        public static int nativeHeight = 0;
 
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
@@ -62,6 +69,7 @@ namespace Tooth.Backend
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern int ChangeDisplaySettings(ref DEVMODE devMode, int flags);
+
 
         [DllImport("User32.dll")]
         public static extern int GetDisplayConfigBufferSizes(uint flags, ref uint numPathArrayElements, ref uint numModeInfoArrayElements);
@@ -286,7 +294,6 @@ namespace Tooth.Backend
             var modes = new DISPLAYCONFIG_MODE_INFO[modeCount];
 
             int res = QueryDisplayConfig(QDC_ONLY_ACTIVE_PATHS, ref pathCount, paths, ref modeCount, modes, IntPtr.Zero);
-            int nativeWidth = 0, nativeHeight = 0;
 
             for (int i = 0; i < paths.Length; i++)
             {
@@ -371,14 +378,20 @@ namespace Tooth.Backend
             if (!EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref devMode))
                 throw new Exception("Failed to get current display settings.");
 
-            return new Resolution
-            {
-                Id = 0,
-                Width = devMode.dmPelsWidth,
-                Height = devMode.dmPelsHeight,
-                Frequency = devMode.dmDisplayFrequency,
-                IsNative = false // current resolution is not necessarily native
-            };
+            Resolution resolution = new Resolution();
+            resolution.Id = 0;
+            resolution.Width = devMode.dmPelsWidth;
+            resolution.Height = devMode.dmPelsHeight;
+            resolution.Frequency = devMode.dmDisplayFrequency;
+
+            if (nativeWidth != 0 && nativeHeight != 0 &&
+                devMode.dmPelsWidth == nativeWidth && devMode.dmPelsHeight == nativeHeight)
+                resolution.IsNative = true;
+            else
+                resolution.IsNative = false; // current resolution is not necessarily native
+
+
+            return resolution;
         }
 
         /// <summary>
@@ -386,18 +399,40 @@ namespace Tooth.Backend
         /// </summary>
         public static bool SetPrimaryResolution(int width, int height)
         {
+            // Prepare DEVMODE structure
             DEVMODE devMode = new DEVMODE();
             devMode.dmSize = (short)Marshal.SizeOf(typeof(DEVMODE));
 
+            // Get current settings
             if (!EnumDisplaySettings(null, ENUM_CURRENT_SETTINGS, ref devMode))
                 throw new InvalidOperationException("Failed to get current display settings.");
 
+            // Update only width and height
             devMode.dmPelsWidth = width;
             devMode.dmPelsHeight = height;
-            devMode.dmFields = 0x00080000 | 0x00100000; // DM_PELSWIDTH | DM_PELSHEIGHT
+            devMode.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
 
-            int result = ChangeDisplaySettings(ref devMode, CDS_UPDATEREGISTRY);
-            return result == DISP_CHANGE_SUCCESSFUL;
+            // Device name for the primary display
+            string deviceName = @"\\.\DISPLAY1";
+
+            // Test if the mode is supported
+            int testResult = ChangeDisplaySettings(ref devMode, CDS_TEST);
+            if (testResult != DISP_CHANGE_SUCCESSFUL)
+            {
+                Console.WriteLine($"Resolution {width}x{height} not supported. Error code: {testResult}");
+                return false;
+            }
+
+            // Apply the mode (and store in registry)
+            int applyResult = ChangeDisplaySettings( ref devMode, CDS_UPDATEREGISTRY);
+            if (applyResult != DISP_CHANGE_SUCCESSFUL)
+            {
+                Console.WriteLine($"Failed to apply resolution {width}x{height}. Error code: {applyResult}");
+                return false;
+            }
+
+            return true;
+
         }
     }
 }

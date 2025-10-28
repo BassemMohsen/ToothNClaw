@@ -344,10 +344,9 @@ namespace Tooth
 
             if (ResolutionComboBox.SelectedValue is int resolution && resolution != 0)
             {
+                Trace.WriteLine($"[MainPage.xaml.cs] Resolution selected is not native, disabling Display scaling option");
                 // Disable "Display" option on the slider
                 ScalingDeviceSlider.Minimum = 1;
-                if (ScalingDeviceSlider.Value < 1)
-                    ScalingDeviceSlider.Value = 1; // move slider to GPU
 
                 ScalingDeviceLabel1.Text = "GPU";
                 ScalingDeviceLabel2.Text = "";
@@ -355,6 +354,7 @@ namespace Tooth
             }
             else
             {
+                Trace.WriteLine($"[MainPage.xaml.cs] Resolution selected is native, enabling Display scaling option");
                 // Enable full range
                 ScalingDeviceSlider.Minimum = 0;
 
