@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.ServiceModel.Channels;
+using System.Text.Json;
 using System.Windows.Input;
 using Windows.ApplicationModel.AppExtensions;
 using Windows.Foundation;
@@ -15,6 +16,7 @@ using Windows.Foundation.Collections;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,6 +33,8 @@ namespace Tooth
     /// </summary>
     public sealed partial class MainPage : IDisposable
     {
+
+
         private static MainPageModel _modelBase = new MainPageModel();
         private MainPageModelWrapper _model;
 
@@ -60,11 +64,13 @@ namespace Tooth
             Backend.Instance.Send("get-fps-limit");
             Backend.Instance.Send("get-boost");
             Backend.Instance.Send("get-EnduranceGaming");
+            Backend.Instance.Send("get-supported-resolutions");
             Backend.Instance.Send("get-resolution");
             Backend.Instance.Send("get-fps-limiter-value");
             Backend.Instance.Send("get-fps-limiter-enabled");
             Backend.Instance.Send("get-Frame-Sync-Mode");
             Backend.Instance.Send("get-Low-Latency-Mode");
+            Backend.Instance.Send("get-Scaling");
             Backend.Instance.Send("init");
         }
 
@@ -74,13 +80,11 @@ namespace Tooth
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Collapsed;
                 LaunchBackendButton.IsTapEnabled = false;
-                LaunchBackendButton.IsTabStop = false;
             }
             else
             {
                 StartingBackgroundserviceTextBlock.Visibility = Visibility.Visible;
                 LaunchBackendButton.IsTapEnabled = true;
-                LaunchBackendButton.IsTabStop = true;
             }
         }
 
@@ -150,14 +154,76 @@ namespace Tooth
                     _model.SetAutoStartVar(bool.Parse(args[1]));
                     break;
                 case "resolution":
-                    _model.Resolution = double.Parse(args[1]);
-                    _model.SetResolutionVar(double.Parse(args[1]));
+                    _model.Resolution = int.Parse(args[1]);
+                    _model.SetResolutionVar(int.Parse(args[1]));
+                    Trace.WriteLine($"[MainPage.xaml.cs] Recieved Resolution id: {_model.Resolution}");
+
+                    ResolutionComboBox.SelectedValue = _model.Resolution;
                     break;
                 case "launch-gamebar-widget":
                     Trace.WriteLine($"[MainPage.xaml.cs] Recieved launch-gamebar-widget");
                     launchGameBarWidget();
                     break;
+                case "Scaling":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating GPU-Scaling Mode to {args[1]}");
+                    if (args[1] == "0")
+                    {
+                        _model.DeviceScaling = 0; // Display Maintain Aspect Ratio
+                    }
+                    else if (args[1] == "1")
+                    {
+                        _model.DeviceScaling = 1; // GPU
+                        _model.GpuScalingMode = 0; // Aspect Ratio
+                    }
+                    else if (args[1] == "2")
+                    {
+                        _model.DeviceScaling = 1; // GPU
+                        _model.GpuScalingMode = 1; // Stretch
+                    }
+                    else if (args[1] == "3")
+                    {
+                        _model.DeviceScaling = 1; // GPU
+                        _model.GpuScalingMode = 2; // Center
+                    }
+                    else if (args[1] == "4")
+                    {
+                        _model.DeviceScaling = 2; // Retro Scaling
+                        _model.RetroScalingMode = 0; // Integer
 
+                    }
+                    else if (args[1] == "5")
+                    {
+                        _model.DeviceScaling = 2; // Retro Scaling
+                        _model.RetroScalingMode = 1; // Nearest Neighbor
+                    }
+                    else
+                    {
+                        Trace.WriteLine($"[MainPage.xaml.cs] Wrong value Scaling to {args[1]}");
+                    }
+                    break;
+                case "supported-resolutions":
+
+                    args = message.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                    if (args.Length < 2)
+                    {
+                        Trace.WriteLine("Malformed message: missing JSON payload");
+                        break;
+                    }
+                    try
+                    {
+                        if (args.Length < 2)
+                            return;
+                        Trace.WriteLine("Raw payload: " + args[1]);
+                        _model.Resolutions = System.Text.Json.JsonSerializer.Deserialize<List<Resolution>>(args[1]);
+                        ResolutionComboBox.ItemsSource = _model.Resolutions;
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine($"Failed to parse resolutions: {ex.Message}");
+                    }
+
+                    break;
             }
         }
 
@@ -275,10 +341,32 @@ namespace Tooth
 
         private void ResolutionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
+            if (ResolutionComboBox.SelectedValue is int resolution && resolution != 0)
+            {
+                Trace.WriteLine($"[MainPage.xaml.cs] Resolution selected is not native, disabling Display scaling option");
+                // Disable "Display" option on the slider
+                ScalingDeviceSlider.Minimum = 1;
+
+                ScalingDeviceLabel1.Text = "GPU";
+                ScalingDeviceLabel2.Text = "";
+                ScalingDeviceLabel3.Text = "Retro";
+            }
+            else
+            {
+                Trace.WriteLine($"[MainPage.xaml.cs] Resolution selected is native, enabling Display scaling option");
+                // Enable full range
+                ScalingDeviceSlider.Minimum = 0;
+
+                ScalingDeviceLabel1.Text = "Display";
+                ScalingDeviceLabel2.Text = "GPU";
+                ScalingDeviceLabel3.Text = "Retro";
+            }
+
             if (sender is ComboBox combo && combo.SelectedItem is ComboBoxItem item)
             {
                 // Extract the Tag (0, 1, or 2)
-                if (item.Tag is double tagValue)
+                if (item.Tag is int tagValue)
                 {
                     if (DataContext is MainPageModelWrapper model)
                     {
@@ -292,6 +380,91 @@ namespace Tooth
         private void FPSSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             Backend.Instance.Send($"set-Fps-limiter" + ' ' + $"{Convert.ToInt32(_model.FpsLimitEnabled)}" + ' ' + $"{_model.FpsLimitValue}");
+        }
+
+        private void ScalingDeviceSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (ResolutionComboBox.SelectedValue is int resolution && resolution != 0)
+            {
+                if (ScalingDeviceSlider.Value < 1)
+                {
+                    ScalingDeviceSlider.Value = 1; // force slider to GPU
+                }
+            }
+
+                int value = (int)e.NewValue;
+            // Decide which property to bind to based on slider position
+            Windows.UI.Xaml.Data.Binding newBinding = null;
+
+            switch (value)
+            {
+                case 0: // Display
+                    BindingOperations.SetBinding(ScalingModeSlider, Slider.ValueProperty, new Windows.UI.Xaml.Data.Binding());
+                    return;
+
+                case 1: // GPU
+                    newBinding = new Windows.UI.Xaml.Data.Binding
+                    {
+                        Path = new PropertyPath("GpuScalingMode"),
+                        Mode = BindingMode.TwoWay
+                    };
+
+                    ScalingModeSlider.Minimum = 0;
+                    ScalingModeSlider.Maximum = 2; 
+                    Label1.Text = "Aspect Ratio";
+                    Label2.Text = "Stretch";
+                    Label3.Text = "Center";
+                    Label2.Visibility = Visibility.Visible; 
+                    break;
+
+                case 2: // Retro
+                    newBinding = new Windows.UI.Xaml.Data.Binding
+                    {
+                        Path = new PropertyPath("RetroScalingMode"),
+                        Mode = BindingMode.TwoWay
+                    };
+                    ScalingModeSlider.Minimum = 0;
+                    ScalingModeSlider.Maximum = 1; 
+                    Label1.Text = "Integer";
+                    Label2.Text = "";
+                    Label3.Text = "Nearest Neighbor";
+                    Label2.Visibility = Visibility.Collapsed;
+                    break;
+                default:
+                    BindingOperations.SetBinding(ScalingModeSlider, Slider.ValueProperty, new Windows.UI.Xaml.Data.Binding());
+                    return;
+            }
+            // Apply new binding dynamically
+            BindingOperations.SetBinding(ScalingModeSlider, Slider.ValueProperty, newBinding);
+        }
+
+        private void SecondaryGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            double value = ScalingDeviceSlider.Value;
+
+            switch (value)
+            {
+                case 0: // Display
+                    break;
+
+                case 1: // GPU
+                    ScalingModeSlider.Minimum = 0;
+                    ScalingModeSlider.Maximum = 2;
+                    Label1.Text = "Aspect Ratio";
+                    Label2.Text = "Stretch";
+                    Label3.Text = "Center";
+                    Label2.Visibility = Visibility.Visible;
+                    break;
+
+                case 2: // Retro
+                    ScalingModeSlider.Minimum = 0;
+                    ScalingModeSlider.Maximum = 1;
+                    Label1.Text = "Integer";
+                    Label2.Text = "";
+                    Label3.Text = "Nearest Neighbor";
+                    Label2.Visibility = Visibility.Collapsed;
+                    break;
+            }
         }
     }
 }

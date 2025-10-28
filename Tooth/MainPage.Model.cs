@@ -9,13 +9,61 @@ using Windows.UI.Core;
 
 namespace Tooth
 {
-	internal class MainPageModelWrapper : INotifyPropertyChanged, IDisposable
+    public struct Resolution
+    {
+        public int Id { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public int Frequency { get; set; }
+        public bool IsNative { get; set; }
+
+        public string DisplayText
+        {
+            get
+            {
+                string aspect = GetAspectRatio(Width, Height);
+                string nativeLabel = (IsNative == true) ? " (Native)" : "";
+                return $"{Width} x {Height} ({aspect}){nativeLabel}";
+            }
+        }
+        // Helper method to calculate common aspect ratios
+        private static string GetAspectRatio(int width, int height)
+        {
+            double ratio = (double)width / height;
+
+            // Match to common display ratios with a small tolerance
+            if (Math.Abs(ratio - 16.0 / 9) < 0.01) return "16:9";
+            if (Math.Abs(ratio - 16.0 / 10) < 0.01) return "16:10";
+            if (Math.Abs(ratio - 4.0 / 3) < 0.01) return "4:3";
+            if (Math.Abs(ratio - 5.0 / 4) < 0.01) return "5:4";
+            if (Math.Abs(ratio - 21.0 / 9) < 0.01) return "21:9";
+
+            // fallback to reduced fraction if unknown
+            int gcd = GCD(width, height);
+            return $"{width / gcd}:{height / gcd}";
+        }
+
+        // Euclidean algorithm to find greatest common divisor
+        private static int GCD(int a, int b)
+        {
+            while (b != 0)
+            {
+                int temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+    }
+
+    internal class MainPageModelWrapper : INotifyPropertyChanged, IDisposable
 	{
 		private MainPageModel _base;
 		private CoreDispatcher _dispatcher;
 
 
-		public MainPageModelWrapper(MainPageModel baseModel, CoreDispatcher dispatcher)
+
+        public MainPageModelWrapper(MainPageModel baseModel, CoreDispatcher dispatcher)
 		{
 			_base = baseModel;
 			_dispatcher = dispatcher;
@@ -37,6 +85,23 @@ namespace Tooth
                 }
             }
         }
+
+        public List<Resolution> Resolutions
+        {
+            get { lock (_base) { return _base.resolutions; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.resolutions != value)
+                    {
+                        _base.resolutions = value;
+                        _base.Notify("Resolutions");
+                    }
+                }
+            }
+        }
+
 
         public double FpsLimitValue
         {
@@ -73,7 +138,7 @@ namespace Tooth
             }
         }
 
-        public double Resolution
+        public int Resolution
         {
             get { lock (_base) { return _base.resolution; } }
             set
@@ -178,7 +243,7 @@ namespace Tooth
             }
         }
 
-        public void SetResolutionVar(double value)
+        public void SetResolutionVar(int value)
         {
             lock (_base)
             {
@@ -288,6 +353,266 @@ namespace Tooth
                 }
             }
         }
+
+        public int DeviceScaling
+        {
+            get { lock (_base) { return _base.deviceScaling; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.deviceScaling != value)
+                    {
+                        _base.deviceScaling = value;
+
+                        if (_base.deviceScaling == 0)
+                        {
+                            // Display Scaling
+                            Backend.Instance.Send($"set-Scaling 0");
+                        }
+                        else if (_base.deviceScaling == 1)
+                        {
+                            if (_base.gpuScalingMode == 0)
+                            {
+                                // GPU Scaling - Maintain Aspect ratio
+                                Backend.Instance.Send($"set-Scaling 1");
+                            }
+                            else if (_base.gpuScalingMode == 1)
+                            {
+                                // GPU Scaling - Stretch
+                                Backend.Instance.Send($"set-Scaling 2");
+                            }
+                            else if (_base.gpuScalingMode == 2)
+                            {
+                                // GPU Scaling - Center
+                                Backend.Instance.Send($"set-Scaling 3");
+                            }
+                            else
+                            {
+                                // Do nothing, wrong value for GPU Scaling
+                            }
+                        }
+                        else if (_base.deviceScaling == 2)
+                        {
+                            if (_base.retroScalingMode == 0)
+                            {
+                                // Retro Scaling - Integer Scaling
+                                Backend.Instance.Send($"set-Scaling 4");
+                            }
+                            else if (_base.retroScalingMode == 1)
+                            {
+                                // Retro Scaling - Nearest neighbour
+                                Backend.Instance.Send($"set-Scaling 5");
+                            }
+                            else
+                            {
+                                // Do nothing, wrong value for Retro Scaling
+                            }
+                        }
+                        else
+                        {
+                            // Do nothing, wrong value for Device Scaling
+                        }
+                        _base.Notify("DeviceScaling");
+                    }
+                }
+            }
+        }
+
+        public void SetDeviceScalingVar(int value)
+        {
+            lock (_base)
+            {
+                if (_base.deviceScaling != value)
+                {
+                    _base.deviceScaling = value;
+
+                    if (_base.deviceScaling == 0)
+                    {
+                        // Display Scaling
+                        Backend.Instance.Send($"set-Scaling 0");
+                    }
+                    else if (_base.deviceScaling == 1)
+                    {
+                        if (_base.gpuScalingMode == 0)
+                        {
+                            // GPU Scaling - Maintain Aspect ratio
+                            Backend.Instance.Send($"set-Scaling 1");
+                        }
+                        else if (_base.gpuScalingMode == 1)
+                        {
+                            // GPU Scaling - Stretch
+                            Backend.Instance.Send($"set-Scaling 2");
+                        }
+                        else if (_base.gpuScalingMode == 2)
+                        {
+                            // GPU Scaling - Center
+                            Backend.Instance.Send($"set-Scaling 3");
+                        }
+                        else
+                        {
+                            // Do nothing, wrong value for GPU Scaling
+                        }
+                    }
+                    else if (_base.deviceScaling == 2)
+                    {
+                        if (_base.retroScalingMode == 0)
+                        {
+                            // Retro Scaling - Integer Scaling
+                            Backend.Instance.Send($"set-Scaling 4");
+                        }
+                        else if (_base.retroScalingMode == 1)
+                        {
+                            // Retro Scaling - Nearest neighbour
+                            Backend.Instance.Send($"set-Scaling 5");
+                        }
+                        else
+                        {
+                            // Do nothing, wrong value for Retro Scaling
+                        }
+                    }
+                    else
+                    {
+                        // Do nothing, wrong value for Device Scaling
+                    }
+                    _base.Notify("DeviceScaling");
+                }
+            }
+        }
+
+        public int GpuScalingMode
+        {
+            get { lock (_base) { return _base.gpuScalingMode; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.gpuScalingMode != value)
+                    {
+                        _base.gpuScalingMode = value;
+
+                        if (_base.deviceScaling == 1)
+                        {
+                            if (_base.gpuScalingMode == 0)
+                            {
+                                // GPU Scaling - Maintain Aspect ratio
+                                Backend.Instance.Send($"set-Scaling 1");
+                            }
+                            else if (_base.gpuScalingMode == 1)
+                            {
+                                // GPU Scaling - Stretch
+                                Backend.Instance.Send($"set-Scaling 2");
+                            }
+                            else if (_base.gpuScalingMode == 2)
+                            {
+                                // GPU Scaling - Center
+                                Backend.Instance.Send($"set-Scaling 3");
+                            }
+                            else
+                            {
+                                // Do nothing, wrong value for GPU Scaling
+                            }
+                        }
+
+                        _base.Notify("GpuScalingMode");
+
+                    }
+                }
+            }
+        }
+
+        public void SetGpuScalingModeVar(int value)
+        {
+            lock (_base)
+            {
+                if (_base.gpuScalingMode != value)
+                {
+                    _base.gpuScalingMode = value;
+
+                    if (_base.deviceScaling == 1)
+                    {
+                        if (_base.gpuScalingMode == 0)
+                        {
+                            // GPU Scaling - Maintain Aspect ratio
+                            Backend.Instance.Send($"set-Scaling 1");
+                        }
+                        else if (_base.gpuScalingMode == 1)
+                        {
+                            // GPU Scaling - Stretch
+                            Backend.Instance.Send($"set-Scaling 2");
+                        }
+                        else if (_base.gpuScalingMode == 2)
+                        {
+                            // GPU Scaling - Center
+                            Backend.Instance.Send($"set-Scaling 3");
+                        }
+                        else
+                        {
+                            // Do nothing, wrong value for GPU Scaling
+                        }
+                    }
+
+                    _base.Notify("GpuScalingMode");
+
+                }
+            }
+        }
+
+        public int RetroScalingMode
+        {
+            get { lock (_base) { return _base.retroScalingMode; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.retroScalingMode != value)
+                    {
+                        _base.retroScalingMode = value;
+
+                        if (_base.deviceScaling == 2) // retro scaling
+                        {
+                            if (_base.retroScalingMode == 0)
+                            {
+                                // Retro Scaling - Integer Scaling
+                                Backend.Instance.Send($"set-Scaling 4");
+                            }
+                            else if (_base.retroScalingMode == 1)
+                            {
+                                // GPU Scaling - Nearest Neighbour
+                                Backend.Instance.Send($"set-Scaling 5");
+                            }
+                            else
+                            {
+                                // Do nothing, wrong value for Retro Scaling
+                            }
+                        }
+
+                        _base.Notify("RetroScalingMode");
+                    }
+                }
+            }
+        }
+
+        public void SetRetroScalingModeVar(int value)
+        {
+            lock (_base)
+            {
+                if (_base.retroScalingMode != value)
+                {
+                    _base.retroScalingMode = value;
+                    if (_base.retroScalingMode < 2)
+                    {
+                        if (_base.deviceScaling == 2)
+                        {
+                            // Retro Scaling
+                            Backend.Instance.Send($"set-Retro-Scaling {value}");
+                        }
+                    }
+                    _base.Notify("RetroScalingMode");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 		public async Task Notify(string propertyName)
@@ -309,17 +634,21 @@ namespace Tooth
 
 	class MainPageModel
     {
+        public List<Resolution> resolutions;
         public bool fpsLimitEnabled = false;
         public double fpsLimitValue = 90;
         public double fpsMin = 30;
         public double fpsMax = 120;
         public double boostMode = 2; // 0: off, 1: enabled, 2: agressive
         public double enduranceGaming = 0; // 0: off, 1: Performance, 2: Balanced, 3: Battery
-        public double resolution = 0; // 0: 1920x1200, 1: 1680 x 1050, 2: 1440 x 900, 3: 1280 x 800
+        public int resolution = 0;
         public bool autoStart = false;
         public bool isConnected = false;
         public double lowlatency = 0; // 0: off, 1: ON, 2: ON+BOOST
         public double framesync = 0; 
+        public int deviceScaling = 0;  // 0: Display Scaling, 1: Gpu Scaling, 2: Retro Scaling
+        public int gpuScalingMode = 0;  // 0: Maintain Aspect Ratio, 1: Stretch, 2: Center
+        public int retroScalingMode = 0; // 0: Integer Scaling, 1: Nearest neighbour
 
         private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();
 

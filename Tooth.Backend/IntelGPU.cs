@@ -33,6 +33,14 @@ namespace Tooth.GraphicsProcessingUnit
             SPEED_SYNC = 4, // Speed up the latest frame, Low Latency, No tearing, no cap.
             CAPPED_FPS = 5, // Automatically enables V-Sync when the application’s render rate exceeds the display's refresh rate and disables VSync when the render rate falls below the display's refresh rate.
         }
+
+        public enum ScalingModeAndMethod : uint
+        {
+            DISPLAY_SCALING = 0,
+            GPU_SCALING_MAINTAIN_ASPECT_RATIO = 1,
+            GPU_SCALING_STRETCH_FIT = 2,
+            GPU_SCALING_CENTER_IN_SCREEN = 3
+        }
         public void Dispose()
         {
             halting = true;
@@ -92,12 +100,12 @@ namespace Tooth.GraphicsProcessingUnit
 
         protected ctl_telemetry_data TelemetryData = new();
 
-        public bool HasIntegerScalingSupport()
+        public bool HasRetroScalingSupport()
         {
             if (!IsInitialized)
                 return false;
 
-            return Execute(() => IGCLBackend.HasIntegerScalingSupport(deviceIdx, 0), false);
+            return Execute(() => IGCLBackend.HasRetroScalingSupport(deviceIdx, 0), false);
         }
 
         public bool HasGPUScalingSupport()
@@ -116,12 +124,26 @@ namespace Tooth.GraphicsProcessingUnit
             return Execute(() => IGCLBackend.HasGPUScalingSupport(deviceIdx, 0), false);
         }
 
-        public bool GetGPUScaling()
+        public ScalingModeAndMethod GetGPUScaling()
         {
             if (!IsInitialized)
-                return false;
+                return ScalingModeAndMethod.DISPLAY_SCALING;
 
-            return Execute(() => IGCLBackend.GetGPUScaling(deviceIdx, 0), false);
+            ctl_scaling_type_flag_t scalingType = IGCLBackend.GetGPUScaling(deviceIdx, 0);
+
+            switch (scalingType)
+            {
+                case ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_IDENTITY:
+                    return ScalingModeAndMethod.DISPLAY_SCALING;
+                case ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_ASPECT_RATIO_CENTERED_MAX:
+                    return ScalingModeAndMethod.GPU_SCALING_MAINTAIN_ASPECT_RATIO;
+                case ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_STRETCHED:
+                    return ScalingModeAndMethod.GPU_SCALING_STRETCH_FIT;
+                case ctl_scaling_type_flag_t.CTL_SCALING_TYPE_FLAG_CENTERED:
+                    return ScalingModeAndMethod.GPU_SCALING_CENTER_IN_SCREEN;
+                default:
+                    return ScalingModeAndMethod.DISPLAY_SCALING;
+            }
         }
 
         public bool GetImageSharpening()
@@ -140,21 +162,20 @@ namespace Tooth.GraphicsProcessingUnit
             return IGCLBackend.GetImageSharpeningSharpness(deviceIdx, 0);
         }
 
-        public bool GetIntegerScaling()
+        public bool GetRetroScalingEnabled()
         {
             if (!IsInitialized)
                 return false;
 
-            return IGCLBackend.GetIntegerScaling(deviceIdx);
+            return IGCLBackend.GetRetroScalingEnabled(deviceIdx);
         }
 
-        // GPUScaling can't be disabled on Intel GPU ?
-        public bool SetGPUScaling(bool enabled)
+        public ctl_retro_scaling_type_flags_t GetRetroScalingType()
         {
             if (!IsInitialized)
-                return false;
+                return ctl_retro_scaling_type_flags_t.CTL_RETRO_SCALING_TYPE_FLAG_MAX;
 
-            return IGCLBackend.SetGPUScaling(deviceIdx, 0 , enabled);
+            return IGCLBackend.GetRetroScalingType(deviceIdx);
         }
 
         public bool SetImageSharpening(bool enable)
@@ -173,20 +194,32 @@ namespace Tooth.GraphicsProcessingUnit
             return IGCLBackend.SetImageSharpeningSharpness(deviceIdx, 0, sharpness);
         }
 
-        public bool SetScalingMode(int mode)
+        public bool SetGPUScalingTypeMode(bool enabled = true, ScalingModeAndMethod mode = ScalingModeAndMethod.DISPLAY_SCALING)
         {
             if (!IsInitialized)
                 return false;
 
-            return IGCLBackend.SetScalingMode(deviceIdx, 0, mode);
+            switch(mode)
+                {
+                    case ScalingModeAndMethod.DISPLAY_SCALING:
+                        return IGCLBackend.SetGPUScalingTypeMode(deviceIdx, 0, enabled, 0);
+                    case ScalingModeAndMethod.GPU_SCALING_MAINTAIN_ASPECT_RATIO:
+                        return IGCLBackend.SetGPUScalingTypeMode(deviceIdx, 0, enabled, 1);
+                    case ScalingModeAndMethod.GPU_SCALING_STRETCH_FIT:
+                        return IGCLBackend.SetGPUScalingTypeMode(deviceIdx, 0, enabled, 2);
+                    case ScalingModeAndMethod.GPU_SCALING_CENTER_IN_SCREEN:
+                        return IGCLBackend.SetGPUScalingTypeMode(deviceIdx, 0, enabled, 3);
+                    default:
+                        return false;
+            }
         }
 
-        public bool SetIntegerScaling(bool enabled, byte type)
+        public bool SetRetroScaling(bool enabled, ctl_retro_scaling_type_flags_t type)
         {
             if (!IsInitialized)
                 return false;
 
-            return IGCLBackend.SetIntegerScaling(deviceIdx, enabled, type);
+            return IGCLBackend.SetRetroScaling(deviceIdx, enabled, type);
         }
 
         public bool SetHueSaturation(double hue, double saturation)
