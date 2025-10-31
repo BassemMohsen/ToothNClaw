@@ -66,7 +66,7 @@ Note: This is designed to be lightweight and complement MSI Quick Settings optio
 
 # 🎥 Featured Demos, Showcases & Community Tutorials
 
-[![Watch the video](https://img.youtube.com/vi/emzgflgQCSM/hqdefault.jpg)](https://www.youtube.com/watch?v=emzgflgQCSM)
+[![Watch the video](https://img.youtube.com/vi/emzgflgQCSM/hqdefault.jpg)](https://www.youtube.com/watch?v=emzgflgQCSM)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Watch the video](https://img.youtube.com/vi/HemCPLP78-k/hqdefault.jpg)](https://youtu.be/HemCPLP78-k?t=858)
 
 
 # Supported Devices
