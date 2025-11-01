@@ -66,12 +66,12 @@ Note: This is designed to be lightweight and complement MSI Quick Settings optio
 
 # 🎥 Featured Demos, Showcases & Community Tutorials
 
-[![Watch the video](https://img.youtube.com/vi/emzgflgQCSM/hqdefault.jpg)](https://www.youtube.com/watch?v=emzgflgQCSM)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Watch the video](https://img.youtube.com/vi/HemCPLP78-k/hqdefault.jpg)](https://youtu.be/HemCPLP78-k?t=858)
+[![Watch the video](https://img.youtube.com/vi/emzgflgQCSM/hqdefault.jpg)](https://www.youtube.com/watch?v=emzgflgQCSM)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Watch the video](https://img.youtube.com/vi/HemCPLP78-k/hqdefault.jpg)](https://youtu.be/HemCPLP78-k?t=858)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Watch the video](https://img.youtube.com/vi/0SmKsFUwTJE/hqdefault.jpg)](https://youtu.be/0SmKsFUwTJE?t=423s)
 
 
 # Supported Devices
 - MSI Claw 8 AI+ A2VM with Intel Lunar Lake.
-- MSI Claw 7 AI+ A2VM with Intel Lunar Lake (Partial)
+- MSI Claw 7 AI+ A2VM with Intel Lunar Lake.
 - Requires Intel Graphics Software and Intel Drivers for Lunar Lake APU.
 
 # Bugs & Features
@@ -83,7 +83,8 @@ Please [open an issue](https://github.com/BassemMohsen/ToothNClaw/issues) in the
 - [Intel IGCL Library](https://github.com/intel/drivers.gpu.control-library)
 - [chenx-dust/RyzenAdjUWP](https://github.com/chenx-dust/RyzenAdjUWP)
 
-> Big shout-out to the Intel Graphics Team for the IGCL library, with its well-designed APIs and useful samples that Tooth N Claw leverages to offer Game Bar widget controls.
+# Acknowledgements
+The Tooth N Claw experience is made possible thanks to Intel’s commitment to open source. A big thank-you to the Intel Graphics Team for providing the IGCL library, along with thorough documentation and numerous practical examples. Their well-designed APIs and samples have been invaluable in enabling Tooth N Claw to offer seamless Game Bar widget controls.
 
 # Frequently Asked Questions
 ## How to uninstall my Tooth N Claw?
