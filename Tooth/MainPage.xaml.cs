@@ -71,6 +71,9 @@ namespace Tooth
             Backend.Instance.Send("get-Frame-Sync-Mode");
             Backend.Instance.Send("get-Low-Latency-Mode");
             Backend.Instance.Send("get-Scaling");
+            Backend.Instance.Send("get-long-tdp");
+            Backend.Instance.Send("get-short-tdp");
+            Backend.Instance.Send("get-power-limit-enabled");
             Backend.Instance.Send("init");
         }
 
@@ -224,6 +227,24 @@ namespace Tooth
                     }
 
                     break;
+
+                case "long-tdp":
+                    _model.LongTDP = int.Parse(args[1]);
+                    _model.SetLongTDPVar(int.Parse(args[1]));
+                    Trace.WriteLine($"[MainPage.xaml.cs] Recieved Long TDP value: {_model.LongTDP}");
+                    break;
+
+                case "short-tdp":
+                    _model.ShortTDP = int.Parse(args[1]);
+                    _model.SetShortTDPVar(int.Parse(args[1]));
+                    Trace.WriteLine($"[MainPage.xaml.cs] Recieved Short TDP value: {_model.ShortTDP}");
+                    break;
+
+                case "power-limit-enabled":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating UI Power Limiter Enabled to {args[1]}");
+                    _model.PowerLimitEnabled = Convert.ToBoolean(bool.Parse(args[1]));
+                    PowerLimitToggle.IsOn = _model.PowerLimitEnabled;
+                    break;
             }
         }
 
@@ -232,10 +253,15 @@ namespace Tooth
             var app = (App)Application.Current;
             var widgetControl = app._xboxGameBarWidgetControl;
 
+            Trace.WriteLine($"[MainPage.xaml.cs] launchGameBarWidget() is invoked");
             if (widgetControl != null)
             {
                 Trace.WriteLine($"[MainPage.xaml.cs] widgetControl.ActivateAsync");
                 await widgetControl.ActivateAsync("Tooth.XboxGameBarUI");
+            }
+            else
+            {
+                Trace.WriteLine($"[MainPage.xaml.cs] widgetControl is Null!");
             }
         }
 
@@ -464,6 +490,34 @@ namespace Tooth
                     Label3.Text = "Nearest Neighbor";
                     Label2.Visibility = Visibility.Collapsed;
                     break;
+            }
+        }
+
+        private void LongSustainedPowerLimitSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            Backend.Instance.Send($"set-long-tdp" + ' ' + $"{_model.LongTDP}");
+        }
+
+        private void ShortBurstPowerLimitSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            Backend.Instance.Send($"set-short-tdp" + ' ' + $"{_model.ShortTDP}");
+        }
+
+        private void PowerLimitToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // handle FPS Limiter toggle changes
+            if (PowerLimitToggle.IsOn)
+            {
+                // When enabled, direct focus down to the slider
+                PowerLimitToggle.XYFocusDown = LongSustainedPowerLimitSlider;
+
+                // Focus the slider when enabling
+                LongSustainedPowerLimitSlider.Focus(FocusState.Programmatic);
+            }
+            else
+            {
+                // When disabled, clear it so focus jumps past the collapsed panel
+                PowerLimitToggle.XYFocusDown = null;
             }
         }
     }
