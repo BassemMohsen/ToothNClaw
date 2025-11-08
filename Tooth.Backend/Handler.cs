@@ -23,6 +23,7 @@ namespace Tooth.Backend
     internal class Handler
     {
         private CpuBoostController cpuBoostController;
+        private PowerLimitController powerLimitController;
         private IntelGPU intelGPUController;
         private Communication _communication;
         private List<Resolution> resolutions;
@@ -45,6 +46,7 @@ namespace Tooth.Backend
         public Handler()
         {
             cpuBoostController = new CpuBoostController();
+            powerLimitController = new PowerLimitController();
             intelGPUController = new IntelGPU();
 		}
 
@@ -741,6 +743,135 @@ namespace Tooth.Backend
                         }
                     }
                     break;
+
+                case "get-power-limit-enabled":
+                    {
+                        bool powerLimitEnabled = SettingsManager.Get<bool>("PowerLimitEnabled");
+                        Console.WriteLine($"[Server Handler] Responding with Power Limite Enabled {powerLimitEnabled}");
+                        (sender as Communication).Send("power-limit-enabled" + ' ' + $"{powerLimitEnabled}");
+                    }
+                    break;
+
+                case "set-power-limit-enabled":
+                    {
+                        Console.WriteLine($"[Server Handler] Setting Power Limit Enabled to {args[1]}");
+
+                        bool powerLimitEnabled = bool.Parse(args[1]);
+                        SettingsManager.Set("PowerLimitEnabled", powerLimitEnabled);
+                    }
+                    break;
+                case "get-long-tdp":
+                    {
+                        if (powerLimitController == null)
+                        {
+                            powerLimitController = new PowerLimitController();
+                        }
+
+                        bool powerLimitEnabled = SettingsManager.Get<bool>("PowerLimitEnabled");
+                        int LongTDP = SettingsManager.Get<int>("LongTDP");
+
+                        // if the Power Limit is enabled, make sure to set PL1
+                        if (powerLimitEnabled)
+                        {
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await powerLimitController.SetTDPLongSustainedLimitAsync(LongTDP);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"TDP update failed: {ex.Message}");
+                                }
+                            });
+                        }
+
+                        Console.WriteLine($"[Server Handler] Responding with Long TDP Value {LongTDP}");
+                        (sender as Communication).Send("long-tdp" + ' ' + LongTDP);
+                    }
+                    break;
+
+                case "set-long-tdp":
+                    {
+                        if (powerLimitController == null)
+                        {
+                            powerLimitController = new PowerLimitController();
+                        }
+
+                        Console.WriteLine($"[Server Handler] Setting Long TDP to {args[1]} ");
+
+                        int LongTDP = int.Parse(args[1]);
+                        SettingsManager.Set("LongTDP", LongTDP);
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await powerLimitController.SetTDPLongSustainedLimitAsync(LongTDP);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"TDP update failed: {ex.Message}");
+                            }
+                        });
+                    }
+                    break;
+
+                case "get-short-tdp":
+                    {
+                        if (powerLimitController == null)
+                        {
+                            powerLimitController = new PowerLimitController();
+                        }
+                        bool powerLimitEnabled = SettingsManager.Get<bool>("PowerLimitEnabled");
+                        int ShortTDP = SettingsManager.Get<int>("ShortTDP");
+
+                        // if the Power Limit is enabled, make sure to set PL2
+                        if(powerLimitEnabled)
+                        {
+                            _ = Task.Run(async () =>
+                            {
+                                try
+                                {
+                                    await powerLimitController.SetTDPShortBurstLimitAsync(ShortTDP);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine($"TDP update failed: {ex.Message}");
+                                }
+                            });
+                        }
+
+                        Console.WriteLine($"[Server Handler] Responding with Short TDP Value {ShortTDP}");
+                        (sender as Communication).Send("short-tdp" + ' ' + ShortTDP);
+                    }
+                    break;
+
+                case "set-short-tdp":
+                    {
+                        if (powerLimitController == null)
+                        {
+                            powerLimitController = new PowerLimitController();
+                        }
+
+                        Console.WriteLine($"[Server Handler] Setting Short TDP to {args[1]} ");
+
+                        int ShortTDP = int.Parse(args[1]);
+                        SettingsManager.Set("ShortTDP", ShortTDP);
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await powerLimitController.SetTDPShortBurstLimitAsync(ShortTDP);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine($"TDP update failed: {ex.Message}");
+                            }
+                        });
+
+                    }
+                    break;
+
                 default:
                     break;
             }

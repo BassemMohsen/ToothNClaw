@@ -101,12 +101,6 @@ namespace Tooth.Backend
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern int ChangeDisplaySettings(ref DEVMODE devMode, int flags);
 
-        [DllImport("user32.dll")]
-        public static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, ref DEVMODE lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        public static extern DISP_CHANGE ChangeDisplaySettingsEx(string lpszDeviceName, IntPtr lpDevMode, IntPtr hwnd, ChangeDisplaySettingsFlags dwflags, IntPtr lParam);
-
         [DllImport("User32.dll")]
         public static extern int GetDisplayConfigBufferSizes(uint flags, ref uint numPathArrayElements, ref uint numModeInfoArrayElements);
 
@@ -568,28 +562,6 @@ namespace Tooth.Backend
             // Apply the mode (and store in registry)
             int applyResult = ChangeDisplaySettings( ref devMode, CDS_UPDATEREGISTRY | CDS_NORESET);
             return applyResult == 0;
-
-            /*DISP_CHANGE applyResult =  ChangeDisplaySettingsEx(
-                        primaryDisplayName,
-                        ref devMode,
-                        (IntPtr)null,
-                        ChangeDisplaySettingsFlags.CDS_UPDATEREGISTRY | ChangeDisplaySettingsFlags.CDS_NORESET,
-                        IntPtr.Zero);
-
-            if (applyResult != DISP_CHANGE.Successful)
-            {
-                Console.WriteLine($"Failed to apply resolution {width}x{height}. Error code: {applyResult}");
-                return false;
-            }
-            else
-            {
-
-                // Apply the settings and update the registry
-                ChangeDisplaySettingsEx(null, IntPtr.Zero, (IntPtr)null, ChangeDisplaySettingsFlags.CDS_NONE, (IntPtr)null);
-                Console.WriteLine($"Successfully applied resolution {width}x{height}.");
-
-                return true;
-            }*/
         }
     }
 }

@@ -73,6 +73,109 @@
 
             <StackPanel x:Name="MainPanel" Orientation="Vertical" Margin="15,0,15,0">
 
+                <!-- Power Limit Control -->
+                <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
+                    <Grid >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Power Limit"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="0"
+                                   FontSize="18"
+                                   FontWeight="Bold"/>
+                        <ToggleSwitch x:Name="PowerLimitToggle"
+                                      Grid.Column="1"
+                                      OffContent="Off"
+                                      OnContent="On"
+                                      IsOn="{Binding PowerLimitEnabled, Mode=TwoWay}"
+                                      Toggled="PowerLimitToggle_Toggled" />
+                    </Grid>
+
+                    <Border x:Name="PowerLimitPanel"
+                            Margin="0,6,0,0"
+                            CornerRadius="8"
+                            Background="#30343A"
+                            BorderBrush="#50555C"
+                            BorderThickness="1"
+                            Padding="8"
+                            Visibility="{Binding IsOn, ElementName=PowerLimitToggle, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                        <!-- Long Sustained Power Limit PL 1 -->
+                        <StackPanel Orientation="Vertical">
+                        <TextBlock Text="Sustained - PL1"
+                                   VerticalAlignment="Center"
+                                   Grid.Column="0"
+                                   FontSize="16"
+                                   Margin="5,0,10,0"/>
+                        <Grid x:Name="LongSustainedPowerLimitSliderPanel" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130*"/>
+                                <ColumnDefinition Width="404*"/>
+                                <ColumnDefinition Width="125"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Slider x:Name="LongSustainedPowerLimitSlider"
+                                    Grid.Column="0"
+                                    Margin="5,0,10,0"
+                                    Minimum="{Binding LongTDPMin}"
+                                    Maximum="{Binding LongTDPMax}"
+                                    Value="{Binding LongTDP, Mode=TwoWay}"
+                                    IsEnabled="{Binding IsOn, ElementName=PowerLimitToggle}" Grid.ColumnSpan="2" ValueChanged="LongSustainedPowerLimitSlider_ValueChanged" VerticalAlignment="Center"/>
+
+                            <muxc:NumberBox x:Name="LongSustainedPowerLimitBox"
+                                            Grid.Column="2"
+                                            Value="{Binding LongTDP, Mode=TwoWay}"
+                                            Minimum="{Binding LongTDPMin}"
+                                            Maximum="{Binding LongTDPMax}"
+                                            SpinButtonPlacementMode="Compact"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            FontSize="18"
+                                            Height="40"
+                                            IsEnabled="{Binding IsOn, ElementName=PowerLimitToggle}"
+                                            Margin="10,0,0,0" Width="115"/>
+                        </Grid>
+
+                            <!-- Short Burst Power Limit PL 1 -->
+                        <TextBlock Text="Short burst - PL2"
+                            VerticalAlignment="Center"
+                            Grid.Column="0"
+                            FontSize="16"
+                            Margin="5,0,10,0"/>
+                        <Grid x:Name="ShortBurstPowerLimitSliderPanel" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="130*"/>
+                                <ColumnDefinition Width="404*"/>
+                                <ColumnDefinition Width="125"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Slider x:Name="ShortBurstPowerLimitSlider"
+                            Grid.Column="0"
+                            Margin="5,0,10,0"
+                            Minimum="{Binding ShortTDPMin}"
+                            Maximum="{Binding ShortTDPMax}"
+                            Value="{Binding ShortTDP, Mode=TwoWay}"
+                            IsEnabled="{Binding IsOn, ElementName=PowerLimitToggle}" Grid.ColumnSpan="2" ValueChanged="ShortBurstPowerLimitSlider_ValueChanged" VerticalAlignment="Center" />
+
+                            <muxc:NumberBox x:Name="ShortBurstPowerLimitBox"
+                                    Grid.Column="2"
+                                    Value="{Binding ShortTDP, Mode=TwoWay}"
+                                    Minimum="{Binding ShortTDPMin}"
+                                    Maximum="{Binding ShortTDPMax}"
+                                    SpinButtonPlacementMode="Compact"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    FontSize="18"
+                                    Height="40"
+                                    IsEnabled="{Binding IsOn, ElementName=PowerLimitToggle}"
+                                    Margin="10,0,0,0" Width="115"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
                 <!-- CPU Boost -->
                 <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
                     <TextBlock x:Name="CpuBoostModeTextBlock" 
@@ -90,8 +193,7 @@
                               Height="40"
                               Margin="5,0,5,0"
                               SelectionChanged="CpuBoostModeSelector_SelectionChanged"
-                              XYFocusUp="{x:Bind LaunchBackendButton}" 
-                              XYFocusDown="{x:Bind FpsLimiterToggle}">
+>
                         
                         <ComboBox.ItemTemplate>
                             <DataTemplate>

@@ -613,6 +613,160 @@ namespace Tooth
             }
         }
 
+        public bool PowerLimitEnabled
+        {
+            get { lock (_base) { return _base.powerLimitEnabled; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.powerLimitEnabled != value)
+                    {
+                        _base.powerLimitEnabled = value;
+                        _base.Notify("PowerLimitEnabled");
+                        Backend.Instance.Send($"set-power-limit-enabled {_base.powerLimitEnabled}");
+                    }
+                }
+            }
+        }
+
+        public void SetPowerLimitEnabledVar(bool value)
+        {
+            lock (_base)
+            {
+                if (_base.powerLimitEnabled != value)
+                {
+                    _base.powerLimitEnabled = value;
+                    _base.Notify("PowerLimitEnabled");
+                }
+            }
+        }
+
+        public int LongTDPMin
+        {
+            get { lock (_base) { return _base.longTDPMin; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.longTDPMin != value)
+                    {
+                        _base.longTDPMin = value;
+                        _base.Notify("LongTDPMin");
+                    }
+                }
+            }
+        }
+
+        public int LongTDPMax
+        {
+            get { lock (_base) { return _base.longTDPMax; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.longTDPMax != value)
+                    {
+                        _base.longTDPMax = value;
+                        _base.Notify("LongTDPMax");
+                    }
+                }
+            }
+        }
+
+        public int LongTDP
+        {
+            get { lock (_base) { return _base.longTDP; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.longTDP != value)
+                    {
+                        _base.longTDP = value;
+                        _base.Notify("LongTDP");
+                        Backend.Instance.Send($"set-long-tdp {_base.longTDP}");
+                    }
+                }
+            }
+        }
+
+        public void SetLongTDPVar(int value)
+        {
+            lock (_base)
+            {
+                if (_base.longTDP != value)
+                {
+                    _base.longTDP = value;
+                    Backend.Instance.Send($"set-long-tdp {value}");
+                    _base.Notify("LongTDP");
+                }
+            }
+        }
+
+
+        public int ShortTDPMin
+        {
+            get { lock (_base) { return _base.shortTDPMin; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.shortTDPMin != value)
+                    {
+                        _base.shortTDPMin = value;
+                        _base.Notify("ShortTDPMin");
+                    }
+                }
+            }
+        }
+
+        public int ShortTDPMax
+        {
+            get { lock (_base) { return _base.shortTDPMax; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.shortTDPMax != value)
+                    {
+                        _base.shortTDPMax = value;
+                        _base.Notify("ShortTDPMax");
+                    }
+                }
+            }
+        }
+
+        public int ShortTDP
+        {
+            get { lock (_base) { return _base.shortTDP; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.shortTDP != value)
+                    {
+                        _base.shortTDP = value;
+                        _base.Notify("ShortTDP");
+                        Backend.Instance.Send($"set-short-tdp {_base.shortTDP}");
+                    }
+                }
+            }
+        }
+
+        public void SetShortTDPVar(int value)
+        {
+            lock (_base)
+            {
+                if (_base.shortTDP != value)
+                {
+                    _base.shortTDP = value;
+                    Backend.Instance.Send($"set-short-tdp {value}");
+                    _base.Notify("ShortTDP");
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 		public async Task Notify(string propertyName)
@@ -632,7 +786,9 @@ namespace Tooth
 		}
 	}
 
-	class MainPageModel
+
+
+    class MainPageModel
     {
         public List<Resolution> resolutions;
         public bool fpsLimitEnabled = false;
@@ -649,6 +805,14 @@ namespace Tooth
         public int deviceScaling = 0;  // 0: Display Scaling, 1: Gpu Scaling, 2: Retro Scaling
         public int gpuScalingMode = 0;  // 0: Maintain Aspect Ratio, 1: Stretch, 2: Center
         public int retroScalingMode = 0; // 0: Integer Scaling, 1: Nearest neighbour
+
+        public bool powerLimitEnabled = false;
+        public int longTDPMin = 8;  // Minimum Assured Power
+        public int longTDPMax = 30;
+        public int longTDP = 30;
+        public int shortTDPMin = 9; // Always long TPD + 1 ; Intel CPU works better this way!
+        public int shortTDPMax = 37; // Maximum Turbo Power
+        public int shortTDP = 37;
 
         private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();
 

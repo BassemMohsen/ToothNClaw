@@ -15,7 +15,10 @@ namespace Tooth.Backend
             { "Brightness", 50.0 },
             { "Gamma", 1.0 },
             { "Hue", 0.0 },
-            { "Saturation", 50.0 }
+            { "Saturation", 50.0 },
+            { "PowerLimitEnabled", false },
+            { "LongTDP", 30 },
+            { "ShortTDP", 37 },
         };
 
         /// <summary>
