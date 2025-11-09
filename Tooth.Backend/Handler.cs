@@ -23,6 +23,7 @@ namespace Tooth.Backend
     internal class Handler
     {
         private CpuBoostController cpuBoostController;
+        private PowerPolicyController powerPolicyController;
         private IntelGPU intelGPUController;
         private Communication _communication;
         private List<Resolution> resolutions;
@@ -45,6 +46,7 @@ namespace Tooth.Backend
         public Handler()
         {
             cpuBoostController = new CpuBoostController();
+            powerPolicyController = new PowerPolicyController();
             intelGPUController = new IntelGPU();
 		}
 
@@ -94,6 +96,9 @@ namespace Tooth.Backend
                         {
 							Console.WriteLine($"[Server Handler] Invalid Boost Mode: {args[1]}");
                         }
+
+                        powerPolicyController.ApplyAll();
+                        powerPolicyController.SetPowerButtonAction(PowerPolicyController.PowerButtonAction.Sleep);
                     }
                     break;
 
