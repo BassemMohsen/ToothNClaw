@@ -15,7 +15,6 @@ using System.Text.Json;
 using static Tooth.Backend.DisplayController;
 using static Tooth.GraphicsProcessingUnit.IntelGPU;
 using static Tooth.IGCL.IGCLBackend;
-using System.Diagnostics.Eventing.Reader;
 
 
 namespace Tooth.Backend
@@ -24,6 +23,7 @@ namespace Tooth.Backend
     {
         private CpuBoostController cpuBoostController;
         private PowerPolicyController powerPolicyController;
+        private ModernStandbyMonitor monitor;
         private IntelGPU intelGPUController;
         private Communication _communication;
         private List<Resolution> resolutions;
@@ -47,6 +47,7 @@ namespace Tooth.Backend
         {
             cpuBoostController = new CpuBoostController();
             powerPolicyController = new PowerPolicyController();
+            monitor = new ModernStandbyMonitor();
             intelGPUController = new IntelGPU();
 		}
 
@@ -97,8 +98,8 @@ namespace Tooth.Backend
 							Console.WriteLine($"[Server Handler] Invalid Boost Mode: {args[1]}");
                         }
 
-                        powerPolicyController.ApplyAll();
-                        powerPolicyController.SetPowerButtonAction(PowerPolicyController.PowerButtonAction.Sleep);
+                        //powerPolicyController.ApplyAll();
+                        //powerPolicyController.SetPowerButtonAction(PowerPolicyController.PowerButtonAction.Sleep);
                     }
                     break;
 
