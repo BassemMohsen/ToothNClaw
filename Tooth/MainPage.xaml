@@ -72,6 +72,84 @@
 
 
             <StackPanel x:Name="MainPanel" Orientation="Vertical" Margin="15,0,15,0">
+                
+                
+                <!-- Resume and Suspend Games -->
+                <Grid HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="16"/>
+                        <!-- Space between buttons -->
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Resume Button -->
+                    <Button
+                    Grid.Column="0"
+                    x:Name="ResumeButton"
+                    Width="190"
+                    Height="44"
+                    HorizontalAlignment="Left"
+                    Click="OnResumeButtonClick"
+                    XYFocusUp="{x:Bind LaunchBackendButton}"
+                    XYFocusDown="{x:Bind AutoSuspendToggle}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                            <FontIcon Glyph="&#xE768;" FontSize="18"/>
+                            <!-- Play icon -->
+                            <TextBlock Text="Resume Game" FontSize="18"/>
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Suspend Button -->
+                    <Button
+                    Grid.Column="2"
+                    x:Name="SuspendButton"
+                    Width="190"
+                    Height="44"
+                    HorizontalAlignment="Right"
+                    Click="OnSuspendButtonClick"
+                    XYFocusUp="{x:Bind LaunchBackendButton}"
+                    XYFocusDown="{x:Bind AutoSuspendToggle}">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="8">
+                            <FontIcon Glyph="&#xE769;" FontSize="18"/>
+                            <!-- Pause icon -->
+                            <TextBlock Text="Suspend Game" FontSize="18"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <Grid Margin="0,10,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <!-- Text takes available space -->
+                        <ColumnDefinition Width="Auto" />
+                        <!-- Toggle only as wide as needed -->
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Label Text -->
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="Auto suspend active game on sleep"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        TextWrapping="WrapWholeWords"
+                        Margin="0,0,16,0"/>
+
+                    <!-- ToggleSwitch -->
+                    <ToggleSwitch
+                        x:Name="AutoSuspendToggle"
+                        Grid.Column="1"
+                        OffContent="Off"
+                        OnContent="On"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        IsOn="{Binding AutoSuspendEnabled, Mode=TwoWay}"
+                        Toggled="AutoSuspedToggle_Toggled"
+                        XYFocusUp="{x:Bind ResumeButton}"
+                        XYFocusDown="{x:Bind CpuBoostModeSelector}" />
+                </Grid>
 
                 <!-- CPU Boost -->
                 <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
@@ -90,7 +168,7 @@
                               Height="40"
                               Margin="5,0,5,0"
                               SelectionChanged="CpuBoostModeSelector_SelectionChanged"
-                              XYFocusUp="{x:Bind LaunchBackendButton}" 
+                              XYFocusUp="{x:Bind AutoSuspendToggle}" 
                               XYFocusDown="{x:Bind FpsLimiterToggle}">
                         
                         <ComboBox.ItemTemplate>
@@ -427,7 +505,133 @@
                         </ComboBoxItem>
                     </ComboBox>
                 </StackPanel>
-                
+
+
+                <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="8" Padding="10" Margin="0,15,0,15">
+                <!-- Power Button Action -->
+                    <StackPanel>
+                        <StackPanel Orientation="Vertical" Spacing="4" Margin="0,10,0,10">
+                    <TextBlock Text="Power button action"
+                               FontSize="18"
+                               Margin="0,0,0,4" FontWeight="Bold"/>
+                    <ComboBox x:Name="PowerButtonActionComboBox"
+                              HorizontalAlignment="Stretch"
+                              SelectionChanged="PowerButtonActionComboBox_SelectionChanged"
+                              SelectedValue="{Binding LowLatency, Mode=TwoWay}"
+                              FontSize="18"
+                              Height="40"
+                              Margin="5,0,5,0"
+                              SelectedValuePath="Tag"
+                              XYFocusUp="{x:Bind LowLatencyComboBox}"
+                              XYFocusDown="{x:Bind EnhancedSleepToggle}">
+                        <ComboBoxItem Content="Sleep" IsSelected="True">
+                            <ComboBoxItem.Tag>
+                                <x:Double>0</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="Hibernate">
+                            <ComboBoxItem.Tag>
+                                <x:Double>1</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Enhanced Sleep toggle - Reduce Random Windows Wakeups-->
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                    <Image Source="ms-appx:///Assets//info.png"
+                            Width="12" Height="12"
+                            VerticalAlignment="Center"
+                            Margin="0,0,5,0"/>
+
+                    <TextBlock Text="More power efficient and reduces wakeups during sleep"
+                               TextWrapping="WrapWholeWords"
+                                FontWeight="SemiBold"
+                                FontSize="12"
+                                VerticalAlignment="Center"/>
+                </StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <!-- Text takes available space -->
+                                <ColumnDefinition Width="Auto" />
+                                <!-- Toggle only as wide as needed -->
+                            </Grid.ColumnDefinitions>
+
+
+                            <!-- Label Text -->
+                            <TextBlock
+                        Grid.Column="0"
+                        Text="Enhanced sleep"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        TextWrapping="WrapWholeWords"
+                        Margin="0,0,16,0"/>
+
+                            <!-- ToggleSwitch -->
+                            <ToggleSwitch
+                        x:Name="EnhancedSleepToggle"
+                        Grid.Column="1"
+                        OffContent="Off"
+                        OnContent="On"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        IsOn="{Binding FpsLimitEnabled, Mode=TwoWay}"
+                        Toggled="EnhancedSleepToggle_Toggled"
+                        XYFocusUp="{x:Bind PowerButtonActionComboBox}"
+                        XYFocusDown="{x:Bind GoBackToSleepToggle}"/>
+                        </Grid>
+
+
+                    <!-- Automatically go back to sleep if woken up for any reason but Power button -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                        <Image Source="ms-appx:///Assets//info.png"
+                            Width="12" Height="12"
+                            VerticalAlignment="Center"
+                            Margin="0,0,5,0"/>
+
+                            <TextBlock Text="If windows had a wakeup for any reason but Power button"
+                               TextWrapping="WrapWholeWords"
+                                FontWeight="SemiBold"
+                                FontSize="12"
+                                VerticalAlignment="Center"/>
+                        </StackPanel>
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <!-- Text takes available space -->
+                            <ColumnDefinition Width="Auto" />
+                            <!-- Toggle only as wide as needed -->
+                        </Grid.ColumnDefinitions>
+
+
+                        <!-- Label Text -->
+                        <TextBlock
+                        Grid.Column="0"
+                        Text="Auto Go back to sleep"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        TextWrapping="WrapWholeWords"
+                        Margin="0,0,16,0"/>
+
+                        <!-- ToggleSwitch -->
+                        <ToggleSwitch
+                        x:Name="GoBackToSleepToggle"
+                        Grid.Column="1"
+                        OffContent="Off"
+                        OnContent="On"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Right"
+                        IsOn="{Binding GoBackToSleepEnabled, Mode=TwoWay}"
+                        Toggled="GoBackToSleepToggle_Toggled"
+                        XYFocusUp="{x:Bind EnhancedSleepToggle}" />
+                    </Grid>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
     </Grid>

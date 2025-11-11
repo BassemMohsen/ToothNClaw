@@ -13,11 +13,16 @@ class ModernStandbyMonitor
     private const int HWND_BROADCAST = 0xffff;
     private const int WM_SYSCOMMAND = 0x0112;
     private const int SC_SUSPEND = 0xF170;
+    private int autoSuspendSetting;
+    private int goBackToSleepSetting;
 
     private readonly XNamespace ns = "http://schemas.microsoft.com/win/2004/08/events/event";
 
     public ModernStandbyMonitor()
     {
+        autoSuspendSetting = SettingsManager.Get<int>("AutoSuspend");
+        goBackToSleepSetting = SettingsManager.Get<int>("GoBackToSleep");
+
         string xpath = "*[System[(EventID=506 or EventID=507) and Provider[@Name='Microsoft-Windows-Kernel-Power']]]";
 
         var query = new EventLogQuery("System", PathType.LogName, xpath);
@@ -34,6 +39,16 @@ class ModernStandbyMonitor
         SendMessage(HWND_BROADCAST, WM_SYSCOMMAND, SC_SUSPEND, 2);
     }
 
+    public void UpdateAutoSuspendSetting(int autoSuspendEnabled)
+    {
+        autoSuspendSetting = autoSuspendEnabled;
+    }
+
+    public void UpdateGoBackToSleepSetting(int goBackToSleepEnabled)
+    {
+        goBackToSleepSetting = goBackToSleepEnabled;
+    }
+
     private void OnEventRecordWritten(object sender, EventRecordWrittenEventArgs e)
     {
         if (e.EventRecord == null)
@@ -45,7 +60,8 @@ class ModernStandbyMonitor
         if (eventId == 506)
         {
             Console.WriteLine($"[ModernStandbyMonitor] System entered Modern Standby at {eventTime:yyyy-MM-dd HH:mm:ss}");
-            GameSuspendController.SuspendForegroundApp();
+            if(autoSuspendSetting == 1)
+                GameSuspendController.SuspendForegroundApp();
         }
         else if (eventId == 507)
         {
@@ -53,13 +69,24 @@ class ModernStandbyMonitor
             Console.WriteLine($"[ModernStandbyMonitor] System woke up from Modern Standby at {eventTime:yyyy-MM-dd HH:mm:ss}. Reason: {reason}");
             if (!reason.Equals("Power Button", StringComparison.OrdinalIgnoreCase))
             {
-                Console.WriteLine($"[ModernStandbyMonitor] System woke up for other reason but power button, go back go to sleep!");
-                SuspendSystem();
+                Console.WriteLine($"[ModernStandbyMonitor] System woke up for other reason but power button");
+
+                if (goBackToSleepSetting == 1)
+                { 
+                    Console.WriteLine($"[ModernStandbyMonitor] Go back go to sleep!");
+
+                    // Resume foreground app, so that they can respond to SC_SUSPEND
+                    if (autoSuspendSetting == 1)
+                        GameSuspendController.ResumeForegroundApp();
+
+                    SuspendSystem();
+                }
             }
             else
             {
                 // It's power button, resume foreground app
-                GameSuspendController.ResumeForegroundApp();
+                if (autoSuspendSetting == 1)
+                    GameSuspendController.ResumeForegroundApp();
             }
         }
     }

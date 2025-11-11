@@ -55,6 +55,18 @@ namespace Tooth.Backend
         private static readonly Guid GUID_SLEEP_BUTTON_ACTION = new("96996bc0-ad50-47ec-923b-6f41874dd9eb");
         private static readonly Guid GUID_LID_SWITCH_CLOSE_ACTION = new("5ca83367-6e45-459f-a27b-476b1d01c936");
 
+        private class PowerSettingSnapshot
+        {
+            public uint AC { get; set; }
+            public uint DC { get; set; }
+        }
+
+        private const string SNAPSHOT_TAKEN_KEY = "PowerSnapshotTaken";
+        private const string SNAPSHOT_KEY_PREFIX = "PowerSetting_";
+
+        private Dictionary<string, PowerSettingSnapshot> _snapshot;
+        private bool _snapshotTaken;
+
         public enum PowerButtonAction : int
         {
             DoNothing = 0,
@@ -63,6 +75,89 @@ namespace Tooth.Backend
             Shutdown = 3,
             TurnOffDisplay = 4
         }
+        public PowerPolicyController()
+        {
+            _snapshotTaken = SettingsManager.Get<bool>(SNAPSHOT_TAKEN_KEY);
+            _snapshot = new Dictionary<string, PowerSettingSnapshot>();
+
+            if (_snapshotTaken)
+            {
+                Console.WriteLine("[PowerPolicyController] Snapshot already exists, loading...");
+                LoadSnapshot();
+            }
+        }
+
+
+        private void SaveOriginalSetting(string name, Guid subgroup, Guid setting)
+        {
+            // Skip if snapshot already taken
+            if (_snapshotTaken)
+                return;
+
+            var val = ReadValue(subgroup, setting);
+            if (val.HasValue)
+            {
+                var snap = new PowerSettingSnapshot { AC = val.Value.ac, DC = val.Value.dc };
+                _snapshot[name] = snap;
+                SettingsManager.SetObject(SNAPSHOT_KEY_PREFIX + name, snap);
+                Console.WriteLine($"[PowerPolicyController] Snapshot saved for {name}: AC={snap.AC}, DC={snap.DC}");
+            }
+        }
+
+        private void FinalizeSnapshot()
+        {
+            if (!_snapshotTaken)
+            {
+                _snapshotTaken = true;
+                SettingsManager.Set(SNAPSHOT_TAKEN_KEY, true);
+                Console.WriteLine("[PowerPolicyController] Snapshot finalized and persisted.");
+            }
+        }
+
+        private void LoadSnapshot()
+        {
+            string[] keys =
+            {
+                "HybridSleep", "WakeTimers", "AwayMode",
+                "ModernStandbyNetwork", "ModernDisconnectedStandby",
+                "PCIeASPM", "ProcessorIdle", "ProcessorThrottle"
+            };
+
+            foreach (var key in keys)
+            {
+                var snap = SettingsManager.GetObject<PowerSettingSnapshot>(SNAPSHOT_KEY_PREFIX + key);
+                if (snap != null)
+                {
+                    _snapshot[key] = snap;
+                    Console.WriteLine($"[PowerPolicyController] Loaded snapshot for {key}: AC={snap.AC}, DC={snap.DC}");
+                }
+            }
+        }
+
+        private static (uint ac, uint dc)? ReadValue(Guid subgroup, Guid setting)
+        {
+            var scheme = GetActiveScheme();
+            if (scheme == Guid.Empty)
+            {
+                Console.WriteLine("[PowerPolicyController] No active power scheme found for read.");
+                return null;
+            }
+
+            if (PowerReadACValueIndex(IntPtr.Zero, ref scheme, ref subgroup, ref setting, out uint acVal) != 0)
+            {
+                Console.WriteLine($"[PowerPolicyController] Failed to read AC value for {setting}");
+                return null;
+            }
+
+            if (PowerReadDCValueIndex(IntPtr.Zero, ref scheme, ref subgroup, ref setting, out uint dcVal) != 0)
+            {
+                Console.WriteLine($"[PowerPolicyController] Failed to read DC value for {setting}");
+                return null;
+            }
+
+            return (acVal, dcVal);
+        }
+
         private static Guid GetActiveScheme()
         {
             if (PowerGetActiveScheme(IntPtr.Zero, out IntPtr pGuid) != 0)
@@ -122,10 +217,60 @@ namespace Tooth.Backend
 
         public void ApplyAll()
         {
+            if (!_snapshotTaken)
+            {
+                Console.WriteLine("[PowerPolicyController] Taking initial power settings snapshot...");
+                // Take snapshot before changing
+                SaveOriginalSetting("HybridSleep", SUB_SLEEP, GUID_ALLOW_HYBRID_SLEEP);
+                SaveOriginalSetting("WakeTimers", SUB_SLEEP, GUID_ALLOW_WAKE_TIMERS);
+                SaveOriginalSetting("AwayMode", SUB_SLEEP, GUID_ALLOW_AWAY_MODE);
+                SaveOriginalSetting("ModernStandbyNetwork", SUB_NONE, GUID_MODERN_STANDBY_NETWORK);
+                SaveOriginalSetting("ModernDisconnectedStandby", SUB_NONE, GUID_MODERN_DISCONNECTED_STANDBY);
+                SaveOriginalSetting("PCIeASPM", SUB_PCIEXPRESS, GUID_PCIEXPRESS_ASPM);
+                SaveOriginalSetting("ProcessorIdle", SUB_PROCESSOR, GUID_IDLE_DISABLE);
+                SaveOriginalSetting("ProcessorThrottle", SUB_PROCESSOR, GUID_PROCTHROTTLEMIN);
+                FinalizeSnapshot();
+                Console.WriteLine("[PowerPolicyController] Snapshot complete.");
+            }
+
+            Console.WriteLine("[PowerPolicyController] Applying new power settings...");
             DisableHybridSleep();
             DisableWakeTimers();
             SetMaxPCIePowerSavings();
             ConfigureProcessorIdleAndThrottle();
+        }
+
+        public void RestoreAll()
+        {
+            if (!_snapshotTaken)
+            {
+                Console.WriteLine("[PowerPolicyController] No persisted snapshot found, cannot restore.");
+                return;
+            }
+
+            var scheme = GetActiveScheme();
+            Console.WriteLine("[PowerPolicyController] Restoring power settings from persisted snapshot...");
+
+            void Restore(string name, Guid subgroup, Guid setting)
+            {
+                if (_snapshot.TryGetValue(name, out var s))
+                {
+                    PowerWriteACValueIndex(IntPtr.Zero, ref scheme, ref subgroup, ref setting, s.AC);
+                    PowerWriteDCValueIndex(IntPtr.Zero, ref scheme, ref subgroup, ref setting, s.DC);
+                    Console.WriteLine($"[PowerPolicyController] Restored {name}: AC={s.AC}, DC={s.DC}");
+                }
+            }
+
+            Restore("HybridSleep", SUB_SLEEP, GUID_ALLOW_HYBRID_SLEEP);
+            Restore("WakeTimers", SUB_SLEEP, GUID_ALLOW_WAKE_TIMERS);
+            Restore("AwayMode", SUB_SLEEP, GUID_ALLOW_AWAY_MODE);
+            Restore("ModernStandbyNetwork", SUB_NONE, GUID_MODERN_STANDBY_NETWORK);
+            Restore("ModernDisconnectedStandby", SUB_NONE, GUID_MODERN_DISCONNECTED_STANDBY);
+            Restore("PCIeASPM", SUB_PCIEXPRESS, GUID_PCIEXPRESS_ASPM);
+            Restore("ProcessorIdle", SUB_PROCESSOR, GUID_IDLE_DISABLE);
+            Restore("ProcessorThrottle", SUB_PROCESSOR, GUID_PROCTHROTTLEMIN);
+
+            PowerSetActiveScheme(IntPtr.Zero, ref scheme);
         }
 
         public void SetPowerButtonAction(PowerButtonAction action)

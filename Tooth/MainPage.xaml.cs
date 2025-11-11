@@ -71,6 +71,8 @@ namespace Tooth
             Backend.Instance.Send("get-Frame-Sync-Mode");
             Backend.Instance.Send("get-Low-Latency-Mode");
             Backend.Instance.Send("get-Scaling");
+            Backend.Instance.Send("get-auto-suspend");
+            Backend.Instance.Send("get-go-back-to-sleep");
             Backend.Instance.Send("init");
         }
 
@@ -223,6 +225,17 @@ namespace Tooth
                         Trace.WriteLine($"Failed to parse resolutions: {ex.Message}");
                     }
 
+                    break;
+
+                case "auto-suspend":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating UI Auto Suspend Enabled to {args[1]}");
+                    _model.AutoSuspendEnabled = Convert.ToBoolean(int.Parse(args[1]));
+                    AutoSuspendToggle.IsOn = _model.AutoSuspendEnabled;
+                    break;
+                case "go-back-to-sleep":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating UI Go back to sleep Enabled to {args[1]}");
+                    _model.GoBackToSleepEnabled = Convert.ToBoolean(int.Parse(args[1]));
+                    GoBackToSleepToggle.IsOn = _model.GoBackToSleepEnabled;
                     break;
             }
         }
@@ -465,6 +478,39 @@ namespace Tooth
                     Label2.Visibility = Visibility.Collapsed;
                     break;
             }
+        }
+
+        private void OnResumeButtonClick(object sender, RoutedEventArgs e)
+        {
+            _model.ResumeActiveGame();
+        }
+
+        private void OnSuspendButtonClick(object sender, RoutedEventArgs e)
+        {
+            _model.SuspendActiveGame();
+        }
+
+        private void AutoSuspedToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // handle Auto Suspend toggle changes
+
+        }
+
+        private void PowerButtonActionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // Handle Power Button Presses
+        }
+
+        private void EnhancedSleepToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // handle Enhanced Sleep toggle changes
+
+        }
+
+        private void GoBackToSleepToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            // handle Go back to sleep changes
+
         }
     }
 }

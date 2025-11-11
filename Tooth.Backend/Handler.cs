@@ -23,7 +23,7 @@ namespace Tooth.Backend
     {
         private CpuBoostController cpuBoostController;
         private PowerPolicyController powerPolicyController;
-        private ModernStandbyMonitor monitor;
+        private ModernStandbyMonitor modernStandbymonitor;
         private IntelGPU intelGPUController;
         private Communication _communication;
         private List<Resolution> resolutions;
@@ -47,7 +47,7 @@ namespace Tooth.Backend
         {
             cpuBoostController = new CpuBoostController();
             powerPolicyController = new PowerPolicyController();
-            monitor = new ModernStandbyMonitor();
+            modernStandbymonitor = new ModernStandbyMonitor();
             intelGPUController = new IntelGPU();
 		}
 
@@ -744,6 +744,54 @@ namespace Tooth.Backend
                             default:
                                 Console.WriteLine($"[Server Handler] Wrong Arg value: Setting GPU Scaling to {args[1]}");
                                 break;
+                        }
+                    }
+                    break;
+
+                case "get-auto-suspend":
+                    {
+                        int autosuspend = SettingsManager.Get<int>("AutoSuspend");
+                        Console.WriteLine($"[Server Handler] Responding with AutoSuspend Value {autosuspend}");
+                        (sender as Communication).Send($"auto-suspend" + ' ' + $"{autosuspend}");
+                    }
+                    break;
+                case "set-auto-suspend":
+                    {
+                        if (int.TryParse(args[1], out int autosuspend))
+                        {
+                            SettingsManager.Set("AutoSuspend", autosuspend);
+                            modernStandbymonitor.UpdateAutoSuspendSetting(autosuspend);
+                            Console.WriteLine($"[Server Handler] Setting AutoSuspend to {autosuspend}");
+                        }
+                    }
+                    break;
+                case "resume-active-game":
+                    {
+                        GameSuspendController.ResumeForegroundApp();
+                        Console.WriteLine($"[Server Handler] ResumedForeground App");
+                    }
+                    break;
+                case "suspend-active-game":
+                    {
+                        GameSuspendController.SuspendForegroundApp();
+                        Console.WriteLine($"[Server Handler] Suspended Foreground App");
+                    }
+                    break;
+
+                case "get-go-back-to-sleep":
+                    {
+                        int gobacktosleep = SettingsManager.Get<int>("GoBackToSleep");
+                        Console.WriteLine($"[Server Handler] Responding with Go back to sleep Value {gobacktosleep}");
+                        (sender as Communication).Send($"go-back-to-sleep" + ' ' + $"{gobacktosleep}");
+                    }
+                    break;
+                case "set-go-back-to-sleep":
+                    {
+                        if (int.TryParse(args[1], out int gobacktosleep))
+                        {
+                            SettingsManager.Set("GoBackToSleep", gobacktosleep);
+                            modernStandbymonitor.UpdateGoBackToSleepSetting(gobacktosleep);
+                            Console.WriteLine($"[Server Handler] Setting Go back to sleep to {gobacktosleep}");
                         }
                     }
                     break;

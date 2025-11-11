@@ -613,6 +613,52 @@ namespace Tooth
             }
         }
 
+        public void SuspendActiveGame()
+        {
+            
+            Backend.Instance.Send("suspend-active-game");
+        }
+
+        public void ResumeActiveGame()
+        {
+
+            Backend.Instance.Send("resume-active-game");
+        }
+
+        public bool AutoSuspendEnabled
+        {
+            get { lock (_base) { return _base.autoSuspendEnabled; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.autoSuspendEnabled != value)
+                    {
+                        _base.autoSuspendEnabled = value;
+                        _base.Notify("AutoSuspendEnabled");
+                        Backend.Instance.Send($"set-auto-suspend {Convert.ToInt32(value)}");
+                    }
+                }
+            }
+        }
+
+        public bool GoBackToSleepEnabled
+        {
+            get { lock (_base) { return _base.goBackToSleepEnabled; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.goBackToSleepEnabled != value)
+                    {
+                        _base.goBackToSleepEnabled = value;
+                        _base.Notify("GoBackToSleepEnabled");
+                        Backend.Instance.Send($"set-go-back-to-sleep {Convert.ToInt32(value)}");
+                    }
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 		public async Task Notify(string propertyName)
@@ -649,6 +695,8 @@ namespace Tooth
         public int deviceScaling = 0;  // 0: Display Scaling, 1: Gpu Scaling, 2: Retro Scaling
         public int gpuScalingMode = 0;  // 0: Maintain Aspect Ratio, 1: Stretch, 2: Center
         public int retroScalingMode = 0; // 0: Integer Scaling, 1: Nearest neighbour
+        public bool autoSuspendEnabled = false;
+        public bool goBackToSleepEnabled = false;
 
         private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();
 
