@@ -73,7 +73,8 @@ namespace Tooth.Backend
             Sleep = 1,
             Hibernate = 2,
             Shutdown = 3,
-            TurnOffDisplay = 4
+            TurnOffDisplay = 4,
+            Undefined = 5
         }
         public PowerPolicyController()
         {
@@ -280,6 +281,27 @@ namespace Tooth.Backend
             WriteValue(SUB_POWER_BUTTON_LID, GUID_POWER_BUTTON_ACTION, (uint)action);
             WriteValue(SUB_POWER_BUTTON_LID, GUID_SLEEP_BUTTON_ACTION, (uint)action);
             WriteValue(SUB_POWER_BUTTON_LID, GUID_LID_SWITCH_CLOSE_ACTION, (uint)action);
+        }
+
+        public PowerButtonAction GetPowerButtonAction()
+        {
+            Console.WriteLine("[PowerPolicyController] Reading Power Button Action...");
+            var value = ReadValue(SUB_POWER_BUTTON_LID, GUID_POWER_BUTTON_ACTION);
+
+            if (!value.HasValue)
+            {
+                Console.WriteLine("[PowerPolicyController] Failed to read Power Button Action.");
+                return PowerButtonAction.Undefined;
+            }
+
+            // AC and DC values should be the same for this setting; use DC
+            uint actionValue = value.Value.dc;
+
+            if (Enum.IsDefined(typeof(PowerButtonAction), (int)actionValue))
+                return (PowerButtonAction)actionValue;
+
+            Console.WriteLine($"[PowerPolicyController] Unknown Power Button Action: {actionValue}");
+            return PowerButtonAction.Undefined;
         }
 
         protected virtual void Dispose(bool disposing)

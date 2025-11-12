@@ -97,9 +97,6 @@ namespace Tooth.Backend
                         {
 							Console.WriteLine($"[Server Handler] Invalid Boost Mode: {args[1]}");
                         }
-
-                        //powerPolicyController.ApplyAll();
-                        //powerPolicyController.SetPowerButtonAction(PowerPolicyController.PowerButtonAction.Sleep);
                     }
                     break;
 
@@ -793,6 +790,37 @@ namespace Tooth.Backend
                             modernStandbymonitor.UpdateGoBackToSleepSetting(gobacktosleep);
                             Console.WriteLine($"[Server Handler] Setting Go back to sleep to {gobacktosleep}");
                         }
+                    }
+                    break;
+
+                case "get-power-button-action":
+                    {
+                        if (powerPolicyController == null)
+                        {
+                            powerPolicyController = new PowerPolicyController();
+                        }
+                        Console.WriteLine($"[Server Handler] Responding with Power Button Action {powerPolicyController.GetPowerButtonAction().ToString()}");
+
+                        (sender as Communication).Send("power-button-action" + ' ' + (int)powerPolicyController.GetPowerButtonAction());
+                    }
+                    break;
+                case "set-power-button-action":
+                    {
+                        if (powerPolicyController == null)
+                        {
+                            powerPolicyController = new PowerPolicyController();
+                        }
+                        Console.WriteLine($"[Server Handler] Setting Power Button Action to {args[1]}");
+                        if (Enum.TryParse(args[1], out PowerPolicyController.PowerButtonAction action))
+                        {
+                            powerPolicyController.SetPowerButtonAction(action);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[Server Handler] Invalid Power Button Action: {args[1]}");
+                        }
+
+                        //powerPolicyController.ApplyAll();
                     }
                     break;
                 default:

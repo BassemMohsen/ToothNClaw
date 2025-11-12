@@ -73,6 +73,7 @@ namespace Tooth
             Backend.Instance.Send("get-Scaling");
             Backend.Instance.Send("get-auto-suspend");
             Backend.Instance.Send("get-go-back-to-sleep");
+            Backend.Instance.Send("get-power-button-action");
             Backend.Instance.Send("init");
         }
 
@@ -236,6 +237,11 @@ namespace Tooth
                     Trace.WriteLine($"[MainPage.xaml.cs] Updating UI Go back to sleep Enabled to {args[1]}");
                     _model.GoBackToSleepEnabled = Convert.ToBoolean(int.Parse(args[1]));
                     GoBackToSleepToggle.IsOn = _model.GoBackToSleepEnabled;
+                    break;
+                case "power-button-action":
+                    Trace.WriteLine($"[MainPage.xaml.cs] Updating UI Power Button Action {args[1]}");
+                    _model.PowerButtonAction = int.Parse(args[1]);
+                    PowerButtonActionComboBox.SelectedValue = _model.PowerButtonAction;
                     break;
             }
         }

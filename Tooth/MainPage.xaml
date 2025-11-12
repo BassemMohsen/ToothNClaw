@@ -129,7 +129,7 @@
                     <!-- Label Text -->
                     <TextBlock
                         Grid.Column="0"
-                        Text="Auto suspend active game on sleep"
+                        Text="Auto suspend current game in focus when entering sleep"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Left"
                         FontSize="16"
@@ -517,16 +517,21 @@
                     <ComboBox x:Name="PowerButtonActionComboBox"
                               HorizontalAlignment="Stretch"
                               SelectionChanged="PowerButtonActionComboBox_SelectionChanged"
-                              SelectedValue="{Binding LowLatency, Mode=TwoWay}"
+                              SelectedValue="{Binding PowerButtonAction, Mode=TwoWay}"
                               FontSize="18"
                               Height="40"
                               Margin="5,0,5,0"
                               SelectedValuePath="Tag"
                               XYFocusUp="{x:Bind LowLatencyComboBox}"
                               XYFocusDown="{x:Bind EnhancedSleepToggle}">
-                        <ComboBoxItem Content="Sleep" IsSelected="True">
+                                <ComboBoxItem Content="Do nothing">
+                                    <ComboBoxItem.Tag>
+                                        <x:Double>0</x:Double>
+                                    </ComboBoxItem.Tag>
+                                </ComboBoxItem>
+                                <ComboBoxItem Content="Sleep" IsSelected="True">
                             <ComboBoxItem.Tag>
-                                <x:Double>0</x:Double>
+                                <x:Double>1</x:Double>
                             </ComboBoxItem.Tag>
                         </ComboBoxItem>
                         <ComboBoxItem Content="Hibernate">
@@ -534,7 +539,17 @@
                                 <x:Double>1</x:Double>
                             </ComboBoxItem.Tag>
                         </ComboBoxItem>
-                    </ComboBox>
+                        <ComboBoxItem Content="Shutdown">
+                            <ComboBoxItem.Tag>
+                                <x:Double>3</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                        <ComboBoxItem Content="Turn off display">
+                            <ComboBoxItem.Tag>
+                                <x:Double>4</x:Double>
+                            </ComboBoxItem.Tag>
+                        </ComboBoxItem>
+                            </ComboBox>
                 </StackPanel>
 
                 <!-- Enhanced Sleep toggle - Reduce Random Windows Wakeups-->

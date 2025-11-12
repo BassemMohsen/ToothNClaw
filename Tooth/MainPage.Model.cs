@@ -659,6 +659,24 @@ namespace Tooth
             }
         }
 
+        public double PowerButtonAction
+        {
+            get { lock (_base) { return _base.powerButtonAction; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.powerButtonAction != value)
+                    {
+                        _base.powerButtonAction = value;
+                        _base.Notify("PowerButtonAction");
+                        Backend.Instance.Send($"set-power-button-action {value}");
+                    }
+                }
+            }
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 		public async Task Notify(string propertyName)
@@ -697,6 +715,7 @@ namespace Tooth
         public int retroScalingMode = 0; // 0: Integer Scaling, 1: Nearest neighbour
         public bool autoSuspendEnabled = false;
         public bool goBackToSleepEnabled = false;
+        public double powerButtonAction = 2; // 0: Sleep, 1: Hibernate
 
         private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();
 
