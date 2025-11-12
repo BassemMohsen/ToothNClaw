@@ -819,8 +819,35 @@ namespace Tooth.Backend
                         {
                             Console.WriteLine($"[Server Handler] Invalid Power Button Action: {args[1]}");
                         }
+                    }
+                    break;
 
-                        //powerPolicyController.ApplyAll();
+                case "get-enhanced-sleep":
+                    {
+                        int enhancedSleep = SettingsManager.Get<int>("EnhancedSleep");
+                        Console.WriteLine($"[Server Handler] Responding with Enhanced sleep Value {enhancedSleep}");
+                        (sender as Communication).Send($"enhanced-sleep" + ' ' + $"{enhancedSleep}");
+                    }
+                    break;
+                case "set-enhanced-sleep":
+                    {
+                        if (int.TryParse(args[1], out int enhancedSleep))
+                        {
+                            SettingsManager.Set("EnhancedSleep", enhancedSleep);
+                            Console.WriteLine($"[Server Handler] Setting Enhanced Sleep to {enhancedSleep}");
+                            if (powerPolicyController == null)
+                            {
+                                powerPolicyController = new PowerPolicyController();
+                            }
+                            if(enhancedSleep == 0)
+                            {
+                                powerPolicyController.RestoreAll();
+                            }
+                            else
+                            {
+                                powerPolicyController.ApplyAll();
+                            }
+                        }
                     }
                     break;
                 default:

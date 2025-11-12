@@ -593,7 +593,7 @@
                         OnContent="On"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Right"
-                        IsOn="{Binding FpsLimitEnabled, Mode=TwoWay}"
+                        IsOn="{Binding EnhancedSleepEnabled, Mode=TwoWay}"
                         Toggled="EnhancedSleepToggle_Toggled"
                         XYFocusUp="{x:Bind PowerButtonActionComboBox}"
                         XYFocusDown="{x:Bind GoBackToSleepToggle}"/>

@@ -676,6 +676,23 @@ namespace Tooth
             }
         }
 
+        public bool EnhancedSleepEnabled
+        {
+            get { lock (_base) { return _base.enhancedSleepEnabled; } }
+            set
+            {
+                lock (_base)
+                {
+                    if (_base.enhancedSleepEnabled != value)
+                    {
+                        _base.enhancedSleepEnabled = value;
+                        _base.Notify("EnhancedSleepEnabled");
+                        Backend.Instance.Send($"set-enhanced-sleep {Convert.ToInt32(value)}");
+                    }
+                }
+            }
+        }
+
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -716,6 +733,7 @@ namespace Tooth
         public bool autoSuspendEnabled = false;
         public bool goBackToSleepEnabled = false;
         public double powerButtonAction = 2; // 0: Sleep, 1: Hibernate
+        public bool enhancedSleepEnabled = false;
 
         private List<MainPageModelWrapper> _wrappers = new List<MainPageModelWrapper>();
 

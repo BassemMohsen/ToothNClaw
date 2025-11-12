@@ -18,6 +18,7 @@ namespace Tooth.Backend
             { "Saturation", 50.0 },
             { "AutoSuspend", 0 },
             { "GoBackToSleep", 0 },
+            { "EnhancedSleep", 0 },
         };
 
         /// <summary>

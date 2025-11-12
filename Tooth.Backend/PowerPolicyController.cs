@@ -53,7 +53,6 @@ namespace Tooth.Backend
         // Power Button Action GUID
         private static readonly Guid GUID_POWER_BUTTON_ACTION = new("7648efa3-dd9c-4e3e-b566-50f929386280");
         private static readonly Guid GUID_SLEEP_BUTTON_ACTION = new("96996bc0-ad50-47ec-923b-6f41874dd9eb");
-        private static readonly Guid GUID_LID_SWITCH_CLOSE_ACTION = new("5ca83367-6e45-459f-a27b-476b1d01c936");
 
         private class PowerSettingSnapshot
         {
@@ -179,10 +178,10 @@ namespace Tooth.Backend
             }
 
             uint result = PowerWriteACValueIndex(IntPtr.Zero, ref scheme, ref subgroup, ref setting, value);
-            if (result != 0) Console.WriteLine($"[PowerPolicyController] PowerWriteACValueIndex failed: {result}");
+            if (result != 0) Console.WriteLine($"[PowerPolicyController] PowerWriteACValueIndex failed: {result} Subgroup {subgroup} Setting {setting} Value {value}");
 
             result = PowerWriteDCValueIndex(IntPtr.Zero, ref scheme, ref subgroup, ref setting, value);
-            if (result != 0) Console.WriteLine($"[PowerPolicyController] PowerWriteDCValueIndex failed: {result}");
+            if (result != 0) Console.WriteLine($"[PowerPolicyController] PowerWriteDCValueIndex failed: {result}  Subgroup {subgroup} Setting {setting} Value {value}");
 
             PowerSetActiveScheme(IntPtr.Zero, ref scheme);
         }
@@ -280,7 +279,6 @@ namespace Tooth.Backend
 
             WriteValue(SUB_POWER_BUTTON_LID, GUID_POWER_BUTTON_ACTION, (uint)action);
             WriteValue(SUB_POWER_BUTTON_LID, GUID_SLEEP_BUTTON_ACTION, (uint)action);
-            WriteValue(SUB_POWER_BUTTON_LID, GUID_LID_SWITCH_CLOSE_ACTION, (uint)action);
         }
 
         public PowerButtonAction GetPowerButtonAction()
