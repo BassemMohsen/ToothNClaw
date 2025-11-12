@@ -15,7 +15,10 @@ namespace Tooth.Backend
             { "Brightness", 50.0 },
             { "Gamma", 1.0 },
             { "Hue", 0.0 },
-            { "Saturation", 50.0 }
+            { "Saturation", 50.0 },
+            { "AutoSuspend", 0 },
+            { "GoBackToSleep", 0 },
+            { "EnhancedSleep", 0 },
         };
 
         /// <summary>
@@ -63,5 +66,21 @@ namespace Tooth.Backend
         {
             localSettings.Values[key] = value;
         }
+
+        public static void SetObject<T>(string key, T value)
+        {
+            string json = System.Text.Json.JsonSerializer.Serialize(value);
+            localSettings.Values[key] = json;
+        }
+
+        public static T GetObject<T>(string key)
+        {
+            if (localSettings.Values.TryGetValue(key, out object raw) && raw is string json)
+            {
+                return System.Text.Json.JsonSerializer.Deserialize<T>(json);
+            }
+            return default;
+        }
+
     }
 }
