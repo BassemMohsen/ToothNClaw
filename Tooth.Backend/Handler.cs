@@ -46,7 +46,10 @@ namespace Tooth.Backend
         {
             cpuBoostController = new CpuBoostController();
             intelGPUController = new IntelGPU();
-		}
+
+            Console.WriteLine($"[Handler] MotherboardInfo CPU ID: {MotherboardInfo.ProcessorID} , CPU Name: {MotherboardInfo.ProcessorName}");
+            Console.WriteLine($"[Handler] MotherboardInfo Product {MotherboardInfo.Product} , SystemName: {MotherboardInfo.Model}");
+        }
 
         public void Register(Communication comm)
         {
