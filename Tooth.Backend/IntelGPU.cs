@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Threading;
 using System.Timers;
-using SharpDX.Direct3D9;
 using Tooth.IGCL;
 using static Tooth.IGCL.IGCLBackend;
 using Timer = System.Timers.Timer;
+using System.Management;
 
 namespace Tooth.GraphicsProcessingUnit
 {
     public class IntelGPU : IDisposable
     {
+
         protected object updateLock = new();
         public bool IsInitialized = false;
         private bool busyEventRaised = false;
@@ -18,7 +19,6 @@ namespace Tooth.GraphicsProcessingUnit
         public event StatusChangedEvent StatusChanged;
         public delegate void StatusChangedEvent(bool status);
 
-        public AdapterInformation adapterInformation;
         protected int deviceIdx = -1;
         protected int displayIdx = 0;
 
@@ -440,29 +440,29 @@ namespace Tooth.GraphicsProcessingUnit
             else
                 Console.WriteLine("Failed to initialize {0}", "IGCL");
 
-            // Get all adapters
-            AdapterCollection adapters = new Direct3D().Adapters;
-
-            // Todo: handle multiple adapters, This assumes single Handheld monitor setup.
-            AdapterInformation primaryDisplay = null;
-
-            foreach (AdapterInformation adapterInformation in adapters)
+            int idx = 0;
+            foreach (var gpu in new ManagementObjectSearcher("SELECT * FROM Win32_VideoController").Get())
             {
-                primaryDisplay = adapterInformation;
+                var name = gpu["Name"]?.ToString() ?? "";
+                Console.WriteLine($"Adapter {idx}: {name}");
+
+                // Map to IGCL device index
+                int igclIdx = IGCLBackend.GetDeviceIdx(name);
+                Console.WriteLine($"IGCLBackend Adapter index is  {igclIdx}");
+                if (igclIdx != -1)
+                {
+                    deviceIdx = igclIdx;
+                    break; // first match wins
+                }
+
+                idx++;
             }
 
-            if (primaryDisplay == null)
-                return;
-
-            Console.WriteLine($"Primary Display Adapter : {primaryDisplay.Details.Description}");
-
-            deviceIdx = IGCLBackend.GetDeviceIdx(primaryDisplay.Details.Description);
-            if (deviceIdx == -1)
-                return;
-
-            Console.WriteLine($"Primary Display device idx is {deviceIdx}");
-
-            IsInitialized = true;
+            if (deviceIdx != -1)
+            {
+                Console.WriteLine($"Primary Display device idx is {deviceIdx}");
+                IsInitialized = true;
+            }
         }
 
         protected void UpdateSettings()
